@@ -1,7 +1,9 @@
-package com.example.bikepass_android;
+package com.example.bikepass_android.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.bikepass_android.R;
 
 public class MainActivity extends AppCompatActivity {
 
