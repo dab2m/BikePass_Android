@@ -4,11 +4,11 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGrey">#C0BCC0</color>
-    <color name="colorWhite">#FFFDFF</color>
+    <color name="colorWhite">#936693</color>
 
     <color name="amber">#FFA000</color>
     <color name="darkBackground">#EEEEEE</color>
-    <color name="darkBackground2">#C0B2B5</color>
+    <color name="darkBackground2">#494445</color>
     <color name="headerColor">#BDBDBD</color>
     <color name="red">#e53935</color>
     <color name="blue">#728DD1</color>
