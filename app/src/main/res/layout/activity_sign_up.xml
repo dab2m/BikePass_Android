@@ -92,6 +92,7 @@
             android:paddingRight="30dp"
             android:radius="30dp"
             android:text="LOGIN"
+            android:onClick="backToMainActivity"
             android:textColor="#DF556F"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
