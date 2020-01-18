@@ -16,13 +16,15 @@
 
         <EditText
             android:id="@+id/usernamesignup"
-            android:layout_width="130dp"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="90dp"
+            android:drawableLeft="@drawable/sizeuser"
             android:ems="10"
             android:hint="Username"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="12sp"/>
 
     </LinearLayout>
 
@@ -34,13 +36,15 @@
 
         <EditText
             android:id="@+id/emailsignup"
-            android:layout_width="130dp"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="140dp"
+            android:drawableLeft="@drawable/sizemail"
             android:ems="10"
             android:hint="Email"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,13 +54,15 @@
 
         <EditText
             android:id="@+id/editText4"
-            android:layout_width="130dp"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="190dp"
             android:ems="10"
+            android:drawableLeft="@drawable/sizelock"
             android:hint="Password"
             android:inputType="textPassword"
+            android:textSize="12sp"
             />
     </LinearLayout>
     <LinearLayout
