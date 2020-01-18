@@ -14,12 +14,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void loginInput(View view){
 
-     EditText username=findViewById(R.id.signupActivityLayout);
+     EditText username=findViewById(R.id.username);
      EditText password=findViewById(R.id.password);
 
      Log.i("info","username:"+username.getText().toString());
      Log.i("info","password:"+password.getText().toString());
-
 
     }
 
