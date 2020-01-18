@@ -1,65 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LoginLayout"
+    android:id="@+id/signupActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/deneme"
-    tools:context=".MainActivity">
+    tools:context=".activity.SignUpActivity">
 
     <LinearLayout
-        android:id="@+id/usernameLayout"
+        android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/username"
+            android:id="@+id/usernamesignup"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="90dp"
-            android:drawableLeft="@drawable/sizeuser"
+            android:ems="10"
             android:hint="Username"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:inputType="textPersonName" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/PasswordLayout"
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/emailsignup"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="140dp"
-            android:layout_marginBottom="0dp"
-            android:drawableLeft="@drawable/sizelock"
-
-            android:hint="Password"
-            android:inputType="textPassword"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textPersonName" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editText4"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="190dp"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/LoginButtonLayout"
         android:layout_width="match_parent"
@@ -78,12 +77,11 @@
             android:layout_height="40dp"
             android:layout_marginStart="0dp"
             android:layout_marginLeft="0dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="300dp"
             android:layout_marginEnd="0dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/loginbutton"
-            android:onClick="loginInput"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:radius="30dp"
@@ -118,7 +116,6 @@
             android:layout_marginRight="40dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/signupbutton"
-            android:onClick="goToSignupActivity"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
             android:radius="30dp"
@@ -129,5 +126,4 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

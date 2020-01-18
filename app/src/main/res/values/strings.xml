@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DAB2M BikePass</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
 </resources>
