@@ -52,13 +52,12 @@
             android:textSize="12sp" />
 
         <Button
-            android:id="@+id/signup"
+            android:id="@+id/signupButton"
             android:layout_width="120dp"
             android:layout_height="25dp"
             android:layout_marginLeft="35dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/signupbutton"
-            android:onClick="signUpInput"
             android:radius="30dp"
             android:text="SIGN UP"
             android:textColor="#FFFFFF"
