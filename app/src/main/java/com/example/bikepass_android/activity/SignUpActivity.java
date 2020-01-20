@@ -1,7 +1,5 @@
 package com.example.bikepass_android.activity;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,23 +8,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.bikepass_android.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class SignUpActivity extends AppCompatActivity  implements View.OnClickListener {
 
@@ -37,7 +28,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     String code="";
     public void backToMainActivity(View view){
 
-        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+        Intent intent=new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
     }
     @Override
