@@ -8,24 +8,24 @@ import android.widget.Button;
 
 import com.example.bikepass_android.R;
 
-public class MainPageActivity extends AppCompatActivity implements View.OnClickListener {
+public class RentBikeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button buttonRentBike;
+    Button buttonCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_page);
+        setContentView(R.layout.activity_rent_bike);
 
-        buttonRentBike = (Button) findViewById(R.id.buttonRentBike);
-        buttonRentBike.setOnClickListener(this);
+        buttonCancel = (Button) findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonRentBike:
-                startActivity(new Intent(this, RentBikeActivity.class));
+            case R.id.buttonCancel:
+                startActivity(new Intent(this, MainPageActivity.class));
                 finish();
                 break;
         }

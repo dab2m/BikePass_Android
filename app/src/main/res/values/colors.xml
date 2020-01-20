@@ -20,4 +20,6 @@
     <color name="palePink">#D39BC0</color>
     <color name="palePinkDarker">#CF8A99</color>
     <color name="paleBlueDarker">#82A7D4</color>
+
+    <color name="white">#FFFFFF</color>
 </resources>
