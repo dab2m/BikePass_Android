@@ -26,7 +26,10 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     EditText password;
     EditText mail;
     Button buton;
-    String code="";
+    String code= "";
+    String userName= "";
+    String passwordUser="";
+    String email="";
     public void backToMainActivity(View view){
 
         Intent intent=new Intent(getApplicationContext(), LoginActivity.class);
@@ -43,13 +46,16 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     @Override
     public void onClick(View view) {
         username = findViewById(R.id.usernamesignup);
+        userName=username.getText().toString();
         password = findViewById(R.id.passwordsignup);
+        passwordUser=password.getText().toString();
         mail = findViewById(R.id.emailsignup);
+        email=mail.getText().toString();
 
 
-        //Log.i("info", "username:" + username.getText().toString());
-        //Log.i("info", "password:" + password.getText().toString());
-        //Log.i("info", "mail:" + mail.getText().toString());
+        Log.i("info", "username:" + username.getText().toString());
+        Log.i("info", "password:" + password.getText().toString());
+        Log.i("info", "mail:" + mail.getText().toString());
 
 
         if (username.getText().toString().isEmpty())
@@ -81,7 +87,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
             URL url = null;
             String response = null;
-            String parameters = "username=" + username + "&password=" + password + "&email=" + mail;
+            String parameters = "username=" + userName + "&password=" + passwordUser + "&email=" + email;
 
             try {
                 url = new URL(strings[0]);
