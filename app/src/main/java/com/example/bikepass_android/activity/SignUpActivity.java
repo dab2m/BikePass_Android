@@ -108,8 +108,11 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                     sb.append(line + "\n");
                 }
                 // Response from server after login process will be stored in response variable.
-                response = sb.toString();
-                Log.i("response", response);
+                response = sb.toString().trim();
+                if(response.equals("1"))
+                    Log.i("info","Registration succesful");
+                else
+                    Log.i("info","Username or password is already used");
                 isr.close();
                 reader.close();
                 return "Success";
