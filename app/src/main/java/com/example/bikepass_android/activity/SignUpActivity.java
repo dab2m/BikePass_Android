@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
@@ -46,21 +47,30 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         mail = findViewById(R.id.emailsignup);
 
 
-        Log.i("info", "username:" + username.getText().toString());
-        Log.i("info", "password:" + password.getText().toString());
-        Log.i("info", "mail:" + mail.getText().toString());
+        //Log.i("info", "username:" + username.getText().toString());
+        //Log.i("info", "password:" + password.getText().toString());
+        //Log.i("info", "mail:" + mail.getText().toString());
 
-        MyAsync async=new MyAsync();
-        try {
-            String result=async.execute("http://192.168.1.24/Bitirme/localWeb/registerUser.php").get();
-            Log.i("text:",result);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        if (username.getText().toString().isEmpty())
+            Toast.makeText(getApplicationContext(), "Username cant be empty", Toast.LENGTH_SHORT).show();
+        else if (mail.getText().toString().isEmpty())
+            Toast.makeText(getApplicationContext(), "Email cant be empty", Toast.LENGTH_SHORT).show();
+        else if (password.getText().toString().isEmpty())
+            Toast.makeText(getApplicationContext(), "Password cant be empty", Toast.LENGTH_SHORT).show();
+
+        else {
+            MyAsync async = new MyAsync();
+            try {
+                String result = async.execute("http://192.168.1.24/Bitirme/localWeb/registerUser.php").get();
+                Log.i("text:", result);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
-
     class MyAsync extends AsyncTask<String,Void,String> {
 
         @Override
@@ -71,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
             URL url = null;
             String response = null;
-            String parameters = "username=" + username + "&password=" + password + "$email=" + mail;
+            String parameters = "username=" + username + "&password=" + password + "&email=" + mail;
 
             try {
                 url = new URL(strings[0]);
