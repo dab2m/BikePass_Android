@@ -83,7 +83,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         else {
             MyAsync async = new MyAsync();
             try {
-                String result = async.execute("http://192.168.1.24/Bitirme/localWeb/registerUser.php").get();
+                String result = async.execute("http://10.100.10.63/Bitirme/localWeb/registerUser.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
