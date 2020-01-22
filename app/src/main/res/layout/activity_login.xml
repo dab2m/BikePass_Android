@@ -50,7 +50,7 @@
             android:layout_height="20dp"
             android:layout_below="@+id/editTextPassword"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="13dp"
             android:text="Remember me" />
 
         <Button
