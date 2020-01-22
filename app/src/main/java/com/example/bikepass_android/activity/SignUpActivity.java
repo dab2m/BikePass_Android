@@ -1,8 +1,13 @@
 package com.example.bikepass_android.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,11 +35,13 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     String userName= "";
     String passwordUser="";
     String email="";
+    Intent intent=null;
     public void backToMainActivity(View view){
 
-        Intent intent=new Intent(getApplicationContext(), LoginActivity.class);
+        intent=new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +49,17 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         buton = findViewById(R.id.signupButton);
         buton.setOnClickListener(this);
     }
+     public void setUserInfo(){
 
+         intent=new Intent(getApplicationContext(), LoginActivity.class);
+         intent.putExtra("username",userName);
+         intent.putExtra("password",passwordUser);
+         startActivity(intent);
+
+     }
     @Override
     public void onClick(View view) {
+
         username = findViewById(R.id.usernamesignup);
         userName=username.getText().toString();
         password = findViewById(R.id.passwordsignup);
@@ -53,9 +68,9 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         email=mail.getText().toString();
 
 
-        Log.i("info", "username:" + username.getText().toString());
-        Log.i("info", "password:" + password.getText().toString());
-        Log.i("info", "mail:" + mail.getText().toString());
+        //Log.i("info", "username:" + username.getText().toString());
+        //Log.i("info", "password:" + password.getText().toString());
+        //Log.i("info", "mail:" + mail.getText().toString());
 
 
         if (username.getText().toString().isEmpty())
@@ -109,10 +124,15 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 }
                 // Response from server after login process will be stored in response variable.
                 response = sb.toString().trim();
-                if(response.equals("1"))
-                    Log.i("info","Registration succesful");
-                else
-                    Log.i("info","Username or password is already used");
+                if(response.equals("1")) {
+                    setUserInfo();
+                }else {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Username or password is already used", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 isr.close();
                 reader.close();
                 return "Success";
