@@ -54,7 +54,7 @@
             android:text="Remember me" />
 
         <Button
-            android:id="@+id/backtologin"
+            android:id="@+id/login"
             android:layout_width="120dp"
             android:layout_height="25dp"
             android:layout_marginLeft="35dp"

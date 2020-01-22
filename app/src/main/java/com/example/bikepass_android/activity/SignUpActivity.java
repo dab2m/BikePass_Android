@@ -79,11 +79,10 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
             Toast.makeText(getApplicationContext(), "Email cant be empty", Toast.LENGTH_SHORT).show();
         else if (password.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Password cant be empty", Toast.LENGTH_SHORT).show();
-
         else {
-            MyAsync async = new MyAsync();
+            MyAsyncSignup async = new MyAsyncSignup();
             try {
-                String result = async.execute("http://10.100.10.63/Bitirme/localWeb/registerUser.php").get();
+                String result = async.execute("http://10.100.10.69/Bitirme/localWeb/registerUser.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -92,7 +91,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
             }
         }
     }
-    class MyAsync extends AsyncTask<String,Void,String> {
+    class MyAsyncSignup extends AsyncTask<String,Void,String> {
 
         @Override
         protected String doInBackground(String[] strings) {
@@ -122,7 +121,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }
-                // Response from server after login process will be stored in response variable.
+                // Response from server after register process will be stored in response variable.
                 response = sb.toString().trim();
                 if(response.equals("1")) {
                     setUserInfo();
