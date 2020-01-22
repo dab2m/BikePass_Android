@@ -13,9 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.bikepass_android.R;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,17 +39,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      username.setText(userName);
      password.setText(passWord);
      Toast.makeText(getApplicationContext(), "Welcome BikePass!", Toast.LENGTH_SHORT).show();
+     setStorage(userName,passWord);
 
     }
+     public void setStorage(String username,String password){
 
+         loginPrefsEditor.putBoolean("saveLogin", true);
+         loginPrefsEditor.putString("username", username);
+         loginPrefsEditor.putString("password", password);
+         loginPrefsEditor.commit();
+     }
+
+     public void clearStrorage(){
+         loginPrefsEditor.clear();
+         loginPrefsEditor.commit();
+     }
     public void goToSignupActivity(View view){
 
         Intent intent=new Intent(getApplicationContext(),SignUpActivity.class);
         startActivity(intent);
-
     }
 
     public void tryLogin(){
+
         if (username.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Username cant be empty", Toast.LENGTH_SHORT).show();
         else if (password.getText().toString().isEmpty())
@@ -81,12 +91,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         rememberMe = findViewById(R.id.saveLoginCheckBox);
         rememberMe.setOnClickListener(this);
 
+        loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        loginPrefsEditor = loginPreferences.edit();
+
         Intent intent=getIntent();
         if(intent.getStringExtra("username")!=null && intent.getStringExtra("password")!=null)
             setView(intent.getStringExtra("username"),intent.getStringExtra("password"));
 
-        loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-        loginPrefsEditor = loginPreferences.edit();
+
 
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
 
@@ -131,13 +143,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 response = sb.toString().trim();
                 Log.i("info:",response);
                 if(response.equals("1")) {
+                    setStorage(userName,passWord);
                     startActivity(new Intent(getApplicationContext(), MainPageActivity.class));
                 }else {
+                    clearStrorage();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(getApplicationContext(), "Username or password is wrong", Toast.LENGTH_SHORT).show();
                         }
                     });
+                    loginPrefsEditor.clear();
+                    loginPrefsEditor.commit();
                 }
                 isr.close();
                 reader.close();
@@ -164,13 +180,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 passWord = password.getText().toString();
 
                 if (rememberMe.isChecked()) {
-                    loginPrefsEditor.putBoolean("saveLogin", true);
-                    loginPrefsEditor.putString("username", userName);
-                    loginPrefsEditor.putString("password", passWord);
-                    loginPrefsEditor.commit();
+                   setStorage(userName,passWord);
                 } else {
-                    loginPrefsEditor.clear();
-                    loginPrefsEditor.commit();
+                   clearStrorage();
                 }
                 break;
         }

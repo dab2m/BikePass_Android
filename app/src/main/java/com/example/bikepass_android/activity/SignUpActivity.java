@@ -31,7 +31,6 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     EditText password;
     EditText mail;
     Button buton;
-    String code= "";
     String userName= "";
     String passwordUser="";
     String email="";
@@ -51,6 +50,8 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     }
      public void setUserInfo(){
 
+        Log.i("info","setUserInfo");
+
          intent=new Intent(getApplicationContext(), LoginActivity.class);
          intent.putExtra("username",userName);
          intent.putExtra("password",passwordUser);
@@ -66,12 +67,6 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         passwordUser=password.getText().toString();
         mail = findViewById(R.id.emailsignup);
         email=mail.getText().toString();
-
-
-        //Log.i("info", "username:" + username.getText().toString());
-        //Log.i("info", "password:" + password.getText().toString());
-        //Log.i("info", "mail:" + mail.getText().toString());
-
 
         if (username.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Username cant be empty", Toast.LENGTH_SHORT).show();
