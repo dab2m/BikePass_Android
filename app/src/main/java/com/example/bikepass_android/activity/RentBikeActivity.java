@@ -26,7 +26,7 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
     Button buttonCancel;
     SurfaceView surfaceView;
     BarcodeDetector barcodeDetector;
-    CameraSource cameraSource;
+    CameraSource cameraSource = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,8 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
         barcodeDetector = new BarcodeDetector.Builder(this).
                 setBarcodeFormats(Barcode.QR_CODE).build();
 
-        cameraSource = new CameraSource.Builder(this,barcodeDetector).
-                setRequestedPreviewSize(640,480).build();
+        cameraSource = new CameraSource.Builder(this, barcodeDetector).
+                setRequestedPreviewSize(640, 480).build();
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -78,13 +78,14 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
-                if(qrCodes.size() != 0){
+                if (qrCodes.size() != 0) {
                     textViewQR.post(new Runnable() {
                         @Override
                         public void run() {
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1000);
-                            textViewQR.setText(qrCodes.valueAt(0).displayValue);
+                            Intent intent = new Intent(RentBikeActivity.this, BikeUsing.class);
+                            startActivity(intent);
                         }
                     });
                 }
