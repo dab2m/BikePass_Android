@@ -26,7 +26,6 @@ public class MainPageActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.buttonRentBike:
                 startActivity(new Intent(this, RentBikeActivity.class));
-                finish();
                 break;
         }
     }

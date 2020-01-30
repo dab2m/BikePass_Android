@@ -1,5 +1,7 @@
 package com.example.bikepass_android.activity;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,19 +26,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         bikeId = (TextView) findViewById(R.id.bikeId);
         stopAndPay = (Button) findViewById(R.id.stopAndPay);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
+        chronometer.start();
     }
 
-    public void startChronometer(View v) {
-
-    }
-
-    public void pauseChronometer(View v) {
-
-    }
-
-    public void resetChronometer(View v) {
-
-    }
 
     @Override
     public void onClick(View view) {

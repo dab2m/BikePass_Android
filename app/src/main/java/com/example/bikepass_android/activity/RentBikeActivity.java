@@ -98,7 +98,6 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.buttonCancel:
                 startActivity(new Intent(this, BikeUsingActivity.class));
-                finish();
                 break;
         }
     }
