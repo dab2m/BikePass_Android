@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#01579B"
     android:gravity="center"
-    tools:context=".activity.BikeUsing">
+    tools:context=".activity.BikeUsingActivity">
 
     <Chronometer
         android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
         android:textSize="30sp"
-        />
-</LinearLayout>
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/stopAndPay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:background="@drawable/round_button"
+        android:text="Stop &amp; \n Pay"
+        android:textColor="#6638e2"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bikeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bike Number"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+</FrameLayout>

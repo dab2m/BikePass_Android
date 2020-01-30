@@ -84,7 +84,7 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
                         public void run() {
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1000);
-                            Intent intent = new Intent(RentBikeActivity.this, BikeUsing.class);
+                            Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
                             startActivity(intent);
                         }
                     });
@@ -97,7 +97,7 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonCancel:
-                startActivity(new Intent(this, MainPageActivity.class));
+                startActivity(new Intent(this, BikeUsingActivity.class));
                 finish();
                 break;
         }
