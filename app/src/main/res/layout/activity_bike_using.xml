@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#01579B"
+    android:background="@drawable/android_back"
     android:gravity="center"
     tools:context=".activity.BikeUsingActivity">
 
@@ -35,4 +35,37 @@
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/minute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="minutes"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_marginTop="385dp"
+        android:layout_marginLeft="150dp"/>
+
+    <TextView
+        android:id="@+id/startFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Fee: 1.5 TL"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:layout_marginTop="450dp"
+        android:layout_marginLeft="150dp"/>
+
+    <TextView
+        android:id="@+id/totalPayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Payment: "
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:layout_marginTop="470dp"
+        android:layout_marginLeft="150dp"/>
 </FrameLayout>
