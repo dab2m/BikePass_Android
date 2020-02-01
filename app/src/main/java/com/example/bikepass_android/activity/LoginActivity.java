@@ -24,6 +24,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText username;
     EditText password;
     CheckBox rememberMe;
+    Intent intent;
     private SharedPreferences loginPreferences;
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
@@ -71,6 +74,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else if (password.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Password cant be empty", Toast.LENGTH_SHORT).show();
         else {
+            userName=username.getText().toString();
+            passWord=password.getText().toString();
             MyAsyncLogin async = new MyAsyncLogin();
             try {
                 String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
@@ -101,8 +106,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent intent=getIntent();
         if(intent.getStringExtra("username")!=null && intent.getStringExtra("password")!=null)
             setView(intent.getStringExtra("username"),intent.getStringExtra("password"));
-
-
 
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
 
@@ -152,14 +155,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Response from server after login process will be stored in response variable.
                 response = sb.toString().trim();
                 Log.i("info:",response);
-                if(response.equals("1")) {
+                JSONObject jObj = new JSONObject(response);
+                final String message = jObj.getString("message");
+                String status = jObj.getString("status");
+                ArrayList<String> statuscodeListForLogin = new ArrayList<>(Arrays.asList("1", "2"));
+                if(status.equals("0")) {
                     setStorage(userName,passWord);
-                    startActivity(new Intent(getApplicationContext(), MainPageActivity.class));
-                }else {
+                    intent=new Intent(getApplicationContext(), MainPageActivity.class);
+                    intent.putExtra("message",message);
+                    startActivity(intent);
+                }else if(statuscodeListForLogin.contains(status)){
                     clearStrorage();
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "Username or password is wrong", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                     loginPrefsEditor.clear();
@@ -170,6 +179,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return "Success";
             } catch (IOException e) {
                 // Error
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             return null;

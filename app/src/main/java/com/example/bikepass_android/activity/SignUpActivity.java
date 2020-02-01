@@ -55,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     }
      public void setUserInfo(){
 
-        Log.i("info","setUserInfo");
+        //Log.i("info","setUserInfo");
 
          intent=new Intent(getApplicationContext(), LoginActivity.class);
          intent.putExtra("username",userName);
