@@ -41,6 +41,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String userName,passWord;
 
 
+    public void goToMapActivity(View view){
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        startActivity(intent);
+    }
+
     public void setView(String userName,String passWord){
 
      username.setText(userName);
