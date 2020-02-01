@@ -17,6 +17,9 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,7 +80,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         else {
             MyAsyncSignup async = new MyAsyncSignup();
             try {
-                String result = async.execute("http://10.100.10.69/Bitirme/localWeb/registerUser.php").get();
+                String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -96,7 +99,15 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
             URL url = null;
             String response = null;
-            String parameters = "username=" + userName + "&password=" + passwordUser + "&email=" + email;
+            JSONObject json = new JSONObject();
+            try {
+                json.put("username",userName);
+                json.put("password",passwordUser);
+                json.put("email",email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+           //String parameters = "username=" + userName + "&password=" + passwordUser + "&email=" + email;
 
             try {
                 url = new URL(strings[0]);
@@ -106,7 +117,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 connection.setRequestMethod("POST");
 
                 request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(parameters);
+                request.write(String.valueOf(json));
                 request.flush();
                 request.close();
                 String line = "";
@@ -118,8 +129,10 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 }
                 // Response from server after register process will be stored in response variable.
                 response = sb.toString().trim();
+                Log.i("response:",response);
                 if(response.equals("1")) {
                     setUserInfo();
+
                 }else {
                     runOnUiThread(new Runnable() {
                         public void run() {

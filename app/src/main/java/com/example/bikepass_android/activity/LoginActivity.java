@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else {
             MyAsyncLogin async = new MyAsyncLogin();
             try {
-                String result = async.execute("http://10.100.10.69/Bitirme/localWeb/userLogin.php").get();
+                String result = async.execute("http://Bikepass.herokuapp.com/src/API/userLogin.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
