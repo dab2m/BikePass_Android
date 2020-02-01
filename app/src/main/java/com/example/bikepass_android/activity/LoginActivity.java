@@ -14,6 +14,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.bikepass_android.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -69,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else {
             MyAsyncLogin async = new MyAsyncLogin();
             try {
-                String result = async.execute("http://Bikepass.herokuapp.com/src/API/userLogin.php").get();
+                String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -119,8 +123,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             URL url = null;
             String response = null;
-            String parameters = "username=" + userName + "&password=" + passWord ;
-
+            //String parameters = "username=" + userName + "&password=" + passWord ;
+            JSONObject jsonLoginData = new JSONObject();
+            try {
+                jsonLoginData.put("username",userName);
+                jsonLoginData.put("password",passWord);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             try {
                 url = new URL(strings[0]);
                 connection = (HttpURLConnection) url.openConnection();
@@ -129,7 +139,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 connection.setRequestMethod("POST");
 
                 request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(parameters);
+                request.write(String.valueOf(jsonLoginData));
                 request.flush();
                 request.close();
                 String line = "";

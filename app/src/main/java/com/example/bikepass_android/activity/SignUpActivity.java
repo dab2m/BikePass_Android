@@ -101,11 +101,11 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
             URL url = null;
             String response = null;
-            JSONObject json = new JSONObject();
+            JSONObject jsonRegisterData = new JSONObject();
             try {
-                json.put("username",userName);
-                json.put("password",passwordUser);
-                json.put("email",email);
+                jsonRegisterData.put("username",userName);
+                jsonRegisterData.put("password",passwordUser);
+                jsonRegisterData.put("email",email);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -119,7 +119,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 connection.setRequestMethod("POST");
 
                 request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(String.valueOf(json));
+                request.write(String.valueOf(jsonRegisterData));
                 request.flush();
                 request.close();
                 String line = "";
