@@ -127,9 +127,15 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }
+
                 // Response from server after register process will be stored in response variable.
                 response = sb.toString().trim();
                 Log.i("response:",response);
+                JSONObject jObj = new JSONObject(response);
+                String message = jObj.getString("message");
+                String status = jObj.getString("status");
+                Log.i("message:",message);
+                Log.i("status:",status);
                 if(response.equals("1")) {
                     setUserInfo();
 
@@ -145,6 +151,8 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 return "Success";
             } catch (IOException e) {
                 // Error
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             return null;
