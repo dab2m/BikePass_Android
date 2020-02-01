@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
      username.setText(userName);
      password.setText(passWord);
-     Toast.makeText(getApplicationContext(), "Welcome BikePass!", Toast.LENGTH_SHORT).show();
+     Toast.makeText(getApplicationContext(), "Account is created! Welcome to BikePass "+userName+"!", Toast.LENGTH_SHORT).show();
      setStorage(userName,passWord);
 
     }

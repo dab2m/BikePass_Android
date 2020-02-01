@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class SignUpActivity extends AppCompatActivity  implements View.OnClickListener {
@@ -130,19 +132,19 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
                 // Response from server after register process will be stored in response variable.
                 response = sb.toString().trim();
-                Log.i("response:",response);
+                //Log.i("response:",response);
                 JSONObject jObj = new JSONObject(response);
-                String message = jObj.getString("message");
+                final String message = jObj.getString("message");
                 String status = jObj.getString("status");
-                Log.i("message:",message);
-                Log.i("status:",status);
-                if(response.equals("1")) {
+                ArrayList<String> statuscodeListForRegister = new ArrayList<>(Arrays.asList("1", "2", "3","4","5"));
+                //Log.i("message:",message);
+                //Log.i("status:",status);
+                if(status.equals("0")) {
                     setUserInfo();
-
-                }else {
+                }else if(statuscodeListForRegister.contains(status)  ) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "Username or password is already used", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
