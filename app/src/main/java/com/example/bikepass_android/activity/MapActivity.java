@@ -66,6 +66,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             @Override
             public void onLocationChanged(Location location) {
                 LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
                 Toast.makeText(getApplicationContext(), location.toString(), Toast.LENGTH_SHORT).show();
@@ -108,6 +109,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 LatLng userLoc = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude() );
+                mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
 
