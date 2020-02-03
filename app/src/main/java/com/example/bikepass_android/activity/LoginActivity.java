@@ -14,12 +14,18 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.bikepass_android.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -31,17 +37,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText username;
     EditText password;
     CheckBox rememberMe;
+    Intent intent;
     private SharedPreferences loginPreferences;
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
     private String userName,passWord;
 
 
+    public void goToMapActivity(View view){
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        startActivity(intent);
+    }
+
     public void setView(String userName,String passWord){
 
      username.setText(userName);
      password.setText(passWord);
-     Toast.makeText(getApplicationContext(), "Welcome BikePass!", Toast.LENGTH_SHORT).show();
+     Toast.makeText(getApplicationContext(), "Account is created! Welcome to BikePass "+userName+"!", Toast.LENGTH_SHORT).show();
      setStorage(userName,passWord);
 
     }
@@ -70,9 +82,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else if (password.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Password cant be empty", Toast.LENGTH_SHORT).show();
         else {
+            userName=username.getText().toString();
+            passWord=password.getText().toString();
             MyAsyncLogin async = new MyAsyncLogin();
             try {
-                String result = async.execute("http://10.100.10.69/Bitirme/localWeb/userLogin.php").get();
+                String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -101,8 +115,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(intent.getStringExtra("username")!=null && intent.getStringExtra("password")!=null)
             setView(intent.getStringExtra("username"),intent.getStringExtra("password"));
 
-
-
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
 
         if (saveLogin == true) {
@@ -122,8 +134,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             URL url = null;
             String response = null;
-            String parameters = "username=" + userName + "&password=" + passWord ;
-
+            //String parameters = "username=" + userName + "&password=" + passWord ;
+            JSONObject jsonLoginData = new JSONObject();
+            try {
+                jsonLoginData.put("username",userName);
+                jsonLoginData.put("password",passWord);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             try {
                 url = new URL(strings[0]);
                 connection = (HttpURLConnection) url.openConnection();
@@ -132,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 connection.setRequestMethod("POST");
 
                 request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(parameters);
+                request.write(String.valueOf(jsonLoginData));
                 request.flush();
                 request.close();
                 String line = "";
@@ -145,14 +163,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Response from server after login process will be stored in response variable.
                 response = sb.toString().trim();
                 Log.i("info:",response);
-                if(response.equals("1")) {
+                JSONObject jObj = new JSONObject(response);
+                final String message = jObj.getString("message");
+                String status = jObj.getString("status");
+                ArrayList<String> statuscodeListForLogin = new ArrayList<>(Arrays.asList("1", "2"));
+                if(status.equals("0")) {
                     setStorage(userName,passWord);
-                    startActivity(new Intent(getApplicationContext(), MainPageActivity.class));
-                }else {
+                    intent=new Intent(getApplicationContext(), MainPageActivity.class);
+                    intent.putExtra("message",message);
+                    startActivity(intent);
+                }else if(statuscodeListForLogin.contains(status)){
                     clearStrorage();
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "Username or password is wrong", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                     loginPrefsEditor.clear();
@@ -163,6 +187,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return "Success";
             } catch (IOException e) {
                 // Error
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             return null;

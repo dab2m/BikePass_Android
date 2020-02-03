@@ -1,16 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/android_back"
     android:gravity="center"
-    tools:context=".activity.BikeUsing">
+    tools:context=".activity.BikeUsingActivity">
 
     <Chronometer
         android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
         android:textSize="30sp"
-        />
-</LinearLayout>
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/stopAndPay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:background="@drawable/round_button"
+        android:text="Stop &amp; \n Pay"
+        android:textColor="#6638e2"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bikeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bike Number"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/minute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="minutes"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_marginTop="385dp"
+        android:layout_marginLeft="150dp"/>
+
+    <TextView
+        android:id="@+id/startFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Fee: 1.5 TL"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:layout_marginTop="450dp"
+        android:layout_marginLeft="150dp"/>
+
+    <TextView
+        android:id="@+id/totalPayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Payment: "
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:layout_marginTop="470dp"
+        android:layout_marginLeft="150dp"/>
+</FrameLayout>

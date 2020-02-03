@@ -2,4 +2,5 @@
     <string name="app_name">BikePass</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_map">Map</string>
 </resources>

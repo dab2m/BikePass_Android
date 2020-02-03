@@ -1,28 +1,26 @@
 package com.example.bikepass_android.activity;
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.bikepass_android.R;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -53,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
     }
      public void setUserInfo(){
 
-        Log.i("info","setUserInfo");
+        //Log.i("info","setUserInfo");
 
          intent=new Intent(getApplicationContext(), LoginActivity.class);
          intent.putExtra("username",userName);
@@ -80,7 +78,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
         else {
             MyAsyncSignup async = new MyAsyncSignup();
             try {
-                String result = async.execute("http://10.100.10.69/Bitirme/localWeb/registerUser.php").get();
+                String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
                 Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -99,7 +97,15 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
             URL url = null;
             String response = null;
-            String parameters = "username=" + userName + "&password=" + passwordUser + "&email=" + email;
+            JSONObject jsonRegisterData = new JSONObject();
+            try {
+                jsonRegisterData.put("username",userName);
+                jsonRegisterData.put("password",passwordUser);
+                jsonRegisterData.put("email",email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+           //String parameters = "username=" + userName + "&password=" + passwordUser + "&email=" + email;
 
             try {
                 url = new URL(strings[0]);
@@ -109,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 connection.setRequestMethod("POST");
 
                 request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(parameters);
+                request.write(String.valueOf(jsonRegisterData));
                 request.flush();
                 request.close();
                 String line = "";
@@ -119,14 +125,22 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }
+
                 // Response from server after register process will be stored in response variable.
                 response = sb.toString().trim();
-                if(response.equals("1")) {
+                //Log.i("response:",response);
+                JSONObject jObj = new JSONObject(response);
+                final String message = jObj.getString("message");
+                String status = jObj.getString("status");
+                ArrayList<String> statuscodeListForRegister = new ArrayList<>(Arrays.asList("1", "2", "3","4","5"));
+                //Log.i("message:",message);
+                //Log.i("status:",status);
+                if(status.equals("0")) {
                     setUserInfo();
-                }else {
+                }else if(statuscodeListForRegister.contains(status)  ) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "Username or password is already used", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -135,6 +149,8 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 return "Success";
             } catch (IOException e) {
                 // Error
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             return null;
