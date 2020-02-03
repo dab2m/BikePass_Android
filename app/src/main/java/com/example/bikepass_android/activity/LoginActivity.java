@@ -22,6 +22,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Created by Dilan on 22.01.2020
+ */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button buttonLogin;

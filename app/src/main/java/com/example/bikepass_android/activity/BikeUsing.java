@@ -7,6 +7,9 @@ import android.widget.Chronometer;
 
 import com.example.bikepass_android.R;
 
+/**
+ * Created by MustafaSaid on 30.01.2020
+ */
 public class BikeUsing extends AppCompatActivity {
 
     private Chronometer chronometer;

@@ -20,6 +20,9 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+/**
+ * Created by MustafaSaid on 21.01.2020
+ */
 public class RentBikeActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView textViewQR;

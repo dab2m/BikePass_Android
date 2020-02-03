@@ -25,6 +25,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Created by Dilan on 18.01.2020
+ */
 public class SignUpActivity extends AppCompatActivity  implements View.OnClickListener {
 
     EditText username;
