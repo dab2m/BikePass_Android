@@ -25,6 +25,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.bikepass_android.R;
 
+/**
+ * Created by Dilan on 02.02.2020
+ */
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     LocationManager locationManager;

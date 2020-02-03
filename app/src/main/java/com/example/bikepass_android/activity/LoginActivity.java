@@ -169,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 ArrayList<String> statuscodeListForLogin = new ArrayList<>(Arrays.asList("1", "2"));
                 if(status.equals("0")) {
                     setStorage(userName,passWord);
-                    intent=new Intent(getApplicationContext(), MainPageActivity.class);
+                    intent=new Intent(getApplicationContext(), ReportsActivity.class);
                     intent.putExtra("message",message);
                     startActivity(intent);
                 }else if(statuscodeListForLogin.contains(status)){
@@ -199,7 +199,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
-                tryLogin();
+                startActivity(new Intent(this, ReportsActivity.class));
+                //tryLogin();
                 break;
             case R.id.saveLoginCheckBox:
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

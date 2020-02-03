@@ -45,7 +45,7 @@
             android:name=".activity.RentBikeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.MainPageActivity"
+            android:name=".activity.ReportsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SignUpActivity"

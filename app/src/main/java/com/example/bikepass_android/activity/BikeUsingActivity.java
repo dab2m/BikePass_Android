@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.example.bikepass_android.R;
 
+/**
+ * Created by MustafaSaid on 30.01.2020
+ */
 public class BikeUsingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView bikeId;

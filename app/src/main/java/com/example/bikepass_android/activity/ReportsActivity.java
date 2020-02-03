@@ -9,14 +9,14 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
-public class MainPageActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button buttonRentBike;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_page);
+        setContentView(R.layout.activity_reports);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         buttonRentBike = (Button) findViewById(R.id.buttonRentBike);
