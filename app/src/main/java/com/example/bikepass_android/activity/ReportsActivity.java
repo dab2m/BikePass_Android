@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
+/**
+ * Created by Berk on 03.02.2020.
+ */
 public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button buttonRentBike;
@@ -19,14 +22,14 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_reports);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        buttonRentBike = (Button) findViewById(R.id.buttonRentBike);
+        buttonRentBike = (Button) findViewById(R.id.b2);
         buttonRentBike.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonRentBike:
+            case R.id.b2:
                 startActivity(new Intent(this, RentBikeActivity.class));
                 break;
         }
