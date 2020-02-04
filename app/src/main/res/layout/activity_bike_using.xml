@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textColor="@color/white"
-        android:textSize="30sp"
+        android:textSize="60sp"
         android:textStyle="bold" />
 
     <Button
@@ -44,7 +44,7 @@
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold"
-        android:layout_marginTop="385dp"
+        android:layout_marginTop="400dp"
         android:layout_marginLeft="150dp"/>
 
     <TextView
