@@ -34,6 +34,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         stopAndPay = (Button) findViewById(R.id.stopAndPay);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
+        chronometer.setFormat("00:%s");
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometerHelper = new ChronometerHelper();
         startStopWatch();
