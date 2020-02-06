@@ -47,7 +47,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometerHelper = new ChronometerHelper();
         startStopWatch();
-        System.out.println((SystemClock.elapsedRealtime() - chronometer.getBase())/1000);
+        long second = (SystemClock.elapsedRealtime() - chronometer.getBase())/1000;
     }
 
     public void startMinuteUpdater() {
