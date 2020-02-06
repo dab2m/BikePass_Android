@@ -9,12 +9,22 @@
     tools:context=".activity.BikeUsingActivity">
 
     <TextView
-        android:id="@+id/bikeId"
+        android:id="@+id/bikeNumberText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Bike Number"
+        android:text="Bike Number: "
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bikeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/bikeNumberText"
+        android:text="00"
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold" />
@@ -30,7 +40,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/minute"
+        android:id="@+id/minuteText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/chronometer"
@@ -41,29 +51,40 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/startFee"
+        android:id="@+id/startFeeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/minute"
+        android:layout_below="@id/minuteText"
         android:layout_centerHorizontal="true"
-        android:text="Start Fee: 1.5 TL"
+        android:text="Start Fee: 1.50 TL"
         android:textColor="@color/white"
         android:textSize="15dp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/totalPayment"
+        android:id="@+id/totalPaymentText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/startFee"
+        android:layout_below="@id/startFeeText"
         android:layout_centerHorizontal="true"
         android:text="Total Payment: "
         android:textColor="@color/white"
         android:textSize="15dp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/totalPaymentCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startFeeText"
+        android:layout_toRightOf="@id/totalPaymentText"
+        android:text="1.50 TL"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
     <Button
-        android:id="@+id/stopAndPay"
+        android:id="@+id/stopAndPayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -72,5 +93,6 @@
         android:text="Stop &amp; \n Pay"
         android:textColor="#6638e2"
         android:textStyle="bold" />
+
 
 </RelativeLayout>

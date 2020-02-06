@@ -18,22 +18,6 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-
-    <Button
-        android:id="@+id/buttonCancel"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="14dp"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/blue"
-        android:text="Cancel"
-        android:textColor="@color/cardview_light_background"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="500dp"
@@ -50,4 +34,20 @@
         android:text="Please focus on QR code"
         android:textColor="@color/white"
         android:textSize="18sp"></TextView>
+
+    <Button
+        android:id="@+id/buttonCancel"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="14dp"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="@color/blue"
+        android:text="Cancel"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>
