@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,64 +8,69 @@
     android:gravity="center"
     tools:context=".activity.BikeUsingActivity">
 
-    <Chronometer
-        android:id="@+id/chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
-        android:textSize="60sp"
-        android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/stopAndPay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:background="@drawable/round_button"
-        android:text="Stop &amp; \n Pay"
-        android:textColor="#6638e2"
-        android:textStyle="bold" />
-
     <TextView
         android:id="@+id/bikeId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:text="Bike Number"
         android:textColor="@color/white"
         android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/white"
+        android:textSize="60sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/minute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/chronometer"
+        android:layout_centerHorizontal="true"
         android:text="minutes"
         android:textColor="@color/white"
         android:textSize="30dp"
-        android:textStyle="bold"
-        android:layout_marginTop="400dp"
-        android:layout_marginLeft="150dp"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/startFee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/minute"
+        android:layout_centerHorizontal="true"
         android:text="Start Fee: 1.5 TL"
         android:textColor="@color/white"
         android:textSize="15dp"
-        android:textStyle="bold"
-        android:layout_marginTop="450dp"
-        android:layout_marginLeft="150dp"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/totalPayment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/startFee"
+        android:layout_centerHorizontal="true"
         android:text="Total Payment: "
         android:textColor="@color/white"
         android:textSize="15dp"
-        android:textStyle="bold"
-        android:layout_marginTop="470dp"
-        android:layout_marginLeft="150dp"/>
-</FrameLayout>
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/stopAndPay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/round_button"
+        android:text="Stop &amp; \n Pay"
+        android:textColor="#6638e2"
+        android:textStyle="bold" />
+
+</RelativeLayout>
