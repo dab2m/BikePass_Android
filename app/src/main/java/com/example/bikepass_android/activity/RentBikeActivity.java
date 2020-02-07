@@ -31,6 +31,8 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource = null;
 
+    private String bikeId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +90,17 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1000);
                             Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
-                            startActivity(intent);
+                            String bikeName = qrCodes.valueAt(0).displayValue;
+                            bikeId = bikeName.substring(bikeName.lastIndexOf(" ") + 1);
+
+                            /**
+                             * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
+                             */
+                            Intent intent2 = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                            intent2.putExtra("key", bikeId);
+                            startActivity(intent2);
+
+
                         }
                     });
                 }

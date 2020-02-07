@@ -33,6 +33,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private BroadcastReceiver minuteUpdateReceiver;
     private double counter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +44,23 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         totalPaymentCount = (TextView) findViewById(R.id.totalPaymentCount);
         stopAndPayButton = (Button) findViewById(R.id.stopAndPayButton);
 
+        /**
+         * Asagidaki kod parcasi RentBikeActivity'den bikeId'yi almak icin yazilmistir.
+         */
+        String id = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            id = extras.getString("key");
+
+        }
+        bikeId.setText(id);
+
+
         chronometer.setFormat("00:%s");
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometerHelper = new ChronometerHelper();
         startStopWatch();
-        long second = (SystemClock.elapsedRealtime() - chronometer.getBase())/1000;
+        long second = (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000;
     }
 
     public void startMinuteUpdater() {
