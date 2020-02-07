@@ -32,8 +32,8 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:layout_gravity="center"
-            android:background="@color/white"
-            android:textColor="@color/colorPrimary"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/white"
             android:textAlignment="center"
             android:textStyle="bold"
             android:textSize="24sp"
@@ -48,8 +48,8 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:layout_gravity="center"
-            android:background="@color/white"
-            android:textColor="@color/colorPrimary"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/white"
             android:textAlignment="center"
             android:textStyle="bold"
             android:textSize="24sp"
@@ -71,8 +71,8 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:layout_gravity="center"
-                android:background="@color/white"
-                android:textColor="@color/colorPrimary"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/white"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textSize="24sp"
@@ -88,8 +88,8 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:layout_gravity="center"
-                android:background="@color/white"
-                android:textColor="@color/colorPrimary"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/white"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textSize="24sp"
@@ -97,16 +97,13 @@
                 android:textColorHint="@color/colorPrimary" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/b1"
-            android:layout_gravity="center"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
-            android:text="asdasd"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/visa_mastercard" />
 
     </LinearLayout>
 </LinearLayout>

@@ -39,9 +39,10 @@
             android:id="@+id/b1"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
+            android:layout_height="40dp"
+            android:layout_margin="50dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/colorPrimary"
             android:text="LeaderBoard"
             android:textColor="@color/white"
             android:textSize="18sp" />
@@ -53,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Rent"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
 
         <Button
             android:id="@+id/b3"
