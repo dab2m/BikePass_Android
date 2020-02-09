@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -14,7 +15,10 @@ import com.example.bikepass_android.R;
  */
 public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ImageButton buttonRentBike;
+    Button bLeaderBoard;
+    ImageButton bRentBike;
+    ImageButton bLocation;
+    ImageButton bSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +26,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_reports);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        buttonRentBike = (ImageButton) findViewById(R.id.b2);
-        buttonRentBike.setOnClickListener(this);
+        bRentBike = (ImageButton) findViewById(R.id.b2);
+        bRentBike.setOnClickListener(this);
     }
 
     @Override
