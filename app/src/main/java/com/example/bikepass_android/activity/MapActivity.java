@@ -13,8 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -68,11 +66,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
-                Toast.makeText(getApplicationContext(), location.toString(), Toast.LENGTH_SHORT).show();
+                //LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                //mMap.clear();
+                //mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
+                //Toast.makeText(getApplicationContext(), location.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -107,21 +105,21 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             } else {
                 //we have permission
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+               // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-                Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                //Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                LatLng userLoc = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude() );
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
+                //LatLng userLoc = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude() );
+               // mMap.clear();
+               // mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
 
             }
         }
         // Add a marker in Sydney and move the camera
         LatLng tobb = new LatLng(39.92102,32.797466 );
 
-        mMap.addMarker(new MarkerOptions().position(tobb).title("Marker in Tobb Üniversity").icon(BitmapDescriptorFactory.fromResource(R.drawable.bikelogo)));
+        mMap.addMarker(new MarkerOptions().position(tobb).title("Marker in Tobb Üniversity").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
     }
 }
