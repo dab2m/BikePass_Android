@@ -83,13 +83,14 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
-                if (qrCodes.size() != 0) {
+                String insideQRCode = qrCodes.valueAt(0).displayValue;
+
+                if (qrCodes.size() != 0 && insideQRCode.toLowerCase().contains("bike")) {
                     textViewQR.post(new Runnable() {
                         @Override
                         public void run() {
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1000);
-                            Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
                             String bikeName = qrCodes.valueAt(0).displayValue;
                             bikeId = bikeName.substring(bikeName.lastIndexOf(" ") + 1);
 
@@ -103,6 +104,8 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
 
                         }
                     });
+                } else {
+
                 }
             }
         });
@@ -112,7 +115,7 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonCancel:
-                startActivity(new Intent(this, BikeUsingActivity.class));
+                this.finish();
                 break;
         }
     }
