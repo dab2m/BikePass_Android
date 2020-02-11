@@ -33,12 +33,21 @@
             android:textColor="@color/colorPrimary"
             android:textSize="20sp" />
 
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="240dp"
+            android:layout_marginLeft="50dp"
+            android:src="@drawable/report_picture" />
+
         <Button
             android:id="@+id/b1"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_margin="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="50dp"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@color/colorPrimary"
             android:text="LeaderBoard"
