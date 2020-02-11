@@ -65,7 +65,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+       /* locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
@@ -92,10 +92,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             public void onProviderDisabled(String s) {
 
             }
-        };
+        }; */
 
         //If device is running SDK<23
-        if (Build.VERSION.SDK_INT < 23) {
+       /* if (Build.VERSION.SDK_INT < 23) {
 
             //Any change of location will be made awere of
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -121,11 +121,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
 
             }
-        }
-        // Add a marker in Sydney and move the camera
-        LatLng tobb = new LatLng(39.92102,32.797466 );
-
-        // mMap.addMarker(new MarkerOptions().position(tobb).title("Marker in Tobb Üniversity").icon(BitmapDescriptorFactory.fromResource(R.drawable.bikelogo)));
-        //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
+        } */
+        // Add a marker in Tobb and move the camera
+         LatLng tobb = new LatLng(39.92102,32.797466 );
+         LatLng jandarma=new LatLng(39.9248788,32.8047355);
+         LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
+         LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
+         LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
+         mMap.addMarker(new MarkerOptions().position(tobb).title("Available bike in Tobb University!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+         mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike inJandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
+         mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
+         mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+         mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
     }
 }
