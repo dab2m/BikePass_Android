@@ -86,13 +86,6 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 e.printStackTrace();
             }
         }
-
-        switch (view.getId()) {
-            case R.id.signupButton:
-                startActivity(new Intent(this, CardDetailsActivity.class));
-                Toast.makeText(getApplicationContext(), "You need to define credit card as well for payment", Toast.LENGTH_LONG).show();
-                break;
-        }
     }
     class MyAsyncSignup extends AsyncTask<String,Void,String> {
 

@@ -25,9 +25,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
         Intent intent=getIntent();
-        Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bRentBike = (ImageButton) findViewById(R.id.b2);
+        //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+        bRentBike = (ImageButton)findViewById(R.id.b2);
+        bSettings = (ImageButton)findViewById(R.id.b4);
         bRentBike.setOnClickListener(this);
+        bSettings.setOnClickListener(this);
     }
 
     @Override
@@ -35,6 +37,9 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.b2:
                 startActivity(new Intent(this, RentBikeActivity.class));
+                break;
+            case R.id.b4:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
     }

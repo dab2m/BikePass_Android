@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
-            android:text="Credit Card Details"
+            android:text="Settings"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/blue"
             android:textSize="32sp"
@@ -25,9 +25,10 @@
 
         <EditText
             android:id="@+id/et1"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:layout_gravity="center"
@@ -36,14 +37,15 @@
             android:textAlignment="center"
             android:textStyle="bold"
             android:textSize="24sp"
-            android:hint="Card Owner's Name"
+            android:hint="Username"
             android:textColorHint="@color/colorPrimary" />
 
         <EditText
             android:id="@+id/et2"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:layout_gravity="center"
@@ -52,57 +54,59 @@
             android:textAlignment="center"
             android:textStyle="bold"
             android:textSize="24sp"
-            android:hint="Card Number"
+            android:hint="Email"
             android:textColorHint="@color/colorPrimary" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/et3"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_gravity="center"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/white"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:hint="Password"
+            android:textColorHint="@color/colorPrimary" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:paddingTop="4dp"
+            android:text="Select which settings and type new values"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
 
-            <EditText
-                android:id="@+id/et3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="60"
-                android:layout_margin="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:layout_gravity="center"
-                android:background="@drawable/rounded_button"
-                android:backgroundTint="@color/white"
-                android:textAlignment="center"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                android:hint="Exp. Date"
-                android:textColorHint="@color/colorPrimary" />
-
-            <EditText
-                android:id="@+id/et4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="40"
-                android:layout_margin="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:layout_gravity="center"
-                android:background="@drawable/rounded_button"
-                android:backgroundTint="@color/white"
-                android:textAlignment="center"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                android:hint="CCV"
-                android:textColorHint="@color/colorPrimary" />
-        </LinearLayout>
-
-        <ImageView
+        <Button
+            android:id="@+id/bCard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@color/colorPrimary"
-            android:src="@drawable/visa_mastercard" />
+            android:text="Credit Card Details"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="You need to define credit card as well for payment"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
