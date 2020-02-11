@@ -15,11 +15,11 @@ public class PremierActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_premier);
     }
 
     public void toSignUp(View view){
-        Intent intent = new Intent(PremierActivity.this,SignUpActivity.class);
+        Intent intent = new Intent(this,SignUpActivity.class);
         startActivity(intent);
     }
 }
