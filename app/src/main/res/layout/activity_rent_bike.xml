@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/android_back"
+    android:background="@drawable/sign_up_activity"
     tools:context=".activity.RentBikeActivity">
 
     <TextView

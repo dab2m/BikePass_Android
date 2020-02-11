@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 import com.google.android.gms.vision.CameraSource;
@@ -83,7 +84,9 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
-                String insideQRCode = qrCodes.valueAt(0).displayValue;
+                String insideQRCode = "";
+                if (qrCodes.size() != 0)
+                    insideQRCode = qrCodes.valueAt(0).displayValue;
 
                 if (qrCodes.size() != 0 && insideQRCode.toLowerCase().contains("bike")) {
                     textViewQR.post(new Runnable() {
@@ -105,7 +108,7 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                 } else {
-
+                    //Toast.makeText(RentBikeActivity.this.getApplicationContext(), "Invalid QR CODE!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
