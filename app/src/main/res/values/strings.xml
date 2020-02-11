@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">BikePass</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="map_key" translatable="false">AIzaSyCrTiZSNJIFztXCbIP0FGF3mRGPrQddq7k</string>
     <string name="title_activity_map">Map</string>
 </resources>

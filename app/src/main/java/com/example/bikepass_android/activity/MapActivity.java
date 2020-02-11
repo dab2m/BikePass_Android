@@ -2,108 +2,35 @@ package com.example.bikepass_android.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.bikepass_android.R;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-
-import java.util.List;
 
 /**
  * Created by Dilan on 02.02.2020
  */
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
-    Location currentLocation;
+
     LocationManager locationManager;
-    private GoogleMap mMap;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    private static final int REQUEST_CODE = 101;
-
-
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        fetchLastLocation();
-
-    }
-
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        LatLng latLng;
-        mMap = googleMap;
-        latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("I am here");
-        Log.i("off", "off");
-        mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 35));
-        mMap.addMarker(markerOptions);
-
-    }
-
-    private void fetchLastLocation() {
-        Log.i("fetc","fett");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
-            return;
-        }
-        Task<Location> task =fusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @SuppressLint("MissingPermission")
-            public void onSuccess(Location location) {
-                location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location != null) {
-                    Log.i("no", "no");
-                    currentLocation = location;
-                    Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT);
-                    SupportMapFragment supportMapFragment = (SupportMapFragment)
-                            getSupportFragmentManager().findFragmentById(R.id.map);
-                    supportMapFragment.getMapAsync(MapActivity.this);
-                } else {
-                    Log.i("yes", "yes");
-                    Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT);
-                }
-            }
-        });
-    }
-
-
-
-public void onRequestPermissionsResult(int requestCode,@NonNull String [] permissions,@NonNull int [] grantResults){
-
-switch (requestCode){
-    case REQUEST_CODE:
-        if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-            fetchLastLocation();
-        }
-        else{
-            Log.i("per","per");
-        }
-        break;
-}
-}
-
-
-  /*  LocationManager locationManager;
     LocationListener locationListener;
     private GoogleMap mMap;
 
@@ -139,13 +66,16 @@ switch (requestCode){
         mMap = googleMap;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
+
             @Override
             public void onLocationChanged(Location location) {
                 LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                Log.i("latitude:",userLoc.toString());
+
                 mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                mMap.addMarker(new MarkerOptions().position(userLoc).title("Hello"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
-                Toast.makeText(getApplicationContext(), location.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), userLoc.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -185,6 +115,7 @@ switch (requestCode){
                 Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 LatLng userLoc = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude() );
+                Log.i("latitude:",userLoc.toString());
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
@@ -194,7 +125,7 @@ switch (requestCode){
         // Add a marker in Sydney and move the camera
         LatLng tobb = new LatLng(39.92102,32.797466 );
 
-        mMap.addMarker(new MarkerOptions().position(tobb).title("Marker in Tobb Üniversity").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
-    }  */
+        // mMap.addMarker(new MarkerOptions().position(tobb).title("Marker in Tobb Üniversity").icon(BitmapDescriptorFactory.fromResource(R.drawable.bikelogo)));
+        //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
+    }
 }
