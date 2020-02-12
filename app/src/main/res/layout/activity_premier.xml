@@ -35,8 +35,8 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="133dp"
-        android:layout_height="26dp"
+        android:layout_width="147dp"
+        android:layout_height="27dp"
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:text="Future of cycling"
@@ -66,11 +66,11 @@
 
     <TextView
         android:id="@+id/sign_in"
-        android:layout_width="169dp"
-        android:layout_height="18dp"
+        android:layout_width="173dp"
+        android:layout_height="37dp"
         android:layout_marginStart="60dp"
         android:layout_marginLeft="60dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:onClick="toSignIn"
         android:text="Already Member? Sign In"
         android:textColor="#fff"
