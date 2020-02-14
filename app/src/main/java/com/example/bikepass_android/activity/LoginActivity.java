@@ -75,6 +75,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
     }
 
+    public void goToReportsActivity(String message){
+        Intent intent=new Intent(getApplicationContext(),ReportsActivity.class);
+        intent.putExtra("message",message);
+        startActivity(intent);
+    }
+
     public void tryLogin(){
 
         if (username.getText().toString().isEmpty())
@@ -87,7 +93,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             MyAsyncLogin async = new MyAsyncLogin();
             try {
                 String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
-                Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -134,7 +139,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             URL url = null;
             String response = null;
-            //String parameters = "username=" + userName + "&password=" + passWord ;
             JSONObject jsonLoginData = new JSONObject();
             try {
                 jsonLoginData.put("username",userName);
@@ -169,9 +173,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 ArrayList<String> statuscodeListForLogin = new ArrayList<>(Arrays.asList("1", "2"));
                 if(status.equals("0")) {
                     setStorage(userName,passWord);
-                    intent=new Intent(getApplicationContext(), ReportsActivity.class);
-                    intent.putExtra("message",message);
-                    startActivity(intent);
+                    goToReportsActivity(message);
                 }else if(statuscodeListForLogin.contains(status)){
                     clearStrorage();
                     runOnUiThread(new Runnable() {
@@ -199,8 +201,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
-                startActivity(new Intent(this, ReportsActivity.class));
-                //tryLogin();
+                tryLogin();
                 break;
             case R.id.saveLoginCheckBox:
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
