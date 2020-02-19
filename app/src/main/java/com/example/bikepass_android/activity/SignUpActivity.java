@@ -105,7 +105,6 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-           //String parameters = "username=" + userName + "&password=" + passwordUser + "&email=" + email;
 
             try {
                 url = new URL(strings[0]);
@@ -113,7 +112,6 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
                 connection.setDoOutput(true);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestMethod("POST");
-
                 request = new OutputStreamWriter(connection.getOutputStream());
                 request.write(String.valueOf(jsonRegisterData));
                 request.flush();
@@ -128,13 +126,10 @@ public class SignUpActivity extends AppCompatActivity  implements View.OnClickLi
 
                 // Response from server after register process will be stored in response variable.
                 response = sb.toString().trim();
-                //Log.i("response:",response);
                 JSONObject jObj = new JSONObject(response);
                 final String message = jObj.getString("message");
                 String status = jObj.getString("status");
                 ArrayList<String> statuscodeListForRegister = new ArrayList<>(Arrays.asList("1", "2", "3","4","5"));
-                //Log.i("message:",message);
-                //Log.i("status:",status);
                 if(status.equals("0")) {
                     setUserInfo();
                 }else if(statuscodeListForRegister.contains(status)  ) {

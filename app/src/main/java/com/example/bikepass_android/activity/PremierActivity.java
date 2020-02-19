@@ -28,4 +28,9 @@ public class PremierActivity extends AppCompatActivity {
         Intent loginIntent=new Intent(this,LoginActivity.class);
         startActivity(loginIntent);
     }
+
+    public void toImage(View view ){
+        Intent loginIntent=new Intent(this,ImageActivity.class);
+        startActivity(loginIntent);
+    }
 }

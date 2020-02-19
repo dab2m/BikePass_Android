@@ -65,7 +65,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-       /* locationListener = new LocationListener() {
+        locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
@@ -92,10 +92,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             public void onProviderDisabled(String s) {
 
             }
-        }; */
+        };
 
         //If device is running SDK<23
-       /* if (Build.VERSION.SDK_INT < 23) {
+       if (Build.VERSION.SDK_INT < 23) {
 
             //Any change of location will be made awere of
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -121,7 +121,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
 
             }
-        } */
+        }
         // Add a marker in Tobb and move the camera
          LatLng tobb = new LatLng(39.92102,32.797466 );
          LatLng jandarma=new LatLng(39.9248788,32.8047355);
