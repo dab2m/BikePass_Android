@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -31,7 +32,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     ChronometerHelper chronometerHelper;
 
     private BroadcastReceiver minuteUpdateReceiver;
-    private double counter;
+    private double totalPayment = 1.5;
 
 
     @Override
@@ -60,33 +61,50 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometerHelper = new ChronometerHelper();
         startStopWatch();
-        long second = (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000;
     }
 
-    public void startMinuteUpdater() {
-        IntentFilter intentFilter = new IntentFilter();
+    public void totalPaymentUpdater() {
+        long elapsedSeconds = (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000;
+        totalPayment = totalPayment + ((int) (elapsedSeconds / 60)) * 0.25;
+        totalPaymentCount.setText(totalPayment + " TL"); // activity'de geri gidip tekrar sayfa aildiginda kaldigi ucretten devam etmesi icin yazildi
+
+        final Handler ha = new Handler();
+
+
+        ha.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                totalPayment = totalPayment + 0.25;
+                totalPaymentCount.setText(totalPayment + " TL");
+
+                ha.postDelayed(this, 60500);
+            }
+        }, 60500);
+
+        /*IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_TICK);
         minuteUpdateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                counter = counter + 0.25;
-                totalPaymentCount.setText(counter + " TL");
+                totalPayment = totalPayment + 0.25;
+                totalPaymentCount.setText(totalPayment + " TL");
             }
         };
 
-        registerReceiver(minuteUpdateReceiver, intentFilter);
+        registerReceiver(minuteUpdateReceiver, intentFilter);*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        startMinuteUpdater();
+        totalPaymentUpdater();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(minuteUpdateReceiver);
+
     }
 
 
