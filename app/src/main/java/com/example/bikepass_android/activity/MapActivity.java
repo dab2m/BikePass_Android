@@ -34,6 +34,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     LocationListener locationListener;
     private GoogleMap mMap;
 
+
     public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -65,14 +66,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        Log.i("hello","hello");
         locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
                 LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
-                Log.i("latitude:",userLoc.toString());
+                Log.i("latitude:",location.toString());
 
-                mMap.clear();
+                //mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(userLoc).title("Hello"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
                 Toast.makeText(getApplicationContext(), userLoc.toString(), Toast.LENGTH_SHORT).show();
@@ -95,7 +97,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         };
 
         //If device is running SDK<23
-       if (Build.VERSION.SDK_INT < 23) {
+        Log.i("message::",Build.VERSION.SDK_INT+"");
+      /* if (Build.VERSION.SDK_INT < 23) {
 
             //Any change of location will be made awere of
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -103,36 +106,41 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-        } else {
+        } else { */
+
             //If we didnt get users permission
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 //ask for permission
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else {
+            }else {
                 //we have permission
+
+                locationManager = (LocationManager)
+                        getSystemService(Context.LOCATION_SERVICE);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
                 Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+                Log.i("latitude:",lastKnownLocation.toString());
                 LatLng userLoc = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude() );
-                Log.i("latitude:",userLoc.toString());
-                mMap.clear();
+
+               // mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
 
             }
-        }
+        //}
         // Add a marker in Tobb and move the camera
-         LatLng tobb = new LatLng(39.92102,32.797466 );
-         LatLng jandarma=new LatLng(39.9248788,32.8047355);
+       //  LatLng tobb = new LatLng(39.92102,32.797466 );
+        LatLng jandarma=new LatLng(39.9248788,32.8047355);
          LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
          LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
          LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
-         mMap.addMarker(new MarkerOptions().position(tobb).title("Available bike in Tobb University!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+       //  mMap.addMarker(new MarkerOptions().position(tobb).title("Available bike in Tobb University!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
          mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike inJandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
          mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
          mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
          mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
-         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
+      //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
     }
 }
