@@ -107,7 +107,7 @@ public class ImageActivity extends Activity implements OnClickListener {
             DefaultHttpClient httpclient = new DefaultHttpClient();
             try {
                 HttpPost httppost = new HttpPost(
-                        "http://192.168.1.24/Bitirme/localWeb/savetofile.php"); // server
+                        "http://Bikepass.herokuapp.com/API/app.php"); // server
 
                 MultipartEntity reqEntity = new MultipartEntity();
                 reqEntity.addPart("myFile",
