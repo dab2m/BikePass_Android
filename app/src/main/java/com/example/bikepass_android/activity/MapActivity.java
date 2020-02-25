@@ -66,7 +66,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        Log.i("hello","hello");
+
         locationListener = new LocationListener() {
 
             @Override
@@ -132,15 +132,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         //}
         // Add a marker in Tobb and move the camera
        //  LatLng tobb = new LatLng(39.92102,32.797466 );
-        LatLng jandarma=new LatLng(39.9248788,32.8047355);
+         LatLng jandarma=new LatLng(39.9248788,32.8047355);
          LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
          LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
          LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
-       //  mMap.addMarker(new MarkerOptions().position(tobb).title("Available bike in Tobb University!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+
          mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike inJandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
          mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
          mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
          mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
-      //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tobb,15));
+
     }
 }
