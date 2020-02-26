@@ -2,18 +2,15 @@ package com.example.bikepass_android.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
@@ -29,11 +26,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 /**
  * Created by Dilan on 02.02.2020
  */
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+    private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -41,6 +40,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     LocationListener locationListener;
     private GoogleMap mMap;
     private boolean isGPS = false;
+    private boolean isContinue = false;
 
 
     @SuppressLint("MissingPermission")
@@ -84,7 +84,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
             return;
         }
-        //getLocation();
+        getLocation();
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -108,39 +108,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         };
 
 
-        //If device is running SDK<23
-        Log.i("message::",Build.VERSION.SDK_INT+"");
-      /* if (Build.VERSION.SDK_INT < 23) {
-
-            //Any change of location will be made awere of
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-        } else { */
-
-            //If we didnt get users permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                //ask for permission
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            }else {
-                //we have permission
-
-                locationManager = (LocationManager)
-                        getSystemService(Context.LOCATION_SERVICE);
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-                Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                Log.i("latitude:",lastKnownLocation.toString());
-                LatLng userLoc = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude() );
-
-               // mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
-
-            }
         //}
         // Add a marker in Tobb and move the camera
        //  LatLng tobb = new LatLng(39.92102,32.797466 );
@@ -156,6 +123,36 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
 
     }
+    private void getLocation(){
+        if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    AppConstants.LOCATION_REQUEST);
+
+        } else {
+            if (isContinue) {
+                mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+            } else {
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            wayLatitude = location.getLatitude();
+                            wayLongitude = location.getLongitude();
+                            LatLng userLoc = new LatLng(wayLatitude, wayLongitude);
+
+                            // mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
+                        } else {
+                            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
 
     public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
