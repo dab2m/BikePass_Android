@@ -11,11 +11,10 @@ import android.widget.Toast;
 import com.example.bikepass_android.R;
 
 /**
- * Created by Berk on 03.02.2020
+ * Created by Berk on 27.02.2020
  */
-public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
+public class LeaderboardActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button bLeaderBoard;
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
@@ -23,13 +22,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reports);
+        setContentView(R.layout.activity_leaderboard);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bLeaderBoard = (Button)findViewById(R.id.b1);
         bRentBike = (ImageButton)findViewById(R.id.b2);
         bSettings = (ImageButton)findViewById(R.id.b4);
-        bLeaderBoard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
     }
@@ -37,9 +34,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.b1:
-                startActivity(new Intent(this, LeaderboardActivity.class));
-                break;
             case R.id.b2:
                 startActivity(new Intent(this, RentBikeActivity.class));
                 break;

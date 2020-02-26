@@ -33,7 +33,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
+/**
+ * Created by Dilan on 19.02.2020
+ */
 public class ImageActivity extends Activity implements OnClickListener {
     private Button mTakePhoto;
     private ImageView mImageView;

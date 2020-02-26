@@ -74,6 +74,9 @@
             android:name=".activity.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".activity.LeaderboardActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
