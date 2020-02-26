@@ -2,10 +2,10 @@ package com.example.bikepass_android.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -35,8 +35,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    LocationManager locationManager;
-    LocationListener locationListener;
     private GoogleMap mMap;
     private boolean isGPS = false;
     private boolean isContinue = false;
@@ -92,10 +90,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 }
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
-                        LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
-                        // Log.i("latitude:",location.toString());
+                        wayLatitude = location.getLatitude();
+                        wayLongitude = location.getLongitude();
+                        LatLng userLoc = new LatLng(wayLatitude, wayLongitude);
+
                         mMap.clear();
-                        mMap.addMarker(new MarkerOptions().position(userLoc).title("Hello"));
+                        mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
                         Toast.makeText(getApplicationContext(), userLoc.toString(), Toast.LENGTH_SHORT).show();
                         if (mFusedLocationClient != null) {
@@ -115,7 +115,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
          LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
          LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
 
-         mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike inJandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
+         mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike in Jandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
          mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
          mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
          mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
@@ -185,5 +185,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         }
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == AppConstants.GPS_REQUEST) {
+                isGPS = true; // flag maintain before get location
+            }
+        }
+    }
 }
