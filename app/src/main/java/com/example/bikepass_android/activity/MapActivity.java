@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
@@ -154,15 +153,36 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
 
-    public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1000: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                    if (isContinue) {
+                        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+                    } else {
+                        mFusedLocationClient.getLastLocation().addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    wayLatitude = location.getLatitude();
+                                    wayLongitude = location.getLongitude();
+                                } else {
+                                    mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
         }
     }
 
