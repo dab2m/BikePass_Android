@@ -40,7 +40,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     LocationManager locationManager;
     LocationListener locationListener;
     private GoogleMap mMap;
-    private boolean isContinue = false;
     private boolean isGPS = false;
 
 
@@ -80,6 +79,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
+        if (!isGPS) {
+            Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //getLocation();
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -94,7 +99,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         mMap.addMarker(new MarkerOptions().position(userLoc).title("Hello"));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
                         Toast.makeText(getApplicationContext(), userLoc.toString(), Toast.LENGTH_SHORT).show();
-                        if (!isContinue && mFusedLocationClient != null) {
+                        if (mFusedLocationClient != null) {
                             mFusedLocationClient.removeLocationUpdates(locationCallback);
                         }
                     }
