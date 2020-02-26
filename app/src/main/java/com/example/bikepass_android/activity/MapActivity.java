@@ -18,7 +18,9 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +36,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
     LocationManager locationManager;
     LocationListener locationListener;
     private GoogleMap mMap;
@@ -68,42 +71,37 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         });
 
+
+
     }
 
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        locationListener = new LocationListener() {
-
+        locationCallback = new LocationCallback() {
             @Override
-            public void onLocationChanged(Location location) {
-                LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
-                Log.i("latitude:",location.toString());
-
-                //mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(userLoc).title("Hello"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
-                Toast.makeText(getApplicationContext(), userLoc.toString(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        LatLng userLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                        // Log.i("latitude:",location.toString());
+                        mMap.clear();
+                        mMap.addMarker(new MarkerOptions().position(userLoc).title("Hello"));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
+                        Toast.makeText(getApplicationContext(), userLoc.toString(), Toast.LENGTH_SHORT).show();
+                        if (!isContinue && mFusedLocationClient != null) {
+                            mFusedLocationClient.removeLocationUpdates(locationCallback);
+                        }
+                    }
+                }
             }
         };
+
 
         //If device is running SDK<23
         Log.i("message::",Build.VERSION.SDK_INT+"");
