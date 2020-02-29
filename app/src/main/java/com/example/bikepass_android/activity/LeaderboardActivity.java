@@ -25,8 +25,8 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_leaderboard);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bRentBike = (ImageButton)findViewById(R.id.b2);
-        bSettings = (ImageButton)findViewById(R.id.b4);
+        bRentBike = (ImageButton)findViewById(R.id.b3);
+        bSettings = (ImageButton)findViewById(R.id.b5);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
     }
@@ -34,10 +34,10 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.b2:
+            case R.id.b3:
                 startActivity(new Intent(this, RentBikeActivity.class));
                 break;
-            case R.id.b4:
+            case R.id.b5:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }

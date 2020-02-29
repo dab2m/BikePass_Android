@@ -17,21 +17,40 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
-            android:text="Welcome back, DAB2M"
+            android:text="In Ankara"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <TextView
+        <Button
+            android:id="@+id/b1"
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:paddingLeft="16dp"
-            android:text="How much did you cycle this week"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="World Leaderboard"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/b2"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/paleBlue"
+            android:text="Return"
             android:textColor="@color/colorPrimary"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,7 +60,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/b2"
+                android:id="@+id/b3"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginLeft="8dp"
@@ -50,7 +69,7 @@
                 android:src="@drawable/bike1" />
 
             <ImageButton
-                android:id="@+id/b3"
+                android:id="@+id/b4"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginLeft="36dp"
@@ -59,7 +78,7 @@
                 android:src="@drawable/world_1" />
 
             <ImageButton
-                android:id="@+id/b4"
+                android:id="@+id/b5"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginLeft="36dp"

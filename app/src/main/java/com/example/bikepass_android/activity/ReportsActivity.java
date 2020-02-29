@@ -15,7 +15,7 @@ import com.example.bikepass_android.R;
  */
 public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button bLeaderBoard;
+    Button bLeaderboard;
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
@@ -26,10 +26,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_reports);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bLeaderBoard = (Button)findViewById(R.id.b1);
+        bLeaderboard = (Button)findViewById(R.id.b1);
         bRentBike = (ImageButton)findViewById(R.id.b2);
         bSettings = (ImageButton)findViewById(R.id.b4);
-        bLeaderBoard.setOnClickListener(this);
+        bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
     }
