@@ -31,7 +31,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
     ChronometerHelper chronometerHelper;
 
-    private BroadcastReceiver minuteUpdateReceiver;
     private double totalPayment = 1.5;
 
 
@@ -64,13 +63,14 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void totalPaymentUpdater() {
-        long elapsedSeconds = (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000;
-        totalPayment = totalPayment + ((int) (elapsedSeconds / 60)) * 0.25;
-        totalPaymentCount.setText(totalPayment + " TL"); // activity'de geri gidip tekrar sayfa aildiginda kaldigi ucretten devam etmesi icin yazildi
+        long elapsedTimeInMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+        long elapsedSeconds = elapsedTimeInMillis / 1000;
+        totalPayment = totalPayment + ((int) (elapsedSeconds / 60)) * 0.25; // activity'de geri gidip tekrar sayfa acildiginda kaldigi ucretten devam etmesi icin yazildi
+        totalPaymentCount.setText(totalPayment + " TL");
 
         final Handler ha = new Handler();
 
-
+        System.out.println("ELAPSED SECOND:"+elapsedSeconds);
         ha.postDelayed(new Runnable() {
 
             @Override
@@ -78,9 +78,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 totalPayment = totalPayment + 0.25;
                 totalPaymentCount.setText(totalPayment + " TL");
 
-                ha.postDelayed(this, 60500);
+                ha.postDelayed(this, 60000);
             }
-        }, 60500);
+        }, 60000);
 
         /*IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_TICK);

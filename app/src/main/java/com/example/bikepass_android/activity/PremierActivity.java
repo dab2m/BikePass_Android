@@ -1,6 +1,10 @@
 package com.example.bikepass_android.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,11 +16,19 @@ import com.example.bikepass_android.R;
  */
 public class PremierActivity extends AppCompatActivity {
 
+    private static int CAMERA_REQUEST_CODE = 100;
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_premier);
 
+        // Request for camera permission from user when app is starting
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+        }
     }
 
     public void toSignUp(View view){

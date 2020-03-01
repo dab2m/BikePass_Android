@@ -1,8 +1,12 @@
 package com.example.bikepass_android.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Vibrator;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -25,6 +29,7 @@ import java.io.IOException;
  * Created by MustafaSaid on 21.01.2020
  */
 public class RentBikeActivity extends AppCompatActivity implements View.OnClickListener {
+
 
     TextView textViewQR;
     Button buttonCancel;
@@ -53,12 +58,16 @@ public class RentBikeActivity extends AppCompatActivity implements View.OnClickL
                 setRequestedPreviewSize(640, 480).build();
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
-                try {
-                    cameraSource.start(surfaceHolder);
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    try {
+                        cameraSource.start(surfaceHolder);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
