@@ -1,11 +1,15 @@
 package com.example.bikepass_android.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -109,37 +113,62 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new android.support.v7.app.AlertDialog.Builder(RentBikeActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton("START", okListener)
+                .setNegativeButton("CANCEL", null)
                 .create()
                 .show();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void handleResult(Result result) {
         final String myResult = result.getText();
         Log.d("QRCodeScanner", result.getText());
         Log.d("QRCodeScanner", result.getBarcodeFormat().toString());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("BIKE INFORMATION");
-        builder.setPositiveButton("START", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        if (qrCodeAnalyzer(myResult)) {
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(50);
 
-                String bikeId;
-                bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
-                /**
-                 * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
-                 */
-                Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
-                intent.putExtra("key", bikeId);
-                startActivity(intent);
-            }
-        });
 
-        builder.setMessage(result.getText());
-        AlertDialog alert1 = builder.create();
-        alert1.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("BIKE INFORMATION");
+            builder.setPositiveButton("START", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    String bikeId;
+                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
+                    /**
+                     * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
+                     */
+                    Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                    intent.putExtra("key", bikeId);
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNeutralButton("CANCEL", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    scannerView.resumeCameraPreview(RentBikeActivity.this);
+                }
+            });
+
+            builder.setMessage(result.getText());
+            AlertDialog alert1 = builder.create();
+            alert1.show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Invalid QR Code!", Toast.LENGTH_LONG).show();
+            scannerView.resumeCameraPreview(RentBikeActivity.this);
+        }
+    }
+
+    public boolean qrCodeAnalyzer(String qrCode) {
+        if (!qrCode.toLowerCase().contains("bike")) {
+            return false;
+        }
+        return true;
+        //TODO buraya kendi bisikletlerimizin id'si cekilecek ve buna gore okutulan qr kodunun bize ait olup olmadigi kontrol edilecek.
     }
 }
