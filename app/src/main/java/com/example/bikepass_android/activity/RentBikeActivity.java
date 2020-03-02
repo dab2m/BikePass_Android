@@ -30,6 +30,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private ZXingScannerView scannerView;
     private static int camId = Camera.CameraInfo.CAMERA_FACING_BACK;
 
+    private String bikeId = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             if (checkPermission()) {
-                Toast.makeText(getApplicationContext(), "Permission already granted!", Toast.LENGTH_LONG).show();
+
             } else {
                 requestPermission();
             }
@@ -137,7 +139,6 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    String bikeId;
                     bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
                     /**
                      * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
@@ -169,6 +170,6 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             return false;
         }
         return true;
-        //TODO buraya kendi bisikletlerimizin id'si cekilecek ve buna gore okutulan qr kodunun bize ait olup olmadigi kontrol edilecek.
+        //TODO buraya kendi bisikletlerimizin id'si cekilecek ve buna gore okutulan qr kodunun bize ait olup olmadigi REST ile kontrol edilecek.
     }
 }

@@ -70,7 +70,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
         final Handler ha = new Handler();
 
-        System.out.println("ELAPSED SECOND:"+elapsedSeconds);
         ha.postDelayed(new Runnable() {
 
             @Override
@@ -94,6 +93,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
         registerReceiver(minuteUpdateReceiver, intentFilter);*/
     }
+
 
     @Override
     protected void onResume() {
@@ -139,5 +139,12 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         public void setStartTime(final long startTime) {
             this.mStartTime = startTime;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
+        intent.putExtra("key", String.valueOf(SystemClock.elapsedRealtime() - chronometer.getBase()));
+        startActivity(intent);
     }
 }
