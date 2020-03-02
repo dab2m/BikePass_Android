@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    implementation group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
     implementation 'me.dm7.barcodescanner:zxing:1.9'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible

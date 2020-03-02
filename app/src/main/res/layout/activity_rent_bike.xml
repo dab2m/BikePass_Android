@@ -1,53 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/sign_up_activity"
-    tools:context=".activity.RentBikeActivity">
+    tools:context="com.example.bikepass_android.activity.RentBikeActivity">
 
     <TextView
-        android:id="@+id/textViewOnTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="Scan QR located on bike"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:text="QR CODE SCANNER"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
-        android:layout_width="500dp"
-        android:layout_height="400dp"
-        android:layout_centerInParent="true" />
-
-    <TextView
-        android:id="@+id/textViewQR"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/surfaceView"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="Please focus on QR code"
-        android:textColor="@color/white"
-        android:textSize="18sp"></TextView>
-
-    <Button
-        android:id="@+id/buttonCancel"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="14dp"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/blue"
-        android:text="Cancel"
-        android:textColor="@color/cardview_light_background"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
