@@ -50,11 +50,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         Intent intent = new Intent(ReportsActivity.this, LoginActivity.class);
         startActivity(intent);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {

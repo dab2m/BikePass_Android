@@ -43,16 +43,17 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         totalPaymentCount = (TextView) findViewById(R.id.totalPaymentCount);
         stopAndPayButton = (Button) findViewById(R.id.stopAndPayButton);
+        stopAndPayButton.setOnClickListener(this);
 
         /**
          * Asagidaki kod parcasi RentBikeActivity'den bikeId'yi almak icin yazilmistir.
          */
         String id = null;
         Bundle extras = getIntent().getExtras();
-        if (extras.getString("key") != null) {
+        if (extras != null && extras.getString("key") != null) {
             id = extras.getString("key");
         }
-        if (extras.getString("bikeId") != null) {
+        if (extras != null && extras.getString("bikeId") != null) {
             id = extras.getString("bikeId");
         }
         bikeId.setText(id);
@@ -65,15 +66,14 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void totalPaymentUpdater() {
-        long elapsedTimeInMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+        /*long elapsedTimeInMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
         long elapsedSeconds = elapsedTimeInMillis / 1000;
         totalPayment = totalPayment + ((int) (elapsedSeconds / 60)) * 0.25; // activity'de geri gidip tekrar sayfa acildiginda kaldigi ucretten devam etmesi icin yazildi
+        */
         totalPaymentCount.setText(totalPayment + " TL");
 
         final Handler ha = new Handler();
-
         ha.postDelayed(new Runnable() {
-
             @Override
             public void run() {
                 totalPayment = totalPayment + 0.25;
@@ -94,7 +94,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
 
@@ -102,8 +101,10 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.stopAndPayButton:
-                System.out.println("ASD");
-                onBackPressed();
+                Toast.makeText(getApplicationContext(), "ODEME ALINDI", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 break;
         }
     }
@@ -138,9 +139,11 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
+        Toast.makeText(getApplicationContext(), "You can't go back while the chronometer is running!", Toast.LENGTH_SHORT).show();
+
+        /*Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
         intent.putExtra("time", String.valueOf(SystemClock.elapsedRealtime() - chronometer.getBase()));
         intent.putExtra("bikeId", bikeId.getText());
-        startActivity(intent);
+        startActivity(intent);*/
     }
 }
