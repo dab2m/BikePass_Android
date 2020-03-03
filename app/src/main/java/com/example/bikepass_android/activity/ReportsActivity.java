@@ -22,6 +22,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton bSettings;
 
     private String time = null;
+    private String bikeId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         super.onStart();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            time = extras.getString("key");
+            time = extras.getString("time");
+            bikeId = extras.getString("bikeId");
         }
     }
 
@@ -61,10 +63,14 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this, LeaderboardActivity.class));
                 break;
             case R.id.b2:
+                Intent intent1 = new Intent(this, RentBikeActivity.class);
+                Intent intent2 = new Intent(this, BikeUsingActivity.class);
+                intent2.putExtra("bikeId", bikeId);
+
                 if (time == null) {
-                    startActivity(new Intent(this, RentBikeActivity.class));
+                    startActivity(intent1);
                 } else {
-                    startActivity(new Intent(this, BikeUsingActivity.class));
+                    startActivity(intent2);
                 }
                 break;
             case R.id.b4:

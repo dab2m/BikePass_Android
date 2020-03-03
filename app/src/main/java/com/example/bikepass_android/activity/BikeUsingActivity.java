@@ -49,9 +49,11 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
          */
         String id = null;
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
+        if (extras.getString("key") != null) {
             id = extras.getString("key");
-
+        }
+        if (extras.getString("bikeId") != null) {
+            id = extras.getString("bikeId");
         }
         bikeId.setText(id);
 
@@ -80,18 +82,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 ha.postDelayed(this, 60000);
             }
         }, 60000);
-
-        /*IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_TIME_TICK);
-        minuteUpdateReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                totalPayment = totalPayment + 0.25;
-                totalPaymentCount.setText(totalPayment + " TL");
-            }
-        };
-
-        registerReceiver(minuteUpdateReceiver, intentFilter);*/
     }
 
 
@@ -110,7 +100,12 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-
+        switch (view.getId()) {
+            case R.id.stopAndPayButton:
+                System.out.println("ASD");
+                onBackPressed();
+                break;
+        }
     }
 
     private void startStopWatch() {
@@ -144,7 +139,8 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
-        intent.putExtra("key", String.valueOf(SystemClock.elapsedRealtime() - chronometer.getBase()));
+        intent.putExtra("time", String.valueOf(SystemClock.elapsedRealtime() - chronometer.getBase()));
+        intent.putExtra("bikeId", bikeId.getText());
         startActivity(intent);
     }
 }

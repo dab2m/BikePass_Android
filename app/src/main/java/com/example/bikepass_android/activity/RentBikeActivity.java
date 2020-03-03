@@ -20,6 +20,9 @@ import android.widget.Toast;
 
 import com.google.zxing.Result;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static android.Manifest.permission.CAMERA;
@@ -39,6 +42,15 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
         int currentApiVersion = Build.VERSION.SDK_INT;
+
+       /* Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour > 8 && hour < 17){
+            scannerView.setFlash(false);
+        }
+        else{
+            scannerView.setFlash(true);
+        }*/
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             if (checkPermission()) {
