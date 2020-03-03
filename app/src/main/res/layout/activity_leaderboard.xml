@@ -61,8 +61,8 @@
 
             <ImageButton
                 android:id="@+id/b3"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginLeft="8dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudBike"

@@ -67,8 +67,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         });
 
-
-
     }
 
     @SuppressLint("MissingPermission")
