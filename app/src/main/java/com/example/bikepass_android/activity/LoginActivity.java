@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.example.bikepass_android.R;
 
 import org.json.JSONException;
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
     }
 
-    public void tryLogin(){
+    public void tryLogin(View view){
 
         if (username.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Username cant be empty", Toast.LENGTH_SHORT).show();
@@ -90,9 +90,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else {
             userName=username.getText().toString();
             passWord=password.getText().toString();
-            MyAsyncLogin async = new MyAsyncLogin();
+           MyAsyncLogin async = new MyAsyncLogin();
             try {
-                String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
+
+                async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -132,7 +133,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     class MyAsyncLogin extends AsyncTask<String,Void,String> {
 
         @Override
-        protected String doInBackground(String[] strings) {
+        protected String doInBackground(String[]urls) {
 
             HttpURLConnection connection;
             OutputStreamWriter request = null;
@@ -147,12 +148,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
             try {
-                url = new URL(strings[0]);
+                url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestMethod("POST");
-
                 request = new OutputStreamWriter(connection.getOutputStream());
                 request.write(String.valueOf(jsonLoginData));
                 request.flush();
@@ -166,7 +166,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 // Response from server after login process will be stored in response variable.
                 response = sb.toString().trim();
-                Log.i("info:",response);
                 JSONObject jObj = new JSONObject(response);
                 final String message = jObj.getString("message");
                 String status = jObj.getString("status");
@@ -189,6 +188,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return "Success";
             } catch (IOException e) {
                 // Error
+                e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -201,7 +201,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
-                tryLogin();
+                tryLogin(v);
                 break;
             case R.id.saveLoginCheckBox:
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

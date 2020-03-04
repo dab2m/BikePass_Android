@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#1B1464</color>
-    <color name="colorPrimary2">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary2">#1B1464</color>
+    <color name="colorPrimaryDark">#1B1464</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGrey">#C0BCC0</color>
     <color name="colorWhite">#936693</color>
@@ -26,4 +26,5 @@
     <color name="backgroudBike">#B01A237E</color>
     <color name="backgroudWorld">#900277BD</color>
     <color name="backgroudSettings">#8D858596</color>
+
 </resources>
