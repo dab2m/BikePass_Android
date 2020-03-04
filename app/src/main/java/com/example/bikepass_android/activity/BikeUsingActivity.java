@@ -1,14 +1,9 @@
 package com.example.bikepass_android.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -62,6 +57,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         chronometer.setFormat("00:%s");
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometerHelper = new ChronometerHelper();
+        chronometerHelper.setStartTime(null);
         startStopWatch();
     }
 
@@ -96,6 +92,11 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
 
     @Override
     public void onClick(View view) {
@@ -119,7 +120,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         }
 
         chronometer.start();
-
+        //TODO yeni bir bisiklet kiralanirken qr okutulunca kronometre eski degerden basliyor
     }
 
     public static class ChronometerHelper {
@@ -132,7 +133,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
             return mStartTime;
         }
 
-        public void setStartTime(final long startTime) {
+        public void setStartTime(final Long startTime) {
             this.mStartTime = startTime;
         }
     }

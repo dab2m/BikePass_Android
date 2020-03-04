@@ -29,7 +29,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
         Intent intent = getIntent();
-        Toast.makeText(getApplicationContext(), "" + intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "" + intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         bLeaderboard = (Button) findViewById(R.id.b1);
         bRentBike = (ImageButton) findViewById(R.id.b2);
         bSettings = (ImageButton) findViewById(R.id.b4);
@@ -63,6 +63,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this, LeaderboardActivity.class));
                 break;
             case R.id.b2:
+                //TODO eger kredi karti bilgileri girilmediyse bu sayfa acilmayacak once kart bilgilerini gir diye uyari cikacak
+
                 Intent intent1 = new Intent(this, RentBikeActivity.class);
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
                 intent2.putExtra("bikeId", bikeId);
