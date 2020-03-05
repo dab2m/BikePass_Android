@@ -1,13 +1,12 @@
 package com.example.bikepass_android.activity;
 
 import android.content.Intent;
-import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
@@ -20,6 +19,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
+    Button btnLogout;
 
     private String time = null;
     private String bikeId = null;
@@ -33,10 +33,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         bLeaderboard = (Button) findViewById(R.id.b1);
         bRentBike = (ImageButton) findViewById(R.id.b2);
         bSettings = (ImageButton) findViewById(R.id.b4);
+        btnLogout = findViewById(R.id.btnLogout);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
-
+        btnLogout.setOnClickListener(this);
 
     }
 
@@ -49,6 +50,18 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             bikeId = extras.getString("bikeId");
         }
     }
+
+
+        public  void logout(View view){
+            SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.clear();
+            editor.commit();
+            Intent intent = new Intent(ReportsActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
 
     /*@Override
     public void onBackPressed() {
@@ -77,6 +90,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.b4:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+
+            case R.id.btnLogout:
+                logout(v);
                 break;
         }
     }
