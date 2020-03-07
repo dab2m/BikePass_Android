@@ -1,9 +1,12 @@
 package com.example.bikepass_android.activity;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
@@ -16,8 +19,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bikepass_android.R;
 import com.google.zxing.Result;
 
 import java.util.Calendar;
@@ -144,18 +152,19 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(50);
 
+            showDialog(this, String.valueOf(result));
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            /*AlertDialog.Builder builder = new AlertDialog.Builder(this, R.layout.my_dialogbox );
             builder.setTitle("BIKE INFORMATION");
             builder.setPositiveButton("START", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
+                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);*/
                     /**
                      * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
                      */
-                    Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                    /*Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
                     intent.putExtra("key", bikeId);
                     startActivity(intent);
                 }
@@ -174,7 +183,50 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         } else {
             Toast.makeText(getApplicationContext(), "Invalid QR Code!", Toast.LENGTH_LONG).show();
             scannerView.resumeCameraPreview(RentBikeActivity.this);
+        */
         }
+
+    }
+
+    public void showDialog(Activity activity, String msg){
+        final String myResult = msg;
+        Log.d("QRCodeScanner", msg);
+        Log.d("QRCodeScanner", msg.toString());
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.my_dialogbox);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText(msg);
+
+        Button dialogBtn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        dialogBtn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scannerView.resumeCameraPreview(RentBikeActivity.this);
+                dialog.dismiss();
+            }
+        });
+
+        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
+                /**
+                 * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
+                 */
+                    Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                    intent.putExtra("key", bikeId);
+                    startActivity(intent);
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
     }
 
     public boolean qrCodeAnalyzer(String qrCode) {
