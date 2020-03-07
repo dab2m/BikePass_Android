@@ -1,12 +1,18 @@
 package com.example.bikepass_android.activity;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
@@ -102,10 +108,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.stopAndPayButton:
-                Toast.makeText(getApplicationContext(), "ODEME ALINDI", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                showDialog(this, "TOTAL PAYMENT : " + totalPaymentCount.getText());
                 break;
         }
     }
@@ -120,7 +123,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         }
 
         chronometer.start();
-        //TODO yeni bir bisiklet kiralanirken qr okutulunca kronometre eski degerden basliyor
+
     }
 
     public static class ChronometerHelper {
@@ -146,5 +149,42 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         intent.putExtra("time", String.valueOf(SystemClock.elapsedRealtime() - chronometer.getBase()));
         intent.putExtra("bikeId", bikeId.getText());
         startActivity(intent);*/
+    }
+
+    public void showDialog(Activity activity, String msg) {
+        final String myResult = msg;
+        Log.d("QRCodeScanner", msg);
+        Log.d("QRCodeScanner", msg.toString());
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_finish);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText(msg);
+
+        Button dialogBtn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        dialogBtn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Button dialogBtn_finish = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), totalPaymentCount.getText() + " ODEME ALINDI", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
     }
 }

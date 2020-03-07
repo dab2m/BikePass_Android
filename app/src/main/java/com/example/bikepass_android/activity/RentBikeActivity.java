@@ -8,14 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Build;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,9 +24,6 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 import com.google.zxing.Result;
-
-import java.util.Calendar;
-import java.util.Locale;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -152,43 +146,18 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(50);
 
-            showDialog(this, String.valueOf(result));
+            showDialog(this, "INFO : " + String.valueOf(result).toUpperCase());
 
-            /*AlertDialog.Builder builder = new AlertDialog.Builder(this, R.layout.my_dialogbox );
-            builder.setTitle("BIKE INFORMATION");
-            builder.setPositiveButton("START", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);*/
-                    /**
-                     * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
-                     */
-                    /*Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
-                    intent.putExtra("key", bikeId);
-                    startActivity(intent);
-                }
-            });
-
-            builder.setNeutralButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    scannerView.resumeCameraPreview(RentBikeActivity.this);
-                }
-            });
-
-            builder.setMessage(result.getText());
-            AlertDialog alert1 = builder.create();
-            alert1.show();
         } else {
+
             Toast.makeText(getApplicationContext(), "Invalid QR Code!", Toast.LENGTH_LONG).show();
             scannerView.resumeCameraPreview(RentBikeActivity.this);
-        */
+
         }
 
     }
 
-    public void showDialog(Activity activity, String msg){
+    public void showDialog(Activity activity, String msg) {
         final String myResult = msg;
         Log.d("QRCodeScanner", msg);
         Log.d("QRCodeScanner", msg.toString());
@@ -196,7 +165,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.my_dialogbox);
+        dialog.setContentView(R.layout.dialogbox_for_start);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
@@ -211,17 +180,17 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             }
         });
 
-        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
-        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+        Button dialogBtn_start = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
                 /**
                  * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
                  */
-                    Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
-                    intent.putExtra("key", bikeId);
-                    startActivity(intent);
+                Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                intent.putExtra("key", bikeId);
+                startActivity(intent);
                 dialog.cancel();
             }
         });
