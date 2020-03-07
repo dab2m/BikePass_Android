@@ -18,7 +18,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
-    Button btnLogout;
+
 
     private String time = null;
     private String bikeId = null;
@@ -32,11 +32,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         bLeaderboard = (Button) findViewById(R.id.b1);
         bRentBike = (ImageButton) findViewById(R.id.b2);
         bSettings = (ImageButton) findViewById(R.id.b4);
-        //btnLogout = findViewById(R.id.btnLogout);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
-      //  btnLogout.setOnClickListener(this);
+
 
     }
 
@@ -51,15 +50,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    /*    public  void logout(View view){
-            SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.clear();
-            editor.commit();
-            Intent intent = new Intent(ReportsActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } */
 
 
     /*@Override
@@ -91,9 +81,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
 
-          /*  case R.id.btnLogout:
-                logout(v);
-                break; */
         }
     }
 }
