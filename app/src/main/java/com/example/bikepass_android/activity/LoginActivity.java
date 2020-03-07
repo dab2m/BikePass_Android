@@ -85,9 +85,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else {
             userName=username.getText().toString();
             passWord=password.getText().toString();
-           MyAsyncLogin async = new MyAsyncLogin();
+            MyAsyncLogin async = new MyAsyncLogin();
             try {
-
                 async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
             } catch (ExecutionException e) {
                 e.printStackTrace();
