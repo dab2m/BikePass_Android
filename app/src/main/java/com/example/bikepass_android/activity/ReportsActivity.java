@@ -1,11 +1,13 @@
 package com.example.bikepass_android.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.bikepass_android.R;
 
@@ -18,6 +20,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
+    TextView view;
 
 
     private String time = null;
@@ -35,7 +38,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
-
+        view=findViewById(R.id.textview);
+        SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
+        String user_name= sharedpreferences.getString("username","");
+        view.setText("Welcome back,"+user_name+"!");
 
     }
 

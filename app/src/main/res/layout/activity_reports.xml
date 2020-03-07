@@ -18,11 +18,11 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
                 android:paddingTop="16dp"
-                android:text="Welcome back, DAB2M"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/colorPrimary"
                 android:textSize="24sp"
