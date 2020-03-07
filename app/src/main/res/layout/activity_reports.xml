@@ -18,7 +18,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="242dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
                 android:paddingTop="16dp"
@@ -28,17 +28,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnLogout"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="30dp"
-                android:background="@drawable/logout_button"
-                android:backgroundTint="@color/colorPrimary"
-                android:gravity="center"
-                android:text="logout"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+
         </LinearLayout>
 
         <LinearLayout
