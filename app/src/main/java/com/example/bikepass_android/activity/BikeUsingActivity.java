@@ -177,7 +177,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), totalPaymentCount.getText() + " ODEME ALINDI", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), totalPaymentCount.getText() + " PAYMENT RECEIVED", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.annotation.RequiresApi;
@@ -25,6 +27,18 @@ import android.widget.Toast;
 import com.example.bikepass_android.R;
 import com.google.zxing.Result;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static android.Manifest.permission.CAMERA;
@@ -37,6 +51,9 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
 
     private String bikeId = null;
 
+    private String qrCode;
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +62,9 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         setContentView(scannerView);
         int currentApiVersion = Build.VERSION.SDK_INT;
 
-       /* Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour > 8 && hour < 17){
-            scannerView.setFlash(false);
-        }
-        else{
-            scannerView.setFlash(true);
-        }*/
+        SharedPreferences preferences = getSharedPreferences("username", getApplicationContext().MODE_PRIVATE);
+        username = preferences.getString("username", null);
+
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             if (checkPermission()) {
@@ -142,6 +154,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         Log.d("QRCodeScanner", result.getText());
         Log.d("QRCodeScanner", result.getBarcodeFormat().toString());
 
+        qrCode = myResult;
+
         if (qrCodeAnalyzer(myResult)) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(50);
@@ -205,4 +219,65 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         return true;
         //TODO buraya kendi bisikletlerimizin id'si cekilecek ve buna gore okutulan qr kodunun bize ait olup olmadigi REST ile kontrol edilecek.
     }
+
+    class MyAsyncBikeId extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("bike_id", qrCode); // okunan qr kodun icinde id olacak ona gore rest ile search yapacak
+                jsonObject.put("username", username); // qr kod okunduktan sonra bisikleti hangi kullanici kiraladi ona gore server'a haber verecek
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                final String message = jObj.getString("message");
+                String status = jObj.getString("status");
+                ArrayList<String> statuscodeListForBike = new ArrayList<>(Arrays.asList("1", "2"));
+                if (status.equals("0")) {
+
+                } else if (statuscodeListForBike.contains(status)) {
+
+                }
+                isr.close();
+                reader.close();
+                return "Success";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+
 }
