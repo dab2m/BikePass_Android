@@ -35,10 +35,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_reports);
         Intent intent = getIntent();
         //Toast.makeText(getApplicationContext(), "" + intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bLeaderboard = (Button) findViewById(R.id.leaderboard);
-        bRentBike = (ImageButton) findViewById(R.id.bikes);
-        bSettings = (ImageButton) findViewById(R.id.settings);
-        goMap=(ImageButton) findViewById(R.id.map);
+        bLeaderboard = (Button) findViewById(R.id.worldleaderboard);
+        bRentBike = (ImageButton) findViewById(R.id.returnbikes);
+        bSettings = (ImageButton) findViewById(R.id.map);
+        goMap=(ImageButton) findViewById(R.id.bikes);
         goMap.setOnClickListener(this);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
@@ -77,10 +77,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.leaderboard:
+            case R.id.worldleaderboard:
                 startActivity(new Intent(this, LeaderboardActivity.class));
                 break;
-            case R.id.bikes:
+            case R.id.returnbikes:
                 //TODO eger kredi karti bilgileri girilmediyse bu sayfa acilmayacak once kart bilgilerini gir diye uyari cikacak
                 Intent intent1 = new Intent(this, RentBikeActivity.class);
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
@@ -92,10 +92,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(intent2);
                 }
                 break;
-            case R.id.settings:
+            case R.id.map:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.map:
+            case R.id.bikes:
                 goToMapActivity(v);
                 break;
 

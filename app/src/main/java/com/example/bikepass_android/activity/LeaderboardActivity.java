@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -29,7 +31,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
-    boolean flag;
+    Button bworldleaderboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +39,10 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_leaderboard);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bRentBike = (ImageButton)findViewById(R.id.map);
-        bSettings = (ImageButton)findViewById(R.id.b5);
+        bRentBike = (ImageButton)findViewById(R.id.bikes);
+        bSettings = (ImageButton)findViewById(R.id.settings);
+        bworldleaderboard=findViewById(R.id.worldleaderboard);
+        bworldleaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
 
@@ -52,6 +56,18 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private void getWorldRequest(View v) {
+
+        LeaderBoard async = new LeaderBoard("World");
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
      class LeaderBoard extends AsyncTask<String, String, String> {
 
         String parameter;
@@ -115,12 +131,16 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.map:
+            case R.id.bikes:
                 startActivity(new Intent(this, RentBikeActivity.class));
                 break;
-            case R.id.b5:
+            case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.worldleaderboard:
+                getWorldRequest(v);
                 break;
         }
     }
+
 }
