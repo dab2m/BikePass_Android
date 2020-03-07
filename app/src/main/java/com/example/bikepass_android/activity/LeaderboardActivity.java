@@ -44,7 +44,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
 
         LeaderBoard async = new LeaderBoard("Ankara");
         try {
-            async.execute("https://Bikepass.herokuapp.com/API/l.php").get();
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
