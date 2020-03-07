@@ -38,6 +38,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -156,6 +157,16 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
 
         qrCode = myResult;
 
+        // REST API
+        MyAsyncBikeId async = new MyAsyncBikeId();
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (qrCodeAnalyzer(myResult)) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(50);
@@ -163,10 +174,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             showDialog(this, "INFO : " + String.valueOf(result).toUpperCase());
 
         } else {
-
             Toast.makeText(getApplicationContext(), "Invalid QR Code!", Toast.LENGTH_LONG).show();
             scannerView.resumeCameraPreview(RentBikeActivity.this);
-
         }
 
     }
@@ -232,7 +241,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             String response = null;
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("bike_id", qrCode); // okunan qr kodun icinde id olacak ona gore rest ile search yapacak
+                // QR kodunun icinde "Bike Id: 1" tarzinda bir icerik olacak bu yuzden bike id'yi almak icin bosluktan sonrasi okunur.
+                jsonObject.put("bike_id", qrCode.substring(qrCode.lastIndexOf(" ") + 1)); // okunan qr kodun icinde id olacak ona gore rest ile search yapacak
                 jsonObject.put("username", username); // qr kod okunduktan sonra bisikleti hangi kullanici kiraladi ona gore server'a haber verecek
             } catch (JSONException e) {
                 e.printStackTrace();
