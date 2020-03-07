@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -25,7 +24,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_leaderboard);
         Intent intent=getIntent();
         Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bRentBike = (ImageButton)findViewById(R.id.b3);
+        bRentBike = (ImageButton)findViewById(R.id.map);
         bSettings = (ImageButton)findViewById(R.id.b5);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
@@ -34,7 +33,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.b3:
+            case R.id.map:
                 startActivity(new Intent(this, RentBikeActivity.class));
                 break;
             case R.id.b5:

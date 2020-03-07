@@ -83,20 +83,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="120dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="130dp"
-            android:layout_marginTop="250dp"
-            android:background="@drawable/gotomap"
-            android:onClick="goToMapActivity"
-            android:text="Go to map"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
     </LinearLayout>
 
 </RelativeLayout>

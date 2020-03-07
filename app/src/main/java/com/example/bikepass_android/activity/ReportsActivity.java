@@ -1,5 +1,6 @@
 package com.example.bikepass_android.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.example.bikepass_android.R;
 public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button bLeaderboard;
+    ImageButton goMap;
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
@@ -26,15 +28,18 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     private String time = null;
     private String bikeId = null;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
         Intent intent = getIntent();
         //Toast.makeText(getApplicationContext(), "" + intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bLeaderboard = (Button) findViewById(R.id.b1);
-        bRentBike = (ImageButton) findViewById(R.id.b2);
-        bSettings = (ImageButton) findViewById(R.id.b4);
+        bLeaderboard = (Button) findViewById(R.id.leaderboard);
+        bRentBike = (ImageButton) findViewById(R.id.bikes);
+        bSettings = (ImageButton) findViewById(R.id.settings);
+        goMap=(ImageButton) findViewById(R.id.map);
+        goMap.setOnClickListener(this);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
@@ -42,6 +47,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
         String user_name= sharedpreferences.getString("username","");
         view.setText("Welcome back,"+user_name+"!");
+
 
     }
 
@@ -57,6 +63,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
 
 
+    public void goToMapActivity(View view){
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        startActivity(intent);
+    }
 
     /*@Override
     public void onBackPressed() {
@@ -67,12 +77,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.b1:
+            case R.id.leaderboard:
                 startActivity(new Intent(this, LeaderboardActivity.class));
                 break;
-            case R.id.b2:
+            case R.id.bikes:
                 //TODO eger kredi karti bilgileri girilmediyse bu sayfa acilmayacak once kart bilgilerini gir diye uyari cikacak
-
                 Intent intent1 = new Intent(this, RentBikeActivity.class);
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
                 intent2.putExtra("bikeId", bikeId);
@@ -83,8 +92,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(intent2);
                 }
                 break;
-            case R.id.b4:
+            case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.map:
+                goToMapActivity(v);
                 break;
 
         }

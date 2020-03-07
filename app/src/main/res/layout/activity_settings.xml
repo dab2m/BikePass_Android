@@ -146,7 +146,7 @@
                 android:id="@+id/bApprove"
                 android:layout_width="105dp"
                 android:layout_height="105dp"
-                android:layout_marginLeft="192dp"
+                android:layout_marginLeft="160dp"
                 android:background="@drawable/ic_approve_48px" />
         </LinearLayout>
     </LinearLayout>
