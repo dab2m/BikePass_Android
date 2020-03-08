@@ -51,9 +51,9 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private static int camId = Camera.CameraInfo.CAMERA_FACING_BACK;
 
     private String bikeId = null;
-
     private String qrCode;
     private String username;
+    private String myResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,36 +151,30 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void handleResult(Result result) {
-        final String myResult = result.getText();
+        myResult = result.getText();
         Log.d("QRCodeScanner", result.getText());
         Log.d("QRCodeScanner", result.getBarcodeFormat().toString());
 
         qrCode = myResult;
+        bikeId = qrCode.substring(qrCode.lastIndexOf(" ") + 1);
 
         // REST API
         MyAsyncBikeId async = new MyAsyncBikeId();
+        String bikeStatus = null;
         try {
-            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+            bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        if (qrCodeAnalyzer(myResult)) {
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(50);
 
-            showDialog(this, "INFO : " + String.valueOf(result).toUpperCase());
-
-        } else {
-            Toast.makeText(getApplicationContext(), "Invalid QR Code!", Toast.LENGTH_LONG).show();
-            scannerView.resumeCameraPreview(RentBikeActivity.this);
-        }
+        bikeStatusParser(bikeStatus);
 
     }
 
-    public void showDialog(Activity activity, String msg) {
+    public void showDialogForStart(Activity activity, String msg) {
         final String myResult = msg;
         Log.d("QRCodeScanner", msg);
         Log.d("QRCodeScanner", msg.toString());
@@ -221,12 +215,59 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         dialog.show();
     }
 
-    public boolean qrCodeAnalyzer(String qrCode) {
-        if (!qrCode.toLowerCase().contains("bike")) {
-            return false;
+    public void showDialogForWarning(Activity activity, String msg) {
+        final String myResult = msg;
+        Log.d("QRCodeScanner", msg);
+        Log.d("QRCodeScanner", msg.toString());
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_warning);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText(msg);
+
+        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scannerView.resumeCameraPreview(RentBikeActivity.this);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void bikeStatusParser(String bikeStatus) {
+        if (bikeStatus != null) {
+            if (bikeStatus.equals("0")) { // Bike is unlocked
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(50);
+
+                showDialogForStart(this, "INFO : " + myResult.toUpperCase());
+            } else if (bikeStatus.equals("1")) { // Unidentified bike_id
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(30);
+
+                showDialogForWarning(this, "INFO : Unidentified bike id !");
+            } else if (bikeStatus.equals("3")) { // Bike is not available
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(30);
+
+                showDialogForWarning(this, "INFO : Bike is not available !");
+            } else if (bikeStatus.equals("4")) { // Database error!
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(30);
+
+                showDialogForWarning(this, "INFO : Database error !");
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Bike Status is null !", Toast.LENGTH_LONG).show();
         }
-        return true;
-        //TODO buraya kendi bisikletlerimizin id'si cekilecek ve buna gore okutulan qr kodunun bize ait olup olmadigi REST ile kontrol edilecek.
+
     }
 
     class MyAsyncBikeId extends AsyncTask<String, Void, String> {
@@ -267,17 +308,12 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
 
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                final String message = jObj.getString("message");
-                String status = jObj.getString("status");
-                ArrayList<String> statuscodeListForBike = new ArrayList<>(Arrays.asList("1", "2"));
-                if (status.equals("0")) {
+                final String message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
 
-                } else if (statuscodeListForBike.contains(status)) {
-
-                }
                 isr.close();
                 reader.close();
-                return "Success";
+                return status;
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();

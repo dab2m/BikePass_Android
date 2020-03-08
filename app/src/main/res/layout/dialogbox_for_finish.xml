@@ -117,7 +117,7 @@
 
 
                     <Button
-                        android:id="@+id/btn_okay"
+                        android:id="@+id/btn_finish"
                         android:layout_width="80dp"
                         android:layout_height="25dp"
                         android:background="@drawable/round_button_positive"

@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Do you want to start ?"
+                    android:text="Something went wrong! Please try again."
                     android:textColor="#ff000000"
                     android:textSize="15dp"
                     android:textStyle="bold" />
@@ -87,41 +87,18 @@
                 android:orientation="horizontal"
                 android:weightSum="100">
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="30dp"
                     android:layout_weight="50"
-                    android:gravity="center|right">
+                    android:gravity="center">
 
                     <Button
-                        android:id="@+id/btn_cancel"
-                        android:layout_width="80dp"
-                        android:layout_height="25dp"
-                        android:background="@drawable/round_button_negative"
-                        android:gravity="center"
-                        android:text="CANCEL"
-                        android:textSize="13dp"
-                        android:textStyle="bold"
-                        android:textColor="#ffffffff" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="30dp"
-                    android:layout_weight="50"
-                    android:gravity="center|left">
-
-
-                    <Button
-                        android:id="@+id/btn_start"
+                        android:id="@+id/btn_okay"
                         android:layout_width="80dp"
                         android:layout_height="25dp"
                         android:background="@drawable/round_button_positive"
-                        android:text="START"
+                        android:text="OKAY"
                         android:textSize="13dp"
                         android:textStyle="bold"
                         android:textColor="#ffffffff" />
