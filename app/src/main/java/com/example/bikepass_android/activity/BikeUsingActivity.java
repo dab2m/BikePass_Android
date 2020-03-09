@@ -173,7 +173,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
-        Button dialogBtn_finish = (Button) dialog.findViewById(R.id.btn_okay);
+        Button dialogBtn_finish = (Button) dialog.findViewById(R.id.btn_finish);
         dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

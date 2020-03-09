@@ -197,7 +197,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             }
         });
 
-        Button dialogBtn_start = (Button) dialog.findViewById(R.id.btn_okay);
+        Button dialogBtn_start = (Button) dialog.findViewById(R.id.btn_start);
         dialogBtn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,17 +252,17 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : Unidentified bike id !");
+                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
             } else if (bikeStatus.equals("3")) { // Bike is not available
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : Bike is not available !");
+                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
             } else if (bikeStatus.equals("4")) { // Database error!
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : Database error !");
+                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
             }
         } else {
             Toast.makeText(getApplicationContext(), "Bike Status is null !", Toast.LENGTH_LONG).show();
