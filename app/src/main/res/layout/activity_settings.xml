@@ -31,7 +31,7 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/et1"
+            android:id="@+id/username"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
