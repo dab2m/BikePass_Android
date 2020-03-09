@@ -19,15 +19,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import com.example.bikepass_android.network.JSONParser;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 /**
  * Created by Berk on 27.02.2020
  */
 public class LeaderboardActivity extends AppCompatActivity implements View.OnClickListener {
-
+    JSONParser jsonParser;
     ImageButton bRentBike;
     ImageButton bLocation;
     ImageButton bSettings;
@@ -60,7 +66,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
 
         LeaderBoard async = new LeaderBoard("World");
         try {
-            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+            async.execute("localhost://.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -112,6 +118,31 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
                  // Response from server after leaderboard process will be stored in response variable.
                  response = sb.toString().trim();
                  JSONObject jObj = new JSONObject(response);
+
+                 jsonParser = new JSONParser();
+                 String jsonString = response;
+                 List<String> my_list =new ArrayList<String>();
+                // Log.i("JSON_RESPONSE", jsonString);
+                 if (jsonString != null && !jsonString.contains("Could not fetch recipes")) {
+                     try {
+                         JSONObject jsonObject = new JSONObject(jsonString);
+                         JSONArray bike_users = jsonObject.getJSONArray("bike_users");
+                         for (int i = 0; i < bike_users.length(); i++) {
+                             JSONObject recipe = bike_users.getJSONObject(i);
+                             String user_name = recipe.getString("user_name");
+                             String bike_usage = recipe.getString("bike_using_time");
+                             Log.i("username",user_name);
+                             Log.i("usage:",bike_usage);
+                         }
+                     } catch (Exception e) {
+                         e.printStackTrace();
+                     }
+                 } else {
+                     Log.d("JSON_RESPONSE", "Empty page resource!");
+                 }
+
+
+
                  isr.close();
                  reader.close();
                  return "Success";
