@@ -54,10 +54,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="352dp"
             android:layout_marginBottom="8dp"
             android:gravity="bottom"
             android:orientation="horizontal">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:id="@+id/list_view">
+
 
             <ImageButton
                 android:id="@+id/bikes"
@@ -87,4 +104,6 @@
                 android:src="@drawable/settings_24px_1" />
         </LinearLayout>
     </LinearLayout>
+
+
 </LinearLayout>
