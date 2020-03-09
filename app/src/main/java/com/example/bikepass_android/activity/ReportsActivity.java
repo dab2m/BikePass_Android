@@ -35,7 +35,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton bSettings;
     TextView view;
 
-
     private String time = null;
     private String bikeId = null;
     private String user_name;
@@ -46,11 +45,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
         Intent intent = getIntent();
-        //Toast.makeText(getApplicationContext(), "" + intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bLeaderboard = (Button) findViewById(R.id.worldleaderboard);
-        bRentBike = (ImageButton) findViewById(R.id.returnbikes);
-        bSettings = (ImageButton) findViewById(R.id.map);
-        goMap = (ImageButton) findViewById(R.id.bikes);
+        //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+        bLeaderboard = (Button)findViewById(R.id.worldleaderboard);
+        bRentBike = (ImageButton)findViewById(R.id.returnbikes);
+        bSettings = (ImageButton)findViewById(R.id.map);
+        goMap = (ImageButton)findViewById(R.id.bikes);
         goMap.setOnClickListener(this);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
@@ -59,8 +58,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
         view.setText("Welcome back," + user_name + "!");
-
-
     }
 
     @Override
@@ -72,7 +69,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             bikeId = extras.getString("bikeId");
         }
     }
-
 
     public void goToMapActivity(View view) {
         Intent intent = new Intent(getApplicationContext(), MapActivity.class);
@@ -93,18 +89,14 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.returnbikes:
                 //TODO eger kredi karti bilgileri girilmediyse bu sayfa acilmayacak once kart bilgilerini gir diye uyari cikacak
-
                 SharedPreferences preferences = getSharedPreferences("username", getApplicationContext().MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("username", user_name);
                 editor.commit();
-
-
                 Intent intent1 = new Intent(this, RentBikeActivity.class);
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
                 intent2.putExtra("bikeId", bikeId);
                 intent2.putExtra("username", user_name);
-
                 if (time == null) {
                     startActivity(intent1);
                 } else {

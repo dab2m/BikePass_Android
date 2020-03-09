@@ -27,6 +27,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     Button bCardDetails;
     Button btnLogout;
+    Button bReject;
+    Button bApprove;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.bReject:
+                break;
+            case R.id.bApprove:
+                break;
             case R.id.bCard:
                 startActivity(new Intent(this, CardDetailsActivity.class));
                 //Toast.makeText(getApplicationContext(), "You need to define credit card as well for payment", Toast.LENGTH_LONG).show();

@@ -30,8 +30,8 @@ public class CardDetailsActivity extends AppCompatActivity implements View.OnCli
     EditText etCardNumber;
     EditText etExpDate;
     EditText etCCV;
-    Button bApprove;
     Button bReject;
+    Button bApprove;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,12 @@ public class CardDetailsActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.bReject:
+                break;
+            case R.id.bApprove:
+                break;
+        }
     }
 
     public void postMethod(final String requestUrl) {

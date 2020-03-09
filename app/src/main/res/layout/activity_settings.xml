@@ -78,7 +78,7 @@
             android:paddingBottom="8dp"
             android:textAlignment="center"
             android:textColorHint="@color/colorPrimary"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -131,21 +131,22 @@
 
             <Button
                 android:id="@+id/btnLogout"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="40dp"
-                android:background="@drawable/logout_button"
-                android:backgroundTint="@color/colorPrimary"
+                android:layout_width="140dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/backgroudLogout"
                 android:gravity="center"
-                android:text="logout"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+                android:text="Logout"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/bApprove"
                 android:layout_width="105dp"
                 android:layout_height="105dp"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="20dp"
                 android:background="@drawable/ic_approve_48px" />
         </LinearLayout>
     </LinearLayout>
