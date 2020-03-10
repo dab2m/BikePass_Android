@@ -40,6 +40,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     ImageButton bSettings;
     Button bworldleaderboard;
     TextView content;
+    LeaderBoard async=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
 
-        LeaderBoard async = new LeaderBoard("Ankara");
+        async = new LeaderBoard("Ankara");
         try {
             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
@@ -71,9 +72,15 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
 
     private void getWorldRequest(View v) {
 
-        LeaderBoard async = new LeaderBoard("World");
-        try {
-            async.execute("localhost://.herokuapp.com/API/app.php").get();
+        //LeaderBoard async = new LeaderBoard("World");
+      /*  if(async.getParameter().equals("Ankara")) {
+            async.setParameter("World");
+        }
+        else {
+            async.setParameter("Ankara");
+        }
+            try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get(); */
             if(content.getText().toString().equals("In Ankara")) {
                 content.setText("In World");
             }
@@ -86,12 +93,11 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
             else {
                 bworldleaderboard.setText("World Leaderboard");
             }
-        } catch (ExecutionException e) {
+    /*    } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-
+        } */
     }
      class LeaderBoard extends AsyncTask<String, String, String> {
 
@@ -101,7 +107,12 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
              super();
              this.parameter=parameter;
          }
-
+         public void setParameter(String parameter){
+             this.parameter=parameter;
+         }
+          public String getParameter(){
+             return this.parameter;
+          }
          @Override
          protected String doInBackground(String[]urls) {
 
@@ -113,6 +124,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
              JSONObject jsonLocData = new JSONObject();
              try {
                  jsonLocData.put("location",this.parameter);
+                 Log.i("location::::::",this.parameter);
 
              } catch (JSONException e) {
                  e.printStackTrace();

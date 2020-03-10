@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/textViewContent"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="53dp"
             android:gravity="center"
             android:text="TextView"
             android:textColor="#B01A237E"
@@ -31,7 +31,7 @@
             <ListView
                 android:id="@+id/list_view"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="221dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true" />
@@ -40,7 +40,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="145dp"
             android:orientation="vertical">
 
             <Button
@@ -75,9 +75,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
             android:gravity="bottom"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:orientation="horizontal">
 
 
             <ImageButton
