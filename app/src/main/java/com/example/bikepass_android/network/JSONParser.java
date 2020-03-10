@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Berk on 09.02.2020.
+ * Created by Berk on 09.02.2020
  */
 public class JSONParser {
 
