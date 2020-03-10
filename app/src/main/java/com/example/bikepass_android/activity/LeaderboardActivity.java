@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
@@ -27,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import com.example.bikepass_android.network.JSONParser;
 
 import org.json.JSONArray;
+import org.w3c.dom.Text;
 
 /**
  * Created by Berk on 27.02.2020
@@ -37,16 +39,20 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     ImageButton bLocation;
     ImageButton bSettings;
     Button bworldleaderboard;
+    TextView content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
         Intent intent=getIntent();
-        Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         bRentBike = (ImageButton)findViewById(R.id.bikes);
         bSettings = (ImageButton)findViewById(R.id.settings);
+        content=(TextView)findViewById(R.id.textViewContent);
+        content.setText("In Ankara");
         bworldleaderboard=findViewById(R.id.worldleaderboard);
+        bworldleaderboard.setText("World Leaderboard");
         bworldleaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bSettings.setOnClickListener(this);
@@ -68,6 +74,18 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         LeaderBoard async = new LeaderBoard("World");
         try {
             async.execute("localhost://.herokuapp.com/API/app.php").get();
+            if(content.getText().toString().equals("In Ankara")) {
+                content.setText("In World");
+            }
+            else {
+                content.setText("In Ankara");
+            }
+            if(bworldleaderboard.getText().toString().equals("World Leaderboard")) {
+                bworldleaderboard.setText("City Leaderboard");
+            }
+            else {
+                bworldleaderboard.setText("World Leaderboard");
+            }
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

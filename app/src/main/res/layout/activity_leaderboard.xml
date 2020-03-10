@@ -13,10 +13,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/textViewContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="TextView"
+            android:textColor="#B01A237E"
+            android:textSize="30sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +54,6 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_button"
                 android:backgroundTint="@color/colorPrimary"
-                android:text="World Leaderboard"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
