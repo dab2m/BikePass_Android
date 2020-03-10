@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
@@ -60,6 +61,8 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
     }
 
     private void getWorldRequest(View v) {
@@ -121,18 +124,23 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
 
                  jsonParser = new JSONParser();
                  String jsonString = response;
-                 List<String> my_list =new ArrayList<String>();
+                 ArrayList<String> user_list =new ArrayList<String>();
+                 List<String> dk_list =new ArrayList<String>();
+                 ListView mlistView=(ListView) findViewById(R.id.list_view);
                 // Log.i("JSON_RESPONSE", jsonString);
                  if (jsonString != null && !jsonString.contains("Could not fetch recipes")) {
                      try {
                          JSONObject jsonObject = new JSONObject(jsonString);
                          JSONArray bike_users = jsonObject.getJSONArray("bike_users");
                          for (int i = 0; i < bike_users.length(); i++) {
-                             JSONObject recipe = bike_users.getJSONObject(i);
-                             String user_name = recipe.getString("user_name");
-                             String bike_usage = recipe.getString("bike_using_time");
-                             Log.i("username",user_name);
-                             Log.i("usage:",bike_usage);
+                             JSONObject values = bike_users.getJSONObject(i);
+                             String user_name = values.getString("user_name");
+                             String bike_usage = values.getString("bike_using_time");
+                             user_list.add(user_name);
+                             dk_list.add(bike_usage);
+
+                            // Log.i("username",user_name);
+                            // Log.i("usage:",bike_usage);
                          }
                      } catch (Exception e) {
                          e.printStackTrace();
