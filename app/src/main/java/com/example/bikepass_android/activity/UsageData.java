@@ -1,4 +1,4 @@
-package com.example.bikepass_android.network;
+package com.example.bikepass_android.activity;
 
 public class UsageData {
 

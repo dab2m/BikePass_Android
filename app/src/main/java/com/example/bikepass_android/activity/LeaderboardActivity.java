@@ -20,16 +20,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import com.example.bikepass_android.network.JSONParser;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
+
 /**
  * Created by Berk on 27.02.2020
  */
@@ -124,9 +122,8 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
 
                  jsonParser = new JSONParser();
                  String jsonString = response;
-                 ArrayList<String> user_list =new ArrayList<String>();
-                 List<String> dk_list =new ArrayList<String>();
-                 ListView mlistView=(ListView) findViewById(R.id.list_view);
+                 ListView mlistView=findViewById(R.id.list_view);
+                 ArrayList <UsageData> usage_data=new ArrayList<UsageData>();
                 // Log.i("JSON_RESPONSE", jsonString);
                  if (jsonString != null && !jsonString.contains("Could not fetch recipes")) {
                      try {
@@ -135,13 +132,13 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
                          for (int i = 0; i < bike_users.length(); i++) {
                              JSONObject values = bike_users.getJSONObject(i);
                              String user_name = values.getString("user_name");
-                             String bike_usage = values.getString("bike_using_time");
-                             user_list.add(user_name);
-                             dk_list.add(bike_usage);
+                             int bike_usage =Integer.parseInt( values.getString("bike_using_time"));
+                             UsageData data=new UsageData(bike_usage,user_name);
+                             usage_data.add(data);
 
-                            // Log.i("username",user_name);
-                            // Log.i("usage:",bike_usage);
                          }
+                         UsageDataListAdapter adapter=new UsageDataListAdapter(LeaderboardActivity.this,R.layout.adapter_view_layout,usage_data);
+                         mlistView.setAdapter(adapter);
                      } catch (Exception e) {
                          e.printStackTrace();
                      }

@@ -13,59 +13,60 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textView16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:paddingLeft="16dp"
-            android:text="In Ankara"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/colorPrimary"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/worldleaderboard"
-            android:layout_gravity="bottom"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/rounded_button"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="World Leaderboard"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/returnbikes"
-            android:layout_gravity="bottom"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="70dp"
-            android:layout_marginRight="70dp"
-            android:background="@drawable/rounded_button"
-            android:backgroundTint="@color/paleBlue"
-            android:text="Return"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp" />
+            android:text="TextView" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="352dp"
+            android:layout_height="250dp"
             android:layout_marginBottom="8dp"
             android:gravity="bottom"
             android:orientation="horizontal">
 
             <ListView
+                android:id="@+id/list_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="250dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:id="@+id/list_view"/>
+                android:layout_alignParentTop="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/worldleaderboard"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="World Leaderboard"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/returnbikes"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="70dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/paleBlue"
+                android:text="Return"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -74,7 +75,7 @@
             android:layout_height="match_parent"
             android:gravity="bottom"
             android:orientation="horizontal"
-            >
+            android:layout_marginBottom="8dp">
 
 
             <ImageButton
@@ -104,6 +105,7 @@
                 android:backgroundTint="@color/backgroudSettings"
                 android:src="@drawable/settings_24px_1" />
         </LinearLayout>
+
     </LinearLayout>
 
 

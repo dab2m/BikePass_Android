@@ -7,13 +7,13 @@
 
 
     <ImageView
-        android:gravity="center"
-        android:textAlignment="center"
-        android:text="ImageView"
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:id="@+id/imageView"
-        android:layout_weight="66.6"/>
+        android:layout_weight="75.6"
+        android:gravity="center"
+        android:text="ImageView"
+        android:textAlignment="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,18 +23,22 @@
 
         <TextView
             android:id="@+id/textViewUser"
-            android:layout_width="wrap_content"
+            android:layout_width="169dp"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="textViewUser" />
+            android:gravity="left"
+            android:paddingTop="12dp"
+            android:text="textViewUser"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textViewDk"
-            android:layout_width="match_parent"
+            android:layout_width="190dp"
             android:layout_height="60dp"
             android:layout_below="@+id/textViewUser"
-            android:gravity="center"
-            android:text="textViewDk" />
+            android:gravity="left"
+            android:paddingTop="12dp"
+            android:text="textViewDk"
+            android:textSize="20sp" />
     </LinearLayout>
 
 </LinearLayout>
