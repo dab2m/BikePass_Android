@@ -105,7 +105,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.map:
                 goToMapActivity(v);
                 break;
-            case R.id.bikes:
+            case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
