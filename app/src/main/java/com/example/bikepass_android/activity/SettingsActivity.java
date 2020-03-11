@@ -40,6 +40,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         bCardDetails.setOnClickListener(this);
         bLogout = findViewById(R.id.bLogout);
         bLogout.setOnClickListener(this);
+        SharedPreferences prefs = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        final String username = prefs.getString("username", "UNKNOWN");
+        final String password = prefs.getString("password", "UNKNOWN");
+        final String email = prefs.getString("email", "UNKNOWN");
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(email);
     }
 
     public  void logout(View view){

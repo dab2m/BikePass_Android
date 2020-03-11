@@ -53,6 +53,7 @@
             android:textStyle="bold"
             android:textSize="24sp"
             android:hint="Card Number"
+            android:numeric="integer"
             android:textColorHint="@color/colorPrimary" />
 
         <LinearLayout
@@ -93,6 +94,7 @@
                 android:textStyle="bold"
                 android:textSize="24sp"
                 android:hint="CCV"
+                android:numeric="integer"
                 android:textColorHint="@color/colorPrimary" />
         </LinearLayout>
 
