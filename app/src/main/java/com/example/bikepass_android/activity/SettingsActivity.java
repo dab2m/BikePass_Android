@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button bCardDetails;
-    Button btnLogout;
+    Button bLogout;
     Button bReject;
     Button bApprove;
 
@@ -38,19 +38,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         bCardDetails = (Button)findViewById(R.id.bCard);
         bCardDetails.setOnClickListener(this);
-        btnLogout = findViewById(R.id.btnLogout);
-        btnLogout.setOnClickListener(this);
+        bLogout = findViewById(R.id.bLogout);
+        bLogout.setOnClickListener(this);
     }
 
-        public  void logout(View view){
-            SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.clear();
-            editor.commit();
-            Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
+    public  void logout(View view){
+        SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.clear();
+        editor.commit();
+        Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -62,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(new Intent(this, CardDetailsActivity.class));
                 //Toast.makeText(getApplicationContext(), "You need to define credit card as well for payment", Toast.LENGTH_LONG).show();
                 break;
-           case R.id.btnLogout:
+           case R.id.bLogout:
                 logout(v);
                 break;
         }
