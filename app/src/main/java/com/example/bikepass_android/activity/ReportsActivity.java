@@ -29,9 +29,8 @@ import java.util.Arrays;
 public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button bLeaderboard;
-    ImageButton goMap;
     ImageButton bRentBike;
-    ImageButton bLocation;
+    ImageButton bGoMap;
     ImageButton bSettings;
     TextView view;
 
@@ -48,16 +47,16 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         bLeaderboard = (Button)findViewById(R.id.worldleaderboard);
         bRentBike = (ImageButton)findViewById(R.id.returnbikes);
-        bSettings = (ImageButton)findViewById(R.id.map);
-        goMap = (ImageButton)findViewById(R.id.bikes);
-        goMap.setOnClickListener(this);
+        bGoMap = (ImageButton)findViewById(R.id.map);
+        bSettings = (ImageButton)findViewById(R.id.settings);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
+        bGoMap.setOnClickListener(this);
         bSettings.setOnClickListener(this);
         view = findViewById(R.id.textview);
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
-        view.setText("Welcome back," + user_name + "!");
+        view.setText("Welcome back, " + user_name);
     }
 
     @Override
@@ -104,12 +103,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case R.id.map:
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;
-            case R.id.bikes:
                 goToMapActivity(v);
                 break;
-
+            case R.id.bikes:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
     }
 
