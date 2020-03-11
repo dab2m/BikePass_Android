@@ -1,4 +1,4 @@
-package com.example.bikepass_android.activity;
+package com.example.bikepass_android.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,12 +10,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.bikepass_android.R;
+import com.example.bikepass_android.model.UsageData;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
- class UsageDataListAdapter extends ArrayAdapter<UsageData> {
+/**
+ * Created by Dilan on 10.03.2020
+ */
+public class UsageDataListAdapter extends ArrayAdapter<UsageData> {
 
     private static final String TAG="UsageDataAdapter";
     private Context mcontext;

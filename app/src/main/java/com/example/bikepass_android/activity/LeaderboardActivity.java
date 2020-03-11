@@ -25,6 +25,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import com.example.bikepass_android.adapter.UsageDataListAdapter;
+import com.example.bikepass_android.model.UsageData;
 import com.example.bikepass_android.network.JSONParser;
 
 import org.json.JSONArray;

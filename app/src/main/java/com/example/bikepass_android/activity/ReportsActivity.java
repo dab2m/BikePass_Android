@@ -56,7 +56,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         view = findViewById(R.id.textview);
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
-        view.setText("Welcome back, " + user_name);
+        view.setText("Welcome back, "+user_name);
     }
 
     @Override
@@ -81,7 +81,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this, LeaderboardActivity.class));
                 break;
             case R.id.returnbikes:
-                //TODO eger kredi karti bilgileri girilmediyse bu sayfa acilmayacak once kart bilgilerini gir diye uyari cikacak
                 SharedPreferences preferences = getSharedPreferences("username", getApplicationContext().MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("username", user_name);
@@ -90,11 +89,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
                 intent2.putExtra("bikeId", bikeId);
                 intent2.putExtra("username", user_name);
-                if (time == null) {
+                if(time==null)
                     startActivity(intent1);
-                } else {
+                else
                     startActivity(intent2);
-                }
                 break;
             case R.id.map:
                 goToMapActivity(v);
