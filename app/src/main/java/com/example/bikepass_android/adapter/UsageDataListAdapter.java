@@ -55,6 +55,7 @@ public class UsageDataListAdapter extends ArrayAdapter<UsageData> {
         if(user_name.equals("You")) {
             user_name_view.setTextColor(Color.MAGENTA);
             bike_usage_time.setTextColor(Color.MAGENTA);
+            bike_image.setImageResource(R.drawable.deneme);
         }
         return convertView;
     }

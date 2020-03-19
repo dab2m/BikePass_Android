@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
          loginPrefsEditor.putBoolean("saveLogin", true);
          loginPrefsEditor.putString("username", username);
          loginPrefsEditor.putString("password", password);
+         loginPrefsEditor.apply();
          loginPrefsEditor.commit();
      }
 

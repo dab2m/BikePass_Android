@@ -44,9 +44,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         final String username = prefs.getString("username", "UNKNOWN");
         final String password = prefs.getString("password", "UNKNOWN");
         final String email = prefs.getString("email", "UNKNOWN");
-        System.out.println(username);
-        System.out.println(password);
-        System.out.println(email);
     }
 
     public  void logout(View view){

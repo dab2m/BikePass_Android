@@ -44,8 +44,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     Button bworldleaderboard;
     TextView content;
     LeaderBoard async=null;
-    //SharedPreferences prefs = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-    final String usernameforloc = "dilan";//prefs.getString("username", "UNKNOWN");
+    String usernameforloc;
     String user_loc="";
     boolean flag=false;
 
@@ -54,7 +53,8 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
-
+        SharedPreferences prefs = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        usernameforloc =prefs.getString("username", "UNKNOWN");
         bRentBike = (ImageButton)findViewById(R.id.bikes);
         bSettings = (ImageButton)findViewById(R.id.settings);
         content=(TextView)findViewById(R.id.textViewContent);
@@ -69,7 +69,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void getRequest(){
-    Log.i("flag",flag+"");
+
     async = new LeaderBoard();
     try {
         async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
