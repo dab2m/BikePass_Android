@@ -1,6 +1,7 @@
 package com.example.bikepass_android.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -51,7 +52,10 @@ public class UsageDataListAdapter extends ArrayAdapter<UsageData> {
         user_name_view.setText(user_name);
         bike_usage_time.setText(bike_usage+" min");
         bike_image.setImageResource(R.drawable.bike_busy);
-
+        if(user_name.equals("You")) {
+            user_name_view.setTextColor(Color.MAGENTA);
+            bike_usage_time.setTextColor(Color.MAGENTA);
+        }
         return convertView;
     }
 }
