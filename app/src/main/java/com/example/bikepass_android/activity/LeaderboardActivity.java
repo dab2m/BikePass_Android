@@ -133,7 +133,7 @@ public class LeaderboardActivity extends AppCompatActivity implements View.OnCli
                  String jsonString = response;
                  final ListView mlistView=findViewById(R.id.list_view);
                  final ArrayList <UsageData> usage_data=new ArrayList<UsageData>();
-                 if (jsonString != null && !jsonString.contains("Could not fetch recipes")) {
+                 if (jsonString != null ) {
                      try {
                          JSONObject jsonObject = new JSONObject(jsonString);
                          JSONArray bike_users = jsonObject.getJSONArray("bike_users");

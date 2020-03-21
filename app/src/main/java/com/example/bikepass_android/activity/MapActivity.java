@@ -6,13 +6,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
+import com.example.bikepass_android.adapter.UsageDataListAdapter;
+import com.example.bikepass_android.model.UsageData;
+import com.example.bikepass_android.network.JSONParser;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -27,10 +33,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
 /**
  * Created by Dilan on 02.02.2020
  */
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+    JSONParser jsonParser;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
@@ -101,14 +121,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         }
                     }
                 }
+
             }
         };
+
+        Bike async = new Bike();
+        try {
+            Log.i("execute","execute");
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
         //}
         // Add a marker in Tobb and move the camera
        //  LatLng tobb = new LatLng(39.92102,32.797466 );
-         LatLng jandarma=new LatLng(39.9248788,32.8047355);
+       /*LatLng jandarma=new LatLng(39.9248788,32.8047355);
          LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
          LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
          LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
@@ -116,7 +147,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
          mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike in Jandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
          mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
          mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
-         mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+         mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available))); */
 
 
     }
@@ -191,5 +222,92 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 isGPS = true; // flag maintain before get location
             }
         }
+    }
+
+
+    class Bike extends AsyncTask<String, String,String> {
+
+        @Override
+        protected String doInBackground(String[]urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonLocData = new JSONObject();
+            try {
+                jsonLocData.put("lat",wayLatitude);
+                jsonLocData.put("long",wayLongitude);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonLocData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                Log.i("dilan","dilan");
+                jsonParser = new JSONParser();
+                String jsonString = response;
+                if (jsonString != null ) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        JSONObject bikes = jsonObject.getJSONObject("bikes");
+                        for (int i = 0; i < bikes.length(); i++) {
+                            JSONObject values = bikes.getJSONObject(String.valueOf(i));
+                            String bike_name = values.getString("name");
+                            String lat = values.getString("lat");
+                            String lng = values.getString("long");
+                            String status = values.getString("status");
+
+                        }
+                    /*        runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike in Jandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
+                                    mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
+                                    mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+                                    mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+                                }
+                            }); */
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d("JSON_RESPONSE", "Empty page resource!");
+                }
+                isr.close();
+                reader.close();
+                return "Success";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+
     }
 }
