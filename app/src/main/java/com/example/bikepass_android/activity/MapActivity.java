@@ -18,6 +18,9 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.directions.route.Route;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.example.bikepass_android.R;
 import com.example.bikepass_android.adapter.UsageDataListAdapter;
 import com.example.bikepass_android.model.UsageData;
@@ -33,6 +36,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -56,7 +60,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by Dilan on 02.02.2020
  */
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener, GoogleMap.OnMarkerClickListener {
     JSONParser jsonParser;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -65,6 +69,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private GoogleMap mMap;
     private boolean isGPS = false;
     private boolean isContinue = false;
+    ArrayList<Marker> marker=new ArrayList<Marker>();
+    LatLng userLoc;
 
 
 
@@ -101,6 +107,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
 
         if (!isGPS) {
             Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
@@ -193,6 +200,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
       return null;
     }
 
+    private void print_direction(double startLatitude,double startLongitude,double endLatitude,double endLongitude){
+
+        LatLng start = new LatLng(startLatitude, startLongitude);
+       //LatLng waypoint= new LatLng(wayLatitude, -77.499333);
+        LatLng end = new LatLng(endLatitude, endLongitude);
+       Log.i("hopp","hop");
+        Routing routing = new Routing.Builder()
+                .travelMode(Routing.TravelMode.WALKING)
+                .withListener(this)
+                .waypoints(start, end)
+                .build();
+        routing.execute();
+    }
+
     private void getLocation(){
         if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -209,7 +230,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         if (location != null) {
                             wayLatitude = location.getLatitude();
                             wayLongitude = location.getLongitude();
-                            LatLng userLoc = new LatLng(wayLatitude, wayLongitude);
+                            userLoc = new LatLng(wayLatitude, wayLongitude);
 
                             // mMap.clear();
                             mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
@@ -264,6 +285,38 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 isGPS = true; // flag maintain before get location
             }
         }
+    }
+
+    @Override
+    public void onRoutingFailure() {
+
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> arrayList, int i) {
+
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker myMarker) {
+
+        for(Marker marker:marker) {
+            if(marker.equals(myMarker)) {
+                Log.i("marker:", String.valueOf(myMarker.getPosition().latitude)+","+String.valueOf(myMarker.getPosition().longitude));
+                print_direction(myMarker.getPosition().latitude,myMarker.getPosition().longitude,wayLatitude,wayLongitude);
+            }
+        }
+        return true;
     }
 
 
@@ -344,16 +397,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                             }
 
                         }
-                       runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
 
-                                for(int i=0;i<loc_list.size();i++) {
-                                    // Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
-                                     mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name())));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
+
+                                    for (int i = 0; i < loc_list.size(); i++) {
+                                        // Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
+                                        marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
+
+                                    }
                                 }
-                            }
-                        });
+                            });
 
                     } catch (Exception e) {
                         e.printStackTrace();
