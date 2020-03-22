@@ -98,7 +98,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        
+
         if (!isGPS) {
             Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
             return;
@@ -129,9 +129,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         };
 
-        Bike async = new Bike();
+        BikeReq async = new BikeReq();
         try {
-            Log.i("execute","execute");
             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -255,7 +254,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
 
-    class Bike extends AsyncTask<String, String,String> {
+    class BikeReq extends AsyncTask<String, String,String> {
+
 
         @Override
         protected String doInBackground(String[]urls) {
@@ -293,31 +293,54 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                Log.i("dilan","dilan");
                 jsonParser = new JSONParser();
                 String jsonString = response;
                 if (jsonString != null ) {
                     try {
+                        final ArrayList<LatLng> loc_list=new ArrayList<LatLng>();
+                        final ArrayList <Bike> status=new ArrayList<Bike>();
+                        LatLng jandarma=new LatLng(39.9248788,32.8047355);
+                        LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
+                        LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
+                        LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONObject bikes = jsonObject.getJSONObject("bikes");
                         for (int i = 0; i < bikes.length(); i++) {
                             JSONObject values = bikes.getJSONObject(String.valueOf(i));
-                            String bike_name = values.getString("name");
-                            String lat = values.getString("lat");
-                            String lng = values.getString("long");
-                            String status = values.getString("status");
+                           // String bike_name = values.getString("name");
+                           // String lat = values.getString("lat");
+                           // String lng = values.getString("long");
+                            //String status = values.getString("status");
+                            loc_list.add(new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long"))));
+                           // mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike in Jandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
+                           // mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
+                           // mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+                           // mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+
+                            if(values.getString("status").equals("0")){
+                             Bike  bike=new Bike(0,"Off service",R.drawable.bike_offservice);
+                                status.add(bike);
+                            }
+                            else if(values.getString("status").equals("1")){
+                              Bike   bike=new Bike(1,"Available",R.drawable.bike_available);
+                                status.add(bike);
+                            }
+                            else if(values.getString("status").equals("2")){
+                               Bike  bike=new Bike(2,"Busy",R.drawable.bike_busy);
+                                status.add(bike);
+                            }
 
                         }
-                    /*        runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                       runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                                    mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike in Jandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
-                                    mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
-                                    mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
-                                    mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
+                                for(int i=0;i<loc_list.size();i++) {
+                                     Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
+                                     mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name())));
                                 }
-                            }); */
+                            }
+                        });
 
                     } catch (Exception e) {
                         e.printStackTrace();
