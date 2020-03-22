@@ -10,6 +10,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -48,6 +49,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -128,30 +131,40 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
             }
         };
+        setRepeatingAsyncTask();
 
-        BikeReq async = new BikeReq();
-        try {
-            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    }
 
+    private void setRepeatingAsyncTask() {
 
-        //}
-        // Add a marker in Tobb and move the camera
-       //  LatLng tobb = new LatLng(39.92102,32.797466 );
-       /*LatLng jandarma=new LatLng(39.9248788,32.8047355);
-         LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
-         LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
-         LatLng ato_hatira_ormani=new LatLng(39.9128171,32.7964965);
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
 
-         mMap.addMarker(new MarkerOptions().position(jandarma).title("Busy bike in Jandara Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_busy)));
-         mMap.addMarker(new MarkerOptions().position(genel_mudurluk).title("Off service bike in Orman Genel Mudurlugu").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_offservice)));
-         mMap.addMarker(new MarkerOptions().position(tarim_bakanlıgı).title("Available bike in Tarım Bakaligi!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available)));
-         mMap.addMarker(new MarkerOptions().position(ato_hatira_ormani).title("Available bike in Ato Hatıra Ormani!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available))); */
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            BikeReq async = new BikeReq();
+                            try {
 
+                                async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+                                mMap.clear();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+            }
+        };
+
+        timer.schedule(task, 0, 3*1000);  // interval of one 3 seconds
 
     }
 
@@ -336,7 +349,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                             public void run() {
 
                                 for(int i=0;i<loc_list.size();i++) {
-                                     Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
+                                    // Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
                                      mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name())));
                                 }
                             }
