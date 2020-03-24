@@ -15,15 +15,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.directions.route.Route;
-import com.directions.route.Routing;
-import com.directions.route.RoutingListener;
 import com.example.bikepass_android.R;
-import com.example.bikepass_android.adapter.UsageDataListAdapter;
-import com.example.bikepass_android.model.UsageData;
 import com.example.bikepass_android.network.JSONParser;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -38,9 +32,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,11 +51,12 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+import com.example.bikepass_android.activity.directionhelpers.FetchURL;
 
 /**
  * Created by Dilan on 02.02.2020
  */
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener, GoogleMap.OnMarkerClickListener {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
     JSONParser jsonParser;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -71,6 +67,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private boolean isContinue = false;
     ArrayList<Marker> marker=new ArrayList<Marker>();
     LatLng userLoc;
+    private Polyline currentPolyline;
 
 
 
@@ -101,13 +98,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         });
 
+        String url=getUrl(marker.get(0).getPosition(),marker.get(1).getPosition(),"walking");
+        new FetchURL(MapActivity.this).execute(url,"walking");
+
     }
 
+    @Override
+    public void onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnMarkerClickListener(this);
+        //mMap.setOnMarkerClickListener(this);
 
         if (!isGPS) {
             Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
@@ -200,7 +206,23 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
       return null;
     }
 
-    private void print_direction(double startLatitude,double startLongitude,double endLatitude,double endLongitude){
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        return url;
+    }
+
+ /*   private void print_direction(double startLatitude,double startLongitude,double endLatitude,double endLongitude){
 
         LatLng start = new LatLng(startLatitude, startLongitude);
        //LatLng waypoint= new LatLng(wayLatitude, -77.499333);
@@ -213,7 +235,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .build();
         routing.execute();
     }
-
+*/
     private void getLocation(){
         if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -287,7 +309,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
-    @Override
+ /*   @Override
     public void onRoutingFailure() {
 
     }
@@ -318,7 +340,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
         return true;
     }
-
+*/
 
     class BikeReq extends AsyncTask<String, String,String> {
 
@@ -395,6 +417,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                Bike  bike=new Bike(2,"Busy",R.drawable.bike_busy);
                                 status.add(bike);
                             }
+                            else if(values.getString("status").equals("3")){
+                                Bike  bike=new Bike(3,"Rezerved",R.drawable.bike_busy);
+                                status.add(bike);
+                            }
 
                         }
 
@@ -406,6 +432,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                                     for (int i = 0; i < loc_list.size(); i++) {
                                         // Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
+                                        Log.i("tag:",status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
                                         marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
 
                                     }
