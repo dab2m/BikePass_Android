@@ -1,10 +1,11 @@
-package com.example.bikepass_android.activity.directionhelpers;
+package com.example.bikepass_android.directionhelpers;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.bikepass_android.activity.TaskLoadedCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -13,10 +14,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-/**
- * Created by Vishal on 10/20/2018.
- */
 
 public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
     TaskLoadedCallback taskCallback;

@@ -1,4 +1,4 @@
-package com.example.bikepass_android.activity.directionhelpers;
+package com.example.bikepass_android.directionhelpers;
 
 import com.google.android.gms.maps.model.LatLng;
 

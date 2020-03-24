@@ -15,10 +15,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
-import com.example.bikepass_android.network.JSONParser;
+import com.example.bikepass_android.network.*;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -51,12 +53,12 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-import com.example.bikepass_android.activity.directionhelpers.FetchURL;
+import com.example.bikepass_android.directionhelpers.*;
 
 /**
  * Created by Dilan on 02.02.2020
  */
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback, View.OnClickListener {
     JSONParser jsonParser;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -68,7 +70,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
     ArrayList<Marker> marker=new ArrayList<Marker>();
     LatLng userLoc;
     private Polyline currentPolyline;
-
+    final ArrayList<LatLng> loc_list=new ArrayList<LatLng>();
+    final ArrayList <Bike> status=new ArrayList<Bike>();
+    Button getPath;
 
 
     @SuppressLint("MissingPermission")
@@ -82,7 +86,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.bikes);
         mapFragment.getMapAsync(this);
-
+        getPath= findViewById(R.id.getPath);
+        getPath.setOnClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         locationRequest = LocationRequest.create();
@@ -98,8 +103,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
             }
         });
 
-        String url=getUrl(marker.get(0).getPosition(),marker.get(1).getPosition(),"walking");
-        new FetchURL(MapActivity.this).execute(url,"walking");
 
     }
 
@@ -177,7 +180,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
             }
         };
 
-        timer.schedule(task, 0, 3*1000);  // interval of one 3 seconds
+        timer.schedule(task, 0, 60*1000);  // interval of one 3 seconds
 
     }
 
@@ -309,6 +312,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.getPath:
+              String url=getUrl(marker.get(0).getPosition(),marker.get(1).getPosition(),"walking");
+              new FetchURL(MapActivity.this).execute(url,"walking");
+              break;
+
+        }
+    }
  /*   @Override
     public void onRoutingFailure() {
 
@@ -385,8 +398,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
                 String jsonString = response;
                 if (jsonString != null ) {
                     try {
-                        final ArrayList<LatLng> loc_list=new ArrayList<LatLng>();
-                        final ArrayList <Bike> status=new ArrayList<Bike>();
+
                         LatLng jandarma=new LatLng(39.9248788,32.8047355);
                         LatLng genel_mudurluk=new LatLng(39.9172585,32.8009429);
                         LatLng tarim_bakanlıgı=new LatLng(39.9220168,32.7989694);
@@ -432,7 +444,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback{
 
                                     for (int i = 0; i < loc_list.size(); i++) {
                                         // Log.i("adrs",getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
-                                        Log.i("tag:",status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
+                                 //       Log.i("tag:",status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude));
                                         marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
 
                                     }

@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
@@ -27,12 +26,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import com.example.bikepass_android.adapter.UsageDataListAdapter;
-import com.example.bikepass_android.model.UsageData;
-import com.example.bikepass_android.network.JSONParser;
+import com.example.bikepass_android.network.*;
+
 
 import org.json.JSONArray;
-import org.w3c.dom.Text;
 
 /**
  * Created by Berk on 27.02.2020

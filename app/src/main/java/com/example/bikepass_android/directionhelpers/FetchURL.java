@@ -1,4 +1,4 @@
-package com.example.bikepass_android.activity.directionhelpers;
+package com.example.bikepass_android.directionhelpers;
 
 import android.content.Context;
 import android.os.AsyncTask;

@@ -1,4 +1,4 @@
-package com.example.bikepass_android.adapter;
+package com.example.bikepass_android.activity;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,7 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.bikepass_android.R;
-import com.example.bikepass_android.model.UsageData;
+import com.example.bikepass_android.activity.UsageData;
+
 
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class UsageDataListAdapter extends ArrayAdapter<UsageData> {
     int mresource;
 
 
-    public UsageDataListAdapter(@NonNull Context context, int resource, @NonNull List<UsageData> objects) {
+    public UsageDataListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<UsageData> objects) {
         super(context, resource, objects);
         mcontext=context;
         mresource=resource;
