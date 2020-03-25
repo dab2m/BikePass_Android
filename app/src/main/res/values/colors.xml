@@ -23,6 +23,9 @@
     <color name="paleBlueDarker">#82A7D4</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="orange">#eaad43</color>
+    <color name="green">#45bc62</color>
+    <color name="bluelight">#49acd5</color>
     <color name="backgroudBike">#B01A237E</color>
     <color name="backgroudWorld">#900277BD</color>
     <color name="backgroudSettings">#8D858596</color>
