@@ -429,11 +429,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }
-                // Response from server after login process will be stored in response variable.
+                // Response from server after rezerving process will be stored in response variable.
                 response = sb.toString().trim();
-                JSONObject jObj = new JSONObject(response);
-                final String message = jObj.getString("message");
-                String status = jObj.getString("status");
+                JSONObject jsonObject = new JSONObject(response);
+                String status = jsonObject.getString("status");
                 if (status.equals("0")) {
                     Toast.makeText(getApplicationContext(), "Request failed!", Toast.LENGTH_SHORT).show();
                 }
@@ -498,26 +497,26 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                             JSONObject jsonObject = new JSONObject(jsonString);
                             JSONObject bikes = jsonObject.getJSONObject("bikes");
-                            if (status.size() > 0)
+                         /*   if (status.size() > 0)
                                 for (int i = 0; i < status.size(); i++) {
                                     status.remove(i);
-                                }
+                                } */
                             for (int i = 0; i < bikes.length(); i++) {
                                 JSONObject values = bikes.getJSONObject(String.valueOf(i));
 
                                 loc_list.add(new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
 
                                 if (values.getString("status").equals("0")) {
-                                    Bike bike = new Bike(0, "Off service", R.drawable.bike_offservice, Integer.parseInt(values.getString("id").substring(3)));
+                                    Bike bike = new Bike(0, "Off service", R.drawable.bike_offservice, Integer.parseInt(values.getString("name").substring(4)));
                                     status.add(bike);
                                 } else if (values.getString("status").equals("1")) {
-                                    Bike bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt(values.getString("id").substring(3)));
+                                    Bike bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt(values.getString("name").substring(4)));
                                     status.add(bike);
                                 } else if (values.getString("status").equals("2")) {
-                                    Bike bike = new Bike(2, "Busy", R.drawable.bike_busy, Integer.parseInt(values.getString("id").substring(3)));
+                                    Bike bike = new Bike(2, "Busy", R.drawable.bike_busy, Integer.parseInt(values.getString("name").substring(4)));
                                     status.add(bike);
                                 } else if (values.getString("status").equals("3")) {
-                                    Bike bike = new Bike(3, "Rezerved", R.drawable.bike_busy, Integer.parseInt(values.getString("id").substring(3)));
+                                    Bike bike = new Bike(3, "Rezerved", R.drawable.bike_busy, Integer.parseInt(values.getString("name").substring(4)));
                                     status.add(bike);
                                 }
 
