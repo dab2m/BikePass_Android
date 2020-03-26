@@ -54,6 +54,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private String qrCode;
     private String username;
     private String myResult;
+    private String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +208,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                  */
                 Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
                 intent.putExtra("key", bikeId);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 dialog.cancel();
             }
@@ -252,17 +254,17 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
+                showDialogForWarning(this, "INFO : " + message);
             } else if (bikeStatus.equals("3")) { // Bike is not available
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
+                showDialogForWarning(this, "INFO : " + message);
             } else if (bikeStatus.equals("4")) { // Database error!
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
+                showDialogForWarning(this, "INFO : " + message);
             }
         } else {
             Toast.makeText(getApplicationContext(), "Bike Status is null !", Toast.LENGTH_LONG).show();
@@ -308,11 +310,15 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
 
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                final String message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
                 String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
 
                 isr.close();
                 reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
                 return status;
             } catch (IOException e) {
                 // Error

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -20,6 +21,17 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+
 /**
  * Created by MustafaSaid on 30.01.2020
  */
@@ -33,6 +45,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     ChronometerHelper chronometerHelper;
 
     private double totalPayment = 1.5;
+
+    private String username;
+    private int bikeTime;
 
 
     @Override
@@ -56,6 +71,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         }
         if (extras != null && extras.getString("bikeId") != null) {
             id = extras.getString("bikeId");
+        }
+        if (extras != null && extras.get("username") != null) {
+            username = extras.getString("username");
         }
         bikeId.setText(id);
 
@@ -108,6 +126,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.stopAndPayButton:
+                long elapsedTimeInMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+                long elapsedSeconds = elapsedTimeInMillis / 1000;
+                bikeTime = (int) elapsedSeconds;
                 showDialog(this, "TOTAL PAYMENT : " + totalPaymentCount.getText());
                 break;
         }
@@ -177,6 +198,19 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // REST API
+                MyAsyncBikeId async = new MyAsyncBikeId();
+                String bikeStatus = null;
+                try {
+                    bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //bikeStatusParser(bikeStatus);
+
+
                 Toast.makeText(getApplicationContext(), totalPaymentCount.getText() + " PAYMENT RECEIVED", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -186,5 +220,67 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         });
 
         dialog.show();
+    }
+
+
+    class MyAsyncBikeId extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+            String message;
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("username", username);
+                jsonObject.put("bike_id", bikeId);
+                jsonObject.put("bike_time", bikeTime);
+                jsonObject.put("bike_km", 5);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
+
+                isr.close();
+                reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
+                return status;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 }
