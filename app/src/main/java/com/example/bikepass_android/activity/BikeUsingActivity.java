@@ -237,7 +237,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("username", username);
-                jsonObject.put("bike_id", bikeId);
+                jsonObject.put("bike_id", bikeId.getText());
                 jsonObject.put("bike_time", bikeTime);
                 jsonObject.put("bike_km", 5);
             } catch (JSONException e) {
