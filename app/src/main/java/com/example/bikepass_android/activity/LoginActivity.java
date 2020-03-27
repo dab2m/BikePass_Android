@@ -1,16 +1,21 @@
 package com.example.bikepass_android.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
@@ -38,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText password;
     CheckBox rememberMe;
     Intent intent;
+    TextView recPwd;
     private SharedPreferences loginPreferences;
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
@@ -46,25 +52,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public void setView(String userName,String passWord){
 
-     username.setText(userName);
-     password.setText(passWord);
-     Toast.makeText(getApplicationContext(), "Account is created! Welcome to BikePass "+userName+"!", Toast.LENGTH_SHORT).show();
-     setStorage(userName,passWord);
+        username.setText(userName);
+        password.setText(passWord);
+        Toast.makeText(getApplicationContext(), "Account is created! Welcome to BikePass "+userName+"!", Toast.LENGTH_SHORT).show();
+        setStorage(userName,passWord);
 
     }
-     public void setStorage(String username,String password){
+    public void setStorage(String username,String password){
 
-         loginPrefsEditor.putBoolean("saveLogin", true);
-         loginPrefsEditor.putString("username", username);
-         loginPrefsEditor.putString("password", password);
-         loginPrefsEditor.apply();
-         loginPrefsEditor.commit();
-     }
+        loginPrefsEditor.putBoolean("saveLogin", true);
+        loginPrefsEditor.putString("username", username);
+        loginPrefsEditor.putString("password", password);
+        loginPrefsEditor.apply();
+        loginPrefsEditor.commit();
+    }
 
-     public void clearStrorage(){
-         loginPrefsEditor.clear();
-         loginPrefsEditor.commit();
-     }
+    public void clearStrorage(){
+        loginPrefsEditor.clear();
+        loginPrefsEditor.commit();
+    }
     public void goToSignupActivity(View view){
 
         Intent intent=new Intent(getApplicationContext(),SignUpActivity.class);
@@ -108,6 +114,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         buttonLogin.setOnClickListener(this);
         rememberMe = findViewById(R.id.saveLoginCheckBox);
         rememberMe.setOnClickListener(this);
+        recPwd=findViewById(R.id.resetPawd);
+        recPwd.setOnClickListener(this);
 
         loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         loginPrefsEditor = loginPreferences.edit();
@@ -206,12 +214,53 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 passWord = password.getText().toString();
 
                 if (rememberMe.isChecked()) {
-                   setStorage(userName,passWord);
+                    setStorage(userName,passWord);
                 } else {
-                   clearStrorage();
+                    clearStrorage();
                 }
                 break;
+            case R.id.resetPawd:
+                showRecoverPasswordDialog();
+
         }
+    }
+
+    private void showRecoverPasswordDialog() {
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("Recover Password");
+        LinearLayout linearLayout=new LinearLayout(this);
+        final EditText emailEt=new EditText(this);
+        emailEt.setHint("Email");
+        emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+
+        linearLayout.addView(emailEt);
+        linearLayout.setPadding(10,10,10,10);
+
+        builder.setView(linearLayout);
+
+        builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String email=emailEt.getText().toString().trim();
+                beginRecovery(email);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void beginRecovery(String email) {
+
     }
 
 }
