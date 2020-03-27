@@ -322,6 +322,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 dialog.dismiss();
 
+
             }
         });
 
@@ -329,17 +330,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void beginRecovery(String email) {
-        setProgressDialog("Sending email...");
+
         MyAsyncRecovery async = new MyAsyncRecovery(email);
         try {
             String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+            setProgressDialog("Sending email...",result);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-    public void setProgressDialog(String message) {
+    public void setProgressDialog(String message, final String result) {
 
         int llPadding = 30;
         LinearLayout ll = new LinearLayout(this);
@@ -390,6 +392,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 if (dialog.isShowing()) {
                     dialog.dismiss();
+                    if(result.equals("Success"))
+                        Toast.makeText(getApplicationContext(), "Email sent", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getApplicationContext(), "Error occured when sending email!", Toast.LENGTH_SHORT).show();
                 }
             }
         };
