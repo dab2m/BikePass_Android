@@ -1,20 +1,28 @@
 package com.example.bikepass_android.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
     private String userName,passWord;
+    ProgressBar pb;
 
 
     public void setView(String userName,String passWord){
@@ -116,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         rememberMe.setOnClickListener(this);
         recPwd=findViewById(R.id.resetPawd);
         recPwd.setOnClickListener(this);
-
+        pb=new ProgressBar(this);
         loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         loginPrefsEditor = loginPreferences.edit();
 
@@ -200,6 +209,65 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    class MyAsyncRecovery extends AsyncTask<String,Void,String> {
+
+        String email;
+        public MyAsyncRecovery(String email){
+            this.email=email;
+        }
+        @Override
+        protected String doInBackground(String[]urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonRecData = new JSONObject();
+            try {
+                jsonRecData.put("email",this.email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonRecData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                // Response from server after recovery process will be stored in response variable.
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                final String message = jObj.getString("message");
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                isr.close();
+                reader.close();
+                return "Success";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+                return "Failure sending";
+            } catch (JSONException e) {
+                return "Failure sending";
+              //  e.printStackTrace();
+            }
+
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -221,6 +289,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.resetPawd:
                 showRecoverPasswordDialog();
+                break;
 
         }
     }
@@ -260,7 +329,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void beginRecovery(String email) {
-
+       // setProgressDialog("Sending email...");
+        MyAsyncRecovery async = new MyAsyncRecovery(email);
+        try {
+            String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
 }
