@@ -33,5 +33,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.github.jd-alexander:library:1.0.7'
-
+    implementation "com.journeyapps:zxing-android-embedded:3.5.0@aar"
+    implementation "com.google.zxing:core:3.3.0"
+    implementation 'com.android.billingclient:billing:1.0'
 }
