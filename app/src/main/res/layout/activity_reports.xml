@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/leaderboard_activity"
+    android:orientation="vertical"
     tools:context=".activity.ReportsActivity">
 
     <LinearLayout
@@ -16,8 +16,8 @@
             android:id="@+id/textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
@@ -27,8 +27,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             android:text="How much did you cycle this week"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
@@ -42,11 +42,11 @@
 
         <Button
             android:id="@+id/worldleaderboard"
-            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="30dp"
+            android:layout_gravity="bottom"
             android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginRight="50dp"
             android:layout_marginBottom="50dp"
             android:background="@drawable/rounded_button"
@@ -54,6 +54,56 @@
             android:text="Leaderboard"
             android:textColor="@color/white"
             android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_totalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Bike Using Time: "
+                android:textColor="@color/red"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/totalTimeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 sec"
+                android:textColor="@color/red"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_totalRecovery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CO2 Recovery: "
+                android:textColor="@color/red"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/totalRecoveryCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 kg"
+                android:textColor="@color/red"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
