@@ -1,6 +1,6 @@
 package com.example.bikepass_android.activity;
 
- class Bike {
+ public class Bike {
 
     private int status_code;
     private String status_name;

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
@@ -58,6 +59,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import com.example.bikepass_android.directionhelpers.*;
+
 
 /**
  * Created by Dilan on 02.02.2020
@@ -534,6 +536,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                         marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
 
                                     }
+                                   // marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(37.4220041,-122.0862462)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available))));
                                 }
                             });
 
