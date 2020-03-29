@@ -96,7 +96,8 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         ha.postDelayed(new Runnable() {
             @Override
             public void run() {
-                totalPayment = totalPayment + 0.25;
+                if(chronometer.getText().toString().substring(6).equals("59")) // kronometre ekrani kapatilip acildiginda yanlis zamanda ucret eklemesi yapilmasin diye yazildi
+                    totalPayment = totalPayment + 0.25;
                 totalPaymentCount.setText(totalPayment + " TL");
 
                 ha.postDelayed(this, 60000);
