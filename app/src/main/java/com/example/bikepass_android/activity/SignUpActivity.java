@@ -198,7 +198,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 jsonRegisterData.put("email",email);
                 jsonRegisterData.put("question",selectedItemText);
                 jsonRegisterData.put("answer",questionAnswer);
-                
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

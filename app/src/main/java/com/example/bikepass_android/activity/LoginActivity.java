@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,6 +59,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Boolean saveLogin;
     private String userName,passWord;
     ProgressBar pb;
+    String emailforecovery;
+    String answerforecovery;
 
 
     public void setView(String userName,String passWord){
@@ -104,6 +108,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             MyAsyncLogin async = new MyAsyncLogin();
             try {
                 async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+               // async.execute("https://localhost/app.php").get();
+
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -209,10 +215,188 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.login:
+                tryLogin(v);
+                break;
+            case R.id.saveLoginCheckBox:
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(username.getWindowToken(), 0);
+
+                userName = username.getText().toString();
+                passWord = password.getText().toString();
+
+                if (rememberMe.isChecked()) {
+                    setStorage(userName,passWord);
+                } else {
+                    clearStrorage();
+                }
+                break;
+            case R.id.resetPawd:
+                showRecoverPasswordDialog("Please enter your username so we can ask your security question","Username");
+                break;
+
+        }
+    }
+
+    private void showRecoverPasswordDialog(String title, final String hint) {
+
+        final AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        LinearLayout linearLayout=new LinearLayout(this);
+        final EditText value=new EditText(this);
+        value.setHint(hint);
+        value.setPadding(50,20,100,20);
+        value.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+
+        linearLayout.addView(value);
+        linearLayout.setPadding(10,10,10,10);
+
+        builder.setView(linearLayout);
+        builder.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(hint.equals("Username")) {
+                    Log.i("hint:",hint);
+                    String rec_value = value.getText().toString().trim();
+                    beginRecovery(rec_value);
+                }
+                else{
+                    Log.i("hint:",hint);
+                    String rec_value = value.getText().toString().trim();
+                      if(rec_value.equals(answerforecovery))
+                          sendRecoveryEmail(emailforecovery);
+                    else
+                      {
+                          Toast.makeText(getApplicationContext(), "Answer doesnt match!", Toast.LENGTH_SHORT).show();
+                      }
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+        runOnUiThread(new Runnable() {
+            public void run() {
+                builder.create().show();
+
+            }
+        });
+    }
+
+    private void  beginRecovery(String usernamerec) {
+        Log.i("begin:","beginrec");
+        MyAsyncRecovery async = new MyAsyncRecovery(usernamerec);
+        try {
+            String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendRecoveryEmail(String emailforecovery) {
+
+        MyAsyncRecoveryEmail async = new MyAsyncRecoveryEmail(emailforecovery);
+        try {
+             String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();;
+            if(result.equals("Success"))
+                setProgressDialog("Sending email to "+ emailforecovery,result);
+        } catch (ExecutionException e) {
+            Log.i("hata:",e.toString());
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            Log.i("hata2:",e.toString());
+            e.printStackTrace();
+        }
+
+    }
+
     class MyAsyncRecovery extends AsyncTask<String,Void,String> {
 
+        String username;
+
+        public MyAsyncRecovery(String usernamerec){
+            this.username=usernamerec;
+        }
+        @Override
+        protected String doInBackground(String[]urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonRecData = new JSONObject();
+            try {
+                jsonRecData.put("usernamerec",this.username);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonRecData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                // Response from server after recovery process will be stored in response variable.
+                response = sb.toString().trim();
+                String jsonString=response;
+                JSONObject jObj = new JSONObject(jsonString);
+                JSONArray data = jObj.getJSONArray("data");
+                String message = jObj.getString("message");
+                String status=jObj.getString("status");
+                JSONObject values = data.getJSONObject(0);
+                emailforecovery=values.getString("email");
+                answerforecovery=values.getString("answer");
+
+                if(jObj.getString("status").equals("0")) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else if(status.equals("1")){
+                    showRecoverPasswordDialog(values.getString("question"),"Answer");
+                }
+                isr.close();
+                reader.close();
+                return "";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+                return "Failure sending";
+            } catch (JSONException e) {
+                return "Failure sending";
+                //  e.printStackTrace();
+            }
+        }
+    }
+
+    class MyAsyncRecoveryEmail extends AsyncTask<String,Void,String> {
+
         String email;
-        public MyAsyncRecovery(String email){
+        public MyAsyncRecoveryEmail(String email){
             this.email=email;
         }
         @Override
@@ -224,7 +408,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             String response = null;
             JSONObject jsonRecData = new JSONObject();
             try {
-                jsonRecData.put("email",this.email);
+                jsonRecData.put("recovery_email",this.email);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -248,97 +432,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Response from server after recovery process will be stored in response variable.
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                final String message = jObj.getString("message");
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                final String status = jObj.getString("status");
                 isr.close();
                 reader.close();
-                return "Success";
+              /*  if(status.equals("1"))
+                    return "Success";
+                else
+                    return "Failure"; */
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();
-                return "Failure sending";
+                //return "Failure sending";
             } catch (JSONException e) {
-                return "Failure sending";
-              //  e.printStackTrace();
+               // return "Failure sending";
+                //  e.printStackTrace();
             }
-
-        }
-    }
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login:
-                tryLogin(v);
-                break;
-            case R.id.saveLoginCheckBox:
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(username.getWindowToken(), 0);
-
-                userName = username.getText().toString();
-                passWord = password.getText().toString();
-
-                if (rememberMe.isChecked()) {
-                    setStorage(userName,passWord);
-                } else {
-                    clearStrorage();
-                }
-                break;
-            case R.id.resetPawd:
-                showRecoverPasswordDialog();
-                break;
-
-        }
-    }
-
-    private void showRecoverPasswordDialog() {
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("Recover Password");
-        LinearLayout linearLayout=new LinearLayout(this);
-        final EditText emailEt=new EditText(this);
-        emailEt.setHint("Email");
-        emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-
-        linearLayout.addView(emailEt);
-        linearLayout.setPadding(10,10,10,10);
-
-        builder.setView(linearLayout);
-
-        builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                String email=emailEt.getText().toString().trim();
-                beginRecovery(email);
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-
-
-            }
-        });
-
-        builder.create().show();
-    }
-
-    private void beginRecovery(String email) {
-
-        MyAsyncRecovery async = new MyAsyncRecovery(email);
-        try {
-            String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-            setProgressDialog("Sending email...",result);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+         return "Success";
         }
     }
     public void setProgressDialog(String message, final String result) {
