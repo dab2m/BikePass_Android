@@ -48,7 +48,7 @@
             android:layout_marginLeft="50dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="50dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@color/colorPrimary"
             android:text="Leaderboard"
@@ -67,47 +67,83 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
-                android:background="@color/zxing_custom_viewfinder_mask"
-                android:columnCount="2"
+                android:layout_centerVertical="true"
+                android:alignmentMode="alignBounds"
+                android:columnCount="1"
                 android:orientation="horizontal"
                 android:rowCount="2"
                 android:useDefaultMargins="true">
 
-                <TextView
-                    android:id="@+id/tv_totalTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Time: "
-                    android:textColor="@color/backgroudWorld"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:background="@drawable/border"
+                    android:padding="5dip">
 
-                <TextView
-                    android:id="@+id/totalTimeCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 sec"
-                    android:textColor="@color/white"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/ivInvite"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/bikelogo" />
 
-                <TextView
-                    android:id="@+id/tv_totalRecovery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CO2: "
-                    android:textColor="@color/backgroudWorld"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/totalRecoveryCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0.0 kg"
-                    android:textColor="@color/white"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_totalTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="Time: "
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="24dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/totalTimeCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="0 sec"
+                        android:textColor="@color/white"
+                        android:textSize="24dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:background="@drawable/border"
+                    android:padding="5dip">
+
+                    <ImageView
+                        android:id="@+id/ivNotificationOff"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/co2" />
+
+                    <TextView
+                        android:id="@+id/tv_totalRecovery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="CO2: "
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="24dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/totalRecoveryCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="0.0 kg"
+                        android:textColor="@color/white"
+                        android:textSize="24dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
 
             </GridLayout>

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -40,6 +41,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton bGoMap;
     ImageButton bSettings;
     TextView view;
+    GridLayout gl;
 
     private String time = null;
     private String bikeId = null;
@@ -59,6 +61,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         bRentBike = (ImageButton) findViewById(R.id.returnbikes);
         bGoMap = (ImageButton) findViewById(R.id.map);
         bSettings = (ImageButton) findViewById(R.id.settings);
+        gl = (GridLayout) findViewById(R.id.grid_layout);
+
 
         totalTimeCount = (TextView) findViewById(R.id.totalTimeCount);
         totalRecoveryCount = (TextView) findViewById(R.id.totalRecoveryCount);
