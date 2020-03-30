@@ -39,12 +39,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     EditText username;
     EditText password;
     EditText mail;
+    EditText qanswer;
     Button buton;
     String userName= "";
     String passwordUser="";
     String email="";
     Intent intent=null;
     Spinner spinner;
+    String selectedItemText;
+    String questionAnswer;
     public void backToMainActivity(View view){
 
         intent=new Intent(getApplicationContext(), LoginActivity.class);
@@ -110,14 +113,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItemText = (String) parent.getItemAtPosition(position);
-                // If user change the default selection
-                // First item is disable and it is used for hint
+                selectedItemText = (String) parent.getItemAtPosition(position);
+
                 if(position > 0){
-                    // Notify the selected item text
-                    Toast.makeText
-                            (getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
-                            .show();
+                   // Toast.makeText(getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -148,6 +147,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         passwordUser=password.getText().toString();
         mail = findViewById(R.id.emailsignup);
         email=mail.getText().toString();
+        qanswer=findViewById(R.id.answerspinner);
+        questionAnswer=qanswer.getText().toString();
 
         if (username.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Username cant be empty", Toast.LENGTH_SHORT).show();
@@ -155,11 +156,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(getApplicationContext(), "Email cant be empty", Toast.LENGTH_SHORT).show();
         else if (password.getText().toString().isEmpty())
             Toast.makeText(getApplicationContext(), "Password cant be empty", Toast.LENGTH_SHORT).show();
+        else if (qanswer.getText().toString().isEmpty())
+            Toast.makeText(getApplicationContext(), "Answer cant be empty", Toast.LENGTH_SHORT).show();
         else {
             MyAsyncSignup async = new MyAsyncSignup();
             try {
                 String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
-                Log.i("text:", result);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -194,6 +196,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 jsonRegisterData.put("username",userName);
                 jsonRegisterData.put("password",passwordUser);
                 jsonRegisterData.put("email",email);
+                jsonRegisterData.put("question",selectedItemText);
+                jsonRegisterData.put("answer",questionAnswer);
+                
             } catch (JSONException e) {
                 e.printStackTrace();
             }
