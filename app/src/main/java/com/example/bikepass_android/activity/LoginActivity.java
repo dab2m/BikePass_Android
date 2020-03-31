@@ -278,6 +278,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String rec_value = value.getText().toString().trim();
                       if(rec_value.equals(answerforecovery)) {
                           sendRecoveryEmail(emailforecovery);
+                          showChangePasswordDialog("Please enter the code we sent you and create a new password");
                       }else
                       {
                           Toast.makeText(getApplicationContext(), "Answer doesnt match!", Toast.LENGTH_SHORT).show();
@@ -300,7 +301,74 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+    private void showChangePasswordDialog(String title) {
 
+        final AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        LinearLayout linearLayout=new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        final EditText value=new EditText(this);
+        value.setHint("Code");
+        value.setPadding(50,60,100,20);
+        value.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        linearLayout.addView(value);
+
+        final EditText passwordvalue=new EditText(this);
+        passwordvalue.setHint("Password");
+        passwordvalue.setPadding(50,80,100,20);
+        passwordvalue.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        linearLayout.addView(passwordvalue);
+
+        final EditText passwordagain=new EditText(this);
+        passwordagain.setHint("Password Again");
+        passwordagain.setPadding(50,80,100,20);
+        passwordagain.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        linearLayout.addView(passwordagain);
+
+        linearLayout.setPadding(10,10,10,10);
+
+        builder.setView(linearLayout);
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!password.getText().toString().equals(passwordagain.getText().toString())){
+                    Toast.makeText(getApplicationContext(), "Password doesnt match!", Toast.LENGTH_SHORT).show();
+                }
+                else if(!value.getText().equals(session.nextString())){
+                    Toast.makeText(getApplicationContext(), "The code we have sent you doesnt match!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    //MyAsyncChangePassord asynccp=new MyAsyncChangePassord(usernamerecovery,password.getText().toString());
+                    //try {
+                        //String result=asynccp.execute(myurl).get();
+                       // result="Success";
+                        //setProgressDialog("Password is changing ","Your password have been changed succesfully","An error occurred!",result);
+                   // } catch (ExecutionException e) {
+
+                    //    e.printStackTrace();
+                    //} catch (InterruptedException e) {
+
+                      //  e.printStackTrace();
+                   // }
+                    //dialog.dismiss();
+                }
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+        runOnUiThread(new Runnable() {
+            public void run() {
+                builder.create().show();
+
+            }
+        });
+    }
 
     private void  beginRecovery(String usernamerec) {
 
