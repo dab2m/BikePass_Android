@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
@@ -42,7 +45,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Dilan on 22.01.2020
@@ -63,7 +68,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String emailforecovery;
     String answerforecovery;
     String myurl;
-    String usernamerec;
+    String usernamerecovery;
+    RandomString session;
 
 
     @Override
@@ -254,27 +260,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         LinearLayout linearLayout=new LinearLayout(this);
         final EditText value=new EditText(this);
         value.setHint(hint);
-        value.setPadding(50,20,100,20);
+        value.setPadding(20,40,40,20);
         value.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
 
         linearLayout.addView(value);
-        linearLayout.setPadding(10,10,10,10);
+        linearLayout.setPadding(40,20,20,10);
 
         builder.setView(linearLayout);
         builder.setPositiveButton("Next", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(hint.equals("Username")) {
-                    Log.i("hint:",hint);
                     String rec_value = value.getText().toString().trim();
                     beginRecovery(rec_value);
                 }
                 else{
-                    Log.i("hint:",hint);
                     String rec_value = value.getText().toString().trim();
-                      if(rec_value.equals(answerforecovery))
+                      if(rec_value.equals(answerforecovery)) {
                           sendRecoveryEmail(emailforecovery);
-                    else
+                      }else
                       {
                           Toast.makeText(getApplicationContext(), "Answer doesnt match!", Toast.LENGTH_SHORT).show();
                       }
@@ -297,8 +301,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+
     private void  beginRecovery(String usernamerec) {
-        Log.i("begin:","beginrec");
+
         MyAsyncRecovery async = new MyAsyncRecovery(usernamerec);
         try {
             String result=async.execute(myurl).get();
@@ -314,15 +319,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         MyAsyncRecoveryEmail async = new MyAsyncRecoveryEmail(emailforecovery);
         try {
-             String result=async.execute(myurl).get();
-             Log.i("myresult:",result);
-            if(result.equals("Success"))
-                setProgressDialog("Sending email to "+ emailforecovery,result);
+             String result=async.execute("https://Bikepass.herokuapp.com/recoverymail.php").get();
+             result="Success";
+             setProgressDialog("Sending email to "+ emailforecovery,"Email sent","Error occured when sending email!",result);
         } catch (ExecutionException e) {
-            Log.i("hata:",e.toString());
+
             e.printStackTrace();
         } catch (InterruptedException e) {
-            Log.i("hata2:",e.toString());
+
             e.printStackTrace();
         }
 
@@ -335,7 +339,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public MyAsyncRecovery(String usernamerec)
         {
             this.username=usernamerec;
-            usernamerec=usernamerec;
+            usernamerecovery=usernamerec;
         }
         @Override
         protected String doInBackground(String[]urls) {
@@ -374,7 +378,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject jObj = new JSONObject(jsonString);
                 JSONArray data = jObj.getJSONArray("data");
                 final String message = jObj.getString("message");
-                Log.i("mesage:",message);
                 String status=jObj.getString("status");
                 JSONObject values = data.getJSONObject(0);
                 emailforecovery=values.getString("email");
@@ -394,13 +397,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return "";
             } catch (IOException e) {
                 // Error
-                Log.i("hata1:",e.getMessage());
                 return "Failure sending";
             } catch (JSONException e) {
-                Log.i("hata2:",e.getMessage());
-
+                e.printStackTrace();
                 return "Failure sending";
-                //  e.printStackTrace();
+
             }
         }
     }
@@ -413,7 +414,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         @Override
         protected String doInBackground(String[]urls) {
-            Log.i("email:",this.email);
+
+           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                session = new RandomString(8);
+            }
+           Log.i("session:",session.nextString());
             HttpURLConnection connection;
             OutputStreamWriter request = null;
             URL url = null;
@@ -421,7 +426,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             JSONObject jsonRecData = new JSONObject();
             try {
                 jsonRecData.put("recovery_email",this.email);
-                jsonRecData.put("usernamerec",usernamerec);
+                jsonRecData.put("recovery_username",usernamerecovery);
+                //jsonRecData.put("recovery_token",session);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -455,22 +461,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();
-                Log.i("hata1:",e.getMessage());
                 return "Failure sending";
             } catch (JSONException e) {
-                Log.i("hata2:",e.getMessage());
                 return "Failure sending";
                 //  e.printStackTrace();
             }
 
         }
     }
-    public void setProgressDialog(String message, final String result) {
+    public void setProgressDialog(String message, final String successmesage, final String errormessage, final String result) {
 
         int llPadding = 30;
         LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.HORIZONTAL);
-        ll.setPadding(llPadding, llPadding, llPadding, llPadding);
+        ll.setPadding(llPadding, 60, llPadding, llPadding);
         ll.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams llParam = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -516,14 +520,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 if (dialog.isShowing()) {
                     dialog.dismiss();
-                    if(result.equals("Success"))
-                        Toast.makeText(getApplicationContext(), "Email sent", Toast.LENGTH_SHORT).show();
+                    if(result.equals("Success")) {
+                        Toast.makeText(getApplicationContext(), successmesage, Toast.LENGTH_SHORT).show();
+                    }
                     else
-                        Toast.makeText(getApplicationContext(), "Error occured when sending email!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), errormessage, Toast.LENGTH_SHORT).show();
                 }
             }
         };
-
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
