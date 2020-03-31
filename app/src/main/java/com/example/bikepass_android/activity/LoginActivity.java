@@ -338,18 +338,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(getApplicationContext(), "The code we have sent you doesnt match!", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    //MyAsyncChangePassord asynccp=new MyAsyncChangePassord(usernamerecovery,password.getText().toString());
-                    //try {
-                        //String result=asynccp.execute(myurl).get();
-                       // result="Success";
-                        //setProgressDialog("Password is changing ","Your password have been changed succesfully","An error occurred!",result);
-                   // } catch (ExecutionException e) {
+                    MyAsyncChangePassord asynccp=new MyAsyncChangePassord(usernamerecovery,password.getText().toString());
+                    try {
+                        String result=asynccp.execute(myurl).get();
+                         result="Success";
+                         setProgressDialog("Password is changing ","Your password have been changed succesfully","An error occurred!",result);
+                    } catch (ExecutionException e) {
 
-                    //    e.printStackTrace();
-                    //} catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
 
-                      //  e.printStackTrace();
-                   // }
+                        e.printStackTrace();
+                    }
                     //dialog.dismiss();
                 }
 
@@ -471,6 +471,71 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return "Failure sending";
 
             }
+        }
+    }
+
+
+    class MyAsyncChangePassord extends AsyncTask<String,Void,String> {
+
+        String username;
+        String changedpassword;
+        public MyAsyncChangePassord(String username, String password){
+            this.username=username;
+            this.changedpassword=password;
+        }
+        @Override
+        protected String doInBackground(String[]urls) {
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                session = new RandomString(8);
+            }
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonRecData = new JSONObject();
+            try {
+                jsonRecData.put("username_changepassword",this.username);
+                jsonRecData.put("password_new",this.changedpassword);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonRecData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                //Response from server after recovery process will be stored in response variable.
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                final String status = jObj.getString("status");
+                isr.close();
+                reader.close();
+                if(status.equals("1"))
+                    return "Success";
+                else
+                    return "Failure";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+                return "Failure sending";
+            } catch (JSONException e) {
+                return "Failure sending";
+                //  e.printStackTrace();
+            }
+
         }
     }
 
