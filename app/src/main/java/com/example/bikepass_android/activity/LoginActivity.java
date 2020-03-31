@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -61,7 +62,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     ProgressBar pb;
     String emailforecovery;
     String answerforecovery;
+    String myurl;
+    String usernamerec;
 
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        myurl="https://Bikepass.herokuapp.com/API/app.php";
+        username=findViewById(R.id.username);
+        password=findViewById(R.id.password);
+        buttonLogin = findViewById(R.id.login);
+        buttonLogin.setOnClickListener(this);
+        rememberMe = findViewById(R.id.saveLoginCheckBox);
+        rememberMe.setOnClickListener(this);
+        recPwd=findViewById(R.id.resetPawd);
+        recPwd.setOnClickListener(this);
+        pb=new ProgressBar(this);
+        loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        loginPrefsEditor = loginPreferences.edit();
+
+        Intent intent=getIntent();
+        if(intent.getStringExtra("username")!=null && intent.getStringExtra("password")!=null)
+            setView(intent.getStringExtra("username"),intent.getStringExtra("password"));
+
+        saveLogin = loginPreferences.getBoolean("saveLogin", false);
+
+        if (saveLogin == true) {
+            username.setText(loginPreferences.getString("username", ""));
+            password.setText(loginPreferences.getString("password", ""));
+            rememberMe.setChecked(true);
+        }
+    }
 
     public void setView(String userName,String passWord){
 
@@ -107,9 +141,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             passWord=password.getText().toString();
             MyAsyncLogin async = new MyAsyncLogin();
             try {
-                async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-               // async.execute("https://localhost/app.php").get();
-
+                async.execute(myurl).get();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -117,47 +149,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        username=findViewById(R.id.username);
-        password=findViewById(R.id.password);
-        buttonLogin = findViewById(R.id.login);
-        buttonLogin.setOnClickListener(this);
-        rememberMe = findViewById(R.id.saveLoginCheckBox);
-        rememberMe.setOnClickListener(this);
-        recPwd=findViewById(R.id.resetPawd);
-        recPwd.setOnClickListener(this);
-        pb=new ProgressBar(this);
-        loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-        loginPrefsEditor = loginPreferences.edit();
-
-        Intent intent=getIntent();
-        if(intent.getStringExtra("username")!=null && intent.getStringExtra("password")!=null)
-            setView(intent.getStringExtra("username"),intent.getStringExtra("password"));
-
-        saveLogin = loginPreferences.getBoolean("saveLogin", false);
-
-        if (saveLogin == true) {
-            username.setText(loginPreferences.getString("username", ""));
-            password.setText(loginPreferences.getString("password", ""));
-            rememberMe.setChecked(true);
-        }
-    }
 
     class MyAsyncLogin extends AsyncTask<String,Void,String> {
 
+        HttpURLConnection connection;
+        OutputStreamWriter request = null;
+        InputStreamReader isr;
+
+        URL url = null;
+        String response = null;
         @Override
         protected String doInBackground(String[]urls) {
 
-            HttpURLConnection connection;
-            OutputStreamWriter request = null;
 
-            URL url = null;
-            String response = null;
             JSONObject jsonLoginData = new JSONObject();
             try {
                 jsonLoginData.put("username",userName);
@@ -296,7 +301,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.i("begin:","beginrec");
         MyAsyncRecovery async = new MyAsyncRecovery(usernamerec);
         try {
-            String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+            String result=async.execute(myurl).get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -306,9 +311,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void sendRecoveryEmail(String emailforecovery) {
 
+
         MyAsyncRecoveryEmail async = new MyAsyncRecoveryEmail(emailforecovery);
         try {
-             String result=async.execute("https://Bikepass.herokuapp.com/API/app.php").get();;
+             String result=async.execute(myurl).get();
+             Log.i("myresult:",result);
             if(result.equals("Success"))
                 setProgressDialog("Sending email to "+ emailforecovery,result);
         } catch (ExecutionException e) {
@@ -325,8 +332,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         String username;
 
-        public MyAsyncRecovery(String usernamerec){
+        public MyAsyncRecovery(String usernamerec)
+        {
             this.username=usernamerec;
+            usernamerec=usernamerec;
         }
         @Override
         protected String doInBackground(String[]urls) {
@@ -364,7 +373,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String jsonString=response;
                 JSONObject jObj = new JSONObject(jsonString);
                 JSONArray data = jObj.getJSONArray("data");
-                String message = jObj.getString("message");
+                final String message = jObj.getString("message");
+                Log.i("mesage:",message);
                 String status=jObj.getString("status");
                 JSONObject values = data.getJSONObject(0);
                 emailforecovery=values.getString("email");
@@ -373,7 +383,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(jObj.getString("status").equals("0")) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }else if(status.equals("1")){
@@ -384,9 +394,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return "";
             } catch (IOException e) {
                 // Error
-                e.printStackTrace();
+                Log.i("hata1:",e.getMessage());
                 return "Failure sending";
             } catch (JSONException e) {
+                Log.i("hata2:",e.getMessage());
+
                 return "Failure sending";
                 //  e.printStackTrace();
             }
@@ -401,7 +413,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         @Override
         protected String doInBackground(String[]urls) {
-
+            Log.i("email:",this.email);
             HttpURLConnection connection;
             OutputStreamWriter request = null;
             URL url = null;
@@ -409,6 +421,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             JSONObject jsonRecData = new JSONObject();
             try {
                 jsonRecData.put("recovery_email",this.email);
+                jsonRecData.put("usernamerec",usernamerec);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -429,25 +442,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }
-                // Response from server after recovery process will be stored in response variable.
+                //Response from server after recovery process will be stored in response variable.
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
                 final String status = jObj.getString("status");
                 isr.close();
                 reader.close();
-              /*  if(status.equals("1"))
+                if(status.equals("1"))
                     return "Success";
                 else
-                    return "Failure"; */
+                    return "Failure";
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();
-                //return "Failure sending";
+                Log.i("hata1:",e.getMessage());
+                return "Failure sending";
             } catch (JSONException e) {
-               // return "Failure sending";
+                Log.i("hata2:",e.getMessage());
+                return "Failure sending";
                 //  e.printStackTrace();
             }
-         return "Success";
+
         }
     }
     public void setProgressDialog(String message, final String result) {
