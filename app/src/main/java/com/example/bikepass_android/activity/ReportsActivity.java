@@ -151,10 +151,9 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
                 intent2.putExtra("bikeId", bikeId);
                 intent2.putExtra("username", user_name);
-                if (time == null)
-                    startActivity(intent1);
-                else
-                    startActivity(intent2);
+
+                startActivity(intent1);
+
                 break;
             case R.id.map:
                 goToMapActivity(v);
