@@ -3,9 +3,10 @@
     android:layout_width="350dp"
     android:layout_height="300dp"
     android:layout_gravity="center"
-    android:background="@color/colorPrimaryDark"
+    android:background="@drawable/border"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:backgroundTint="@color/colorPrimary2">
 
     <TextView
         android:id="@+id/txtclose"
@@ -51,15 +52,15 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:background="@color/orange"
+            android:background="@drawable/border"
+            android:backgroundTint="@color/orange"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/moneysss"
-                />
+                android:src="@drawable/moneysss" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -90,37 +91,37 @@
                            android:textSize="18sp" />
                    </LinearLayout> -->
 
-               <LinearLayout
-                   android:layout_width="0dp"
-                   android:layout_height="50dp"
-                   android:layout_weight="1"
-                   android:background="@color/bluelight"
-                   android:gravity="center"
-                   android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="@color/bluelight"
+            android:gravity="center"
+            android:orientation="vertical">
 
-                   <ImageView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:src="@drawable/pinss"
-        />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/pinss" />
 
-                   <TextView
-                       android:id="@+id/dist"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textColor="@color/white"
-                       android:textSize="18sp" />
-               </LinearLayout>
-           </LinearLayout>
+            <TextView
+                android:id="@+id/dist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
 
-           <Button
-               android:id="@+id/btnrzrv"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_gravity="center_horizontal"
-               android:layout_marginTop="25dp"
-               android:background="@drawable/buttonstyle"
-               android:text="Rezerve et"
-               android:textColor="@color/white" />
+    <Button
+        android:id="@+id/btnrzrv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/buttonstyle"
+        android:text="Rezerve et"
+        android:textColor="@color/white" />
 
-       </LinearLayout>
+</LinearLayout>

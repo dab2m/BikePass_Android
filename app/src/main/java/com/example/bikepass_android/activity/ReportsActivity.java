@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,33 +45,48 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     GridLayout gl;
 
     private String time = null;
+    private String total_credit = null;
     private String bikeId = null;
     private String user_name;
 
     TextView totalTimeCount;
     TextView totalRecoveryCount;
+    TextView totalCreditCount;
+
+    CardView time_cardView;
+    CardView co2_cardView;
+    CardView credit_cardView;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_reports);
-        Intent intent = getIntent();
-        //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+
         bLeaderboard = (Button) findViewById(R.id.worldleaderboard);
         bRentBike = (ImageButton) findViewById(R.id.returnbikes);
         bGoMap = (ImageButton) findViewById(R.id.map);
         bSettings = (ImageButton) findViewById(R.id.settings);
         gl = (GridLayout) findViewById(R.id.grid_layout);
 
+        time_cardView = (CardView) findViewById(R.id.time_cardView);
+        co2_cardView = (CardView) findViewById(R.id.co2_cardView);
+        credit_cardView = (CardView) findViewById(R.id.credit_cardView);
 
         totalTimeCount = (TextView) findViewById(R.id.totalTimeCount);
         totalRecoveryCount = (TextView) findViewById(R.id.totalRecoveryCount);
+        totalCreditCount = (TextView) findViewById(R.id.totalCreditCount);
+
+        time_cardView.setOnClickListener(this);
+        co2_cardView.setOnClickListener(this);
+        credit_cardView.setOnClickListener(this);
 
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bGoMap.setOnClickListener(this);
         bSettings.setOnClickListener(this);
+
         view = findViewById(R.id.textview);
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
@@ -79,21 +95,30 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
         // REST API
         MyAsync async = new MyAsync();
-        String time = null;
+        String time_and_credit = null;
         try {
-            time = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+            time_and_credit = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        time = time_and_credit.substring(0, time_and_credit.indexOf(" "));
+        total_credit = time_and_credit.substring(time_and_credit.indexOf(" ") + 1);
 
-        totalTimeCount.setText(time + " sec");
+        double time_double = Double.parseDouble(time);
+        time_double = time_double / 60;
+        DecimalFormat df2 = new DecimalFormat("#.##");
+        String _time_double = df2.format(time_double);
+        totalTimeCount.setText(_time_double + " min");
+
         double _time = Double.parseDouble(time);
         double co2 = (_time / 180.0) * 0.271;
         DecimalFormat df = new DecimalFormat("#.###");
         String co2String = df.format(co2);
         totalRecoveryCount.setText(co2String + " kg");
+
+        totalCreditCount.setText(total_credit + " Credit");
     }
 
     @Override
@@ -137,6 +162,9 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.time_cardView:
+                System.out.println("ASDASDASD");
+                break;
         }
     }
 
@@ -176,6 +204,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected String doInBackground(String[] urls) {
             String time;
+            String total_credit;
 
             HttpURLConnection connection;
             OutputStreamWriter request = null;
@@ -209,15 +238,16 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
                 time = jObj.getString("bike using time"); // request sonucu donen bisikletin durum mesaji
-
+                total_credit = jObj.getString("total_credit");
 
                 isr.close();
                 reader.close();
 
 
                 Log.i("time", time);
+                Log.i("total_credit", total_credit);
 
-                return time;
+                return time + " " + total_credit;
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();

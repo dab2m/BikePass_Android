@@ -70,12 +70,13 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:alignmentMode="alignMargins"
-                android:columnCount="2"
+                android:columnCount="3"
                 android:orientation="horizontal"
                 android:rowCount="3"
                 android:useDefaultMargins="true">
 
                 <android.support.v7.widget.CardView
+                    android:id="@+id/time_cardView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_rowWeight="1"
@@ -124,6 +125,7 @@
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
+                    android:id="@+id/co2_cardView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_rowWeight="1"
@@ -169,6 +171,56 @@
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/credit_cardView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dip">
+
+                        <ImageView
+                            android:id="@+id/credit_icon"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/credit_icon" />
+
+
+                        <TextView
+                            android:id="@+id/tv_totalCredit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="Credit: "
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/totalCreditCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="0 Credit"
+                            android:textColor="@color/blue"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
             </GridLayout>
         </RelativeLayout>
 
