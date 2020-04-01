@@ -36,8 +36,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -160,7 +158,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         bikeId = qrCode.substring(qrCode.lastIndexOf(" ") + 1);
 
         // REST API
-        MyAsyncBikeId async = new MyAsyncBikeId();
+        MyAsyncBikeIdForUnlock async = new MyAsyncBikeIdForUnlock();
         String bikeStatus = null;
         try {
             bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
@@ -267,12 +265,13 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 showDialogForWarning(this, "INFO : " + message);
             }
         } else {
-            Toast.makeText(getApplicationContext(), "Bike Status is null !", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Connection Error !", Toast.LENGTH_LONG).show();
+            scannerView.resumeCameraPreview(RentBikeActivity.this);
         }
 
     }
 
-    class MyAsyncBikeId extends AsyncTask<String, Void, String> {
+    class MyAsyncBikeIdForUnlock extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String[] urls) {
@@ -330,6 +329,5 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             return null;
         }
     }
-
 
 }
