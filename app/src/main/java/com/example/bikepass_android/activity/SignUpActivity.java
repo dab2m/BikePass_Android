@@ -1,6 +1,7 @@
 package com.example.bikepass_android.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,7 +42,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     EditText password;
     EditText mail;
     EditText qanswer;
-    Button buton;
+    Button button;
     String userName= "";
     String passwordUser="";
     String email="";
@@ -58,8 +60,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        buton = findViewById(R.id.signupButton);
-        buton.setOnClickListener(this);
+        button = findViewById(R.id.signupButton);
+        button.setOnClickListener(this);
         spinner=findViewById(R.id.spinner);
         final Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
@@ -123,6 +125,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+                Toast.makeText(getApplicationContext(), "Please select a question and answer ", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -138,8 +141,20 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
          startActivity(intent);
 
      }
+
+
     @Override
-    public void onClick(View view) {
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.signupButton:
+                trySignup(v);
+                break;
+
+        }
+    }
+
+    public void trySignup(View view) {
+
 
         username = findViewById(R.id.usernamesignup);
         userName=username.getText().toString();
@@ -161,7 +176,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         else {
             MyAsyncSignup async = new MyAsyncSignup();
             try {
-                String result = async.execute("http://Bikepass.herokuapp.com/API/app.php").get();
+                String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -227,6 +242,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 final String message = jObj.getString("message");
                 String status = jObj.getString("status");
                 ArrayList<String> statuscodeListForRegister = new ArrayList<>(Arrays.asList("1", "2", "3","4","5"));
+
                 if(status.equals("0")) {
                     setUserInfo();
                 }else if(statuscodeListForRegister.contains(status)  ) {
