@@ -1,14 +1,18 @@
 package com.example.bikepass_android.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -152,8 +156,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 intent2.putExtra("bikeId", bikeId);
                 intent2.putExtra("username", user_name);
 
-                startActivity(intent1);
-
+                if (total_credit != null && Integer.parseInt(total_credit) > 0)
+                    startActivity(intent1);
+                else
+                    showDialogForWarning(this, "NOT ENOUGH CREDIT !");
                 break;
             case R.id.map:
                 goToMapActivity(v);
@@ -196,6 +202,34 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         thread.start();
+    }
+
+    public void showDialogForWarning(Activity activity, String msg) {
+        final String myResult = msg;
+        Log.d("QRCodeScanner", msg);
+        Log.d("QRCodeScanner", msg.toString());
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_warning);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText(msg);
+
+        TextView tv_info = (TextView) dialog.findViewById(R.id.tv_info);
+        tv_info.setText("Your credit: " + total_credit + "  ||  You must buy credit.");
+
+        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     class MyAsync extends AsyncTask<String, Void, String> {
