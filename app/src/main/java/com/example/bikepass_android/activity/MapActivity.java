@@ -520,10 +520,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONObject bikes = jsonObject.getJSONObject("bikes");
-                         /*   if (status.size() > 0)
-                                for (int i = 0; i < status.size(); i++) {
-                                    status.remove(i);
-                                } */
                         for (int i = 0; i < bikes.length(); i++) {
                             JSONObject values = bikes.getJSONObject(String.valueOf(i));
 

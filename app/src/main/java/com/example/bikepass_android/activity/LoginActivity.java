@@ -69,7 +69,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String answerforecovery;
     String myurl;
     String usernamerecovery;
-    RandomString session;
+    String session;
+    String rec_question;
 
 
     @Override
@@ -279,14 +280,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onClick(View v) {
                         if(hint.equals("Username")) {
                             String rec_value = value.getText().toString().trim();
-                            beginRecovery(rec_value);
+                            String status=execute_recovery(rec_value,myurl);
+                            if(status.equals("1")){
+                                alertDialog.dismiss();
+                                showRecoverPasswordDialog(rec_question,"Answer");
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "There is no such a user!", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else{
                             String rec_value = value.getText().toString().trim();
                             if(rec_value.equals(answerforecovery)) {
-                                sendRecoveryEmail(emailforecovery);
+                                String status=sendRecoveryEmail(emailforecovery,"https://Bikepass.herokuapp.com/recoverymail.php");
                                 alertDialog.dismiss();
-                                showChangePasswordDialog("Please enter the code we sent you and create a new password");
+                                setProgressDialog("Sending email to "+ emailforecovery,"Email sent","Error occured when sending email!",status);
+
                             }else
                             {
                                 Toast.makeText(getApplicationContext(), "Answer doesnt match!", Toast.LENGTH_SHORT).show();
@@ -343,17 +352,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 p.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!password.getText().toString().equals(passwordagain.getText().toString())){
+                        if(!passwordvalue.getText().toString().equals(passwordagain.getText().toString())){
                             Toast.makeText(getApplicationContext(), "Password doesnt match!", Toast.LENGTH_SHORT).show();
                         }
-                        else if(!value.getText().equals(session.nextString())){
+
+                        else if(!value.getText().toString().equals(session)){
                             Toast.makeText(getApplicationContext(), "The code we have sent you doesnt match!", Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            MyAsyncChangePassord asynccp=new MyAsyncChangePassord(usernamerecovery,password.getText().toString());
+                            MyAsyncChangePassword asynccp=new MyAsyncChangePassword(usernamerecovery,password.getText().toString());
                             try {
                                 String result=asynccp.execute(myurl).get();
-                                result="Success";
                                 setProgressDialog("Password is changing ","Your password have been changed succesfully","An error occurred!",result);
                             } catch (ExecutionException e) {
 
@@ -378,26 +387,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    private void  beginRecovery(String usernamerec) {
+    private String execute_recovery(String usernamerec,String url) {
 
         MyAsyncRecovery async = new MyAsyncRecovery(usernamerec);
+        String result="";
         try {
-            String result=async.execute(myurl).get();
+            result=async.execute(url).get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return result;
     }
 
-    private void sendRecoveryEmail(String emailforecovery) {
-
+    private String sendRecoveryEmail(String emailforecovery,String url) {
 
         MyAsyncRecoveryEmail async = new MyAsyncRecoveryEmail(emailforecovery);
+        String result="";
         try {
-             String result=async.execute("https://Bikepass.herokuapp.com/recoverymail.php").get();
-             result="Success";
-             setProgressDialog("Sending email to "+ emailforecovery,"Email sent","Error occured when sending email!",result);
+
+            result=async.execute(url).get();
+
         } catch (ExecutionException e) {
 
             e.printStackTrace();
@@ -405,7 +416,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             e.printStackTrace();
         }
-
+      return result;
     }
 
     class MyAsyncRecovery extends AsyncTask<String,Void,String> {
@@ -458,19 +469,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject values = data.getJSONObject(0);
                 emailforecovery=values.getString("email");
                 answerforecovery=values.getString("answer");
-
                 if(jObj.getString("status").equals("0")) {
-                    runOnUiThread(new Runnable() {
+                   /* runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    });*/
                 }else if(status.equals("1")){
-                    showRecoverPasswordDialog(values.getString("question"),"Answer");
+                    rec_question=values.getString("question");
+                   // showRecoverPasswordDialog(values.getString("question"),"Answer");
                 }
                 isr.close();
                 reader.close();
-                return "";
+                return status;
             } catch (IOException e) {
                 // Error
                 return "Failure sending";
@@ -483,28 +494,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    class MyAsyncChangePassord extends AsyncTask<String,Void,String> {
+    class MyAsyncChangePassword extends AsyncTask<String,Void,String> {
 
         String username;
         String changedpassword;
-        public MyAsyncChangePassord(String username, String password){
+        public MyAsyncChangePassword(String username, String password){
             this.username=username;
             this.changedpassword=password;
         }
         @Override
         protected String doInBackground(String[]urls) {
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                session = new RandomString(8);
-            }
             HttpURLConnection connection;
             OutputStreamWriter request = null;
             URL url = null;
             String response = null;
             JSONObject jsonRecData = new JSONObject();
             try {
-                jsonRecData.put("username_changepassword",this.username);
-                jsonRecData.put("password_new",this.changedpassword);
+                jsonRecData.put("usernamerecovery",this.username);
+                jsonRecData.put("passwordrecovery",this.changedpassword);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -531,7 +539,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 final String status = jObj.getString("status");
                 isr.close();
                 reader.close();
-                if(status.equals("1"))
+                if(status.equals("0"))
                     return "Success";
                 else
                     return "Failure";
@@ -556,10 +564,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected String doInBackground(String[]urls) {
 
-           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                session = new RandomString(8);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+              RandomString  s = new RandomString(8);
+              session=s.nextString();
             }
-           Log.i("session:",session.nextString());
             HttpURLConnection connection;
             OutputStreamWriter request = null;
             URL url = null;
@@ -568,7 +576,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             try {
                 jsonRecData.put("recovery_email",this.email);
                 jsonRecData.put("recovery_username",usernamerecovery);
-                //jsonRecData.put("recovery_token",session);
+                jsonRecData.put("recovery_code",session);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -595,10 +603,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 final String status = jObj.getString("status");
                 isr.close();
                 reader.close();
-                if(status.equals("1"))
-                    return "Success";
-                else
-                    return "Failure";
+               return status;
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();
@@ -661,7 +666,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 if (dialog.isShowing()) {
                     dialog.dismiss();
-                    if(result.equals("Success")) {
+                    if(result.equals("1")) {
+                        Toast.makeText(getApplicationContext(), successmesage, Toast.LENGTH_SHORT).show();
+                        showChangePasswordDialog("Please enter the code we sent you and create a new password");
+                    }else if(result.equals("Success"))
+                    {
                         Toast.makeText(getApplicationContext(), successmesage, Toast.LENGTH_SHORT).show();
                     }
                     else
