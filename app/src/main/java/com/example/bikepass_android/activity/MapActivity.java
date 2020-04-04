@@ -196,7 +196,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                             try {
 
                                 async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                                mMap.clear();
+                                //mMap.clear();
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
                             } catch (InterruptedException e) {
@@ -210,7 +210,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         };
 
-        timer.schedule(task, 0, 60 * 1000);  // interval of one 3 seconds
+        timer.schedule(task, 0, 30 * 1000);  // interval of one 30 seconds
 
     }
 
@@ -386,11 +386,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             if (marker.equals(myMarker)) {
                 String url = getUrl(userLoc, marker.getPosition(), "walking");
                 new FetchURL(MapActivity.this).execute(url, "walking");
-                // Log.i("marker:", String.valueOf(myMarker.getPosition().latitude)+","+String.valueOf(myMarker.getPosition().longitude));
                 setDialog(whichBike);
             }
 
         }
+        whichBike=-1;
         return true;
     }
 
@@ -557,17 +557,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                                 for (int i = 0; i < loc_list.size(); i++) {
                                     boolean flag=true;
-                                    for(Marker marker:marker){
-                                       if(marker.getPosition().latitude==loc_list.get(i).latitude && marker.getPosition().longitude==loc_list.get(i).longitude )
-                                           flag=false;
-                                    }
-                                    if(flag)
-                                    marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
+                                    for(Marker marker:marker) {
+                                        if (marker.getPosition().latitude == loc_list.get(i).latitude && marker.getPosition().longitude == loc_list.get(i).longitude) {
+                                            flag = false;
+                                        }
 
+                                    }
+                                    if(flag) {
+                                        marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
+                                    }
                                 }
-                                Log.i("loclist size:",loc_list.size()+"");
-                                Log.i("status size:",status.size()+"");
-                                Log.i("marker size:",marker.size()+"");
+
                             }
                         });
 
