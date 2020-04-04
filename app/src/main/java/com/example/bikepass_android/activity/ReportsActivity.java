@@ -269,6 +269,13 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         TextView tv_currentCO2Recovery = (TextView) dialog.findViewById(R.id.tv_currentCO2Recovery);
         tv_currentCO2Recovery.setText(co2String + " KG");
 
+        TextView tv_co2Info = (TextView) dialog.findViewById(R.id.tv_co2Info);
+        tv_co2Info.setText("Çevre dostu bisikletler ile karbon salınımına savaş açıyoruz.\n" +
+                "Günlük koşuşturma içerisinde bizi gideceğimiz yere hızlı ve kolay bir şekilde götüren motorlu taşıtları tercih ediyoruz." +
+                "Bu nedenle çoğu zaman çevremizdeki birçok güzelliği keşfedemediğimiz gibi kirliliği de fark etmiyoruz." +
+                "Hatta her bir yolcu için 271 gram karbon emisyonu üreten araçlar ve 101 gram karbon emisyonu üreten otobüsler ile hem çevreyi hem de insan sağlığını tehdit etmeye devam ediyoruz." +
+                "Bu sorunun önüne geçebilecek en önemli çözüm yollarından biri ise kilometre başına karbon emisyonunu 21 grama düşüren bisiklet kullanımını artırmak.");
+
         Button close_button = (Button) dialog.findViewById(R.id.close_button);
         close_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,6 +294,31 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
         TextView tv_currentCreditCount = (TextView) dialog.findViewById(R.id.tv_currentCreditCount);
         tv_currentCreditCount.setText(total_credit);
+
+        CardView justACycle_cardView = (CardView) dialog.findViewById(R.id.justACycle_cardView);
+        CardView procycler_cardView = (CardView) dialog.findViewById(R.id.procycler_cardView);
+        CardView cycleAddict_cardView = (CardView) dialog.findViewById(R.id.cycleAddict_cardView);
+
+        justACycle_cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("JUST A CYCLE");
+            }
+        });
+
+        procycler_cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("PROCYCLE");
+            }
+        });
+
+        cycleAddict_cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("CYCLEADDICT");
+            }
+        });
 
         Button close_button = (Button) dialog.findViewById(R.id.close_button);
         close_button.setOnClickListener(new View.OnClickListener() {

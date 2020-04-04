@@ -88,6 +88,19 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@color/zxing_transparent"
+                android:src="@drawable/cycle_gif" />
+
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -95,18 +108,17 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_co2Info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif"
                 android:paddingLeft="5dp"
-                android:paddingTop="20dp"
-                android:text="Burada co2 salinimi hakkinda bilgiler yer alacak !!!!
-ne yazilacagina daha sonra karar verilebilir veya daha da isi ileri goturup sosyal sorumluluk projeleri
-bilgileri verilebilir Bunlari buraya burasi dolu gozuksun diye yaziyorum sakin yanlis anlamayin saygilar..."
-                android:textColor="@color/blue"
-                android:textSize="13sp" />
+                android:paddingTop="10dp"
+                android:textColor="@color/darkBackground2"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
