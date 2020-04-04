@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -85,14 +86,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Button getPath;
     Dialog myDialog;
     int whichBike = -1;
-
     private ImageView imgMyLocation;
     private MapFragment mapFragment;
+    SharedPreferences sharedpreferences ;
+    private String user_name;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        user_name = sharedpreferences.getString("username", "");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -355,7 +358,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         try {
 
                             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                            mMap.clear();
+                           // mMap.clear();
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
@@ -364,6 +367,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     } catch (Exception e) {
 
                     }
+                    myDialog.dismiss();
                 }
             });
 
@@ -433,7 +437,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             String response = null;
             JSONObject jsonLocData = new JSONObject();
             try {
-                jsonLocData.put("bikeId", this.bikeid);
+                jsonLocData.put("bike_id", this.bikeid);
+                jsonLocData.put("usernameres", user_name);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -459,8 +464,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 response = sb.toString().trim();
                 JSONObject jsonObject = new JSONObject(response);
                 String status = jsonObject.getString("status");
-                if (status.equals("0")) {
+                if (!status.equals("0")) {
                     Toast.makeText(getApplicationContext(), "Request failed!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Bike rezerved for you!", Toast.LENGTH_SHORT).show();
                 }
                 isr.close();
                 reader.close();
