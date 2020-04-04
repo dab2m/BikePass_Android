@@ -213,7 +213,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         };
 
-        timer.schedule(task, 0, 30 * 1000);  // interval of one 30 seconds
+        timer.schedule(task, 0, 3 * 1000);  // interval of one 30 seconds
 
     }
 
@@ -465,13 +465,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 JSONObject jsonObject = new JSONObject(response);
                 String status = jsonObject.getString("status");
                 if (!status.equals("0")) {
-                    Toast.makeText(getApplicationContext(), "Request failed!", Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                           Toast.makeText(getApplicationContext(), "Request failed!", Toast.LENGTH_SHORT).show();
+                            }});
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Bike rezerved for you!", Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                          Toast.makeText(getApplicationContext(), "Bike rezerved for you!", Toast.LENGTH_SHORT).show();
+                        }});
                 }
                 isr.close();
                 reader.close();
+
                 return "Success";
             } catch (IOException e) {
                 // Error
