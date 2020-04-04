@@ -25,6 +25,6 @@ package com.example.bikepass_android.activity;
     public int getLogo_name(){return this.logo_name;}
 
     public void setLogo_name(int logo_name){this.logo_name=logo_name;}
-    
+
     public int getId(){return this.id;}
 }
