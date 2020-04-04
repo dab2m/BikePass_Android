@@ -91,6 +91,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         bGoMap.setOnClickListener(this);
         bSettings.setOnClickListener(this);
 
+
         view = findViewById(R.id.textview);
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
@@ -168,7 +169,13 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.time_cardView:
-                System.out.println("ASDASDASD");
+                showDialogForTime(this);
+                break;
+            case R.id.co2_cardView:
+                showDialogForCO2(this);
+                break;
+            case R.id.credit_cardView:
+                showDialogForCredit(this);
                 break;
         }
     }
@@ -223,6 +230,42 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
         Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
         dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void showDialogForTime(Activity activity) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialogbox_for_time);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        Button close_button = (Button) dialog.findViewById(R.id.close_button);
+        close_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void showDialogForCO2(Activity activity) {
+
+    }
+
+    public void showDialogForCredit(Activity activity) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialogbox_for_credit);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        Button close_button = (Button) dialog.findViewById(R.id.close_button);
+        close_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
