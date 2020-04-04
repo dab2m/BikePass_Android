@@ -137,8 +137,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     @Override
     public void onTaskDone(Object... values) {
-       // if (currentPolyline != null)
-         //   currentPolyline.remove();
+        if (currentPolyline != null)
+            currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
