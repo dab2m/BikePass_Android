@@ -114,14 +114,39 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnrzrv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/buttonstyle"
-        android:text="Rezerve et"
-        android:textColor="@color/white" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/bluelight"
+        android:gravity="center"
+        android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/log"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/red"
+            android:gravity="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/bluelight"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnrzrv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/buttonstyle"
+            android:text="Rezerve et"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
 </LinearLayout>

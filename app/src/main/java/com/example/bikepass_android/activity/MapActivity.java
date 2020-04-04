@@ -333,17 +333,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         TextView bikestats;
         Button btnreserved;
         TextView dist;
+        TextView log;
         myDialog.setContentView(R.layout.custompopup);
         bikestats = myDialog.findViewById(R.id.bikestatus);
         bikestats.setText(status.get(bikenum).getStatus_name());
         dist = myDialog.findViewById(R.id.dist);
         dist.setText(distance + " m");
+        log=myDialog.findViewById(R.id.log);
+        log.setText("This bike is not avaliable right now!");
         btnreserved = (Button) myDialog.findViewById(R.id.btnrzrv);
         if (status.get(bikenum).getStatus_code() != 1) {
-
             //btnreserved.setEnabled(false);
             btnreserved.setVisibility(View.GONE);
         } else {
+            log.setVisibility(View.GONE);
             btnreserved.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
