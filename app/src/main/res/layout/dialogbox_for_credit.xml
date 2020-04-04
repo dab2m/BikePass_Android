@@ -41,7 +41,8 @@
                 android:singleLine="true"
                 android:text="BUY CREDITS"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/close_button"
@@ -70,10 +71,9 @@
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-smallcaps"
                 android:singleLine="true"
-                android:text="Current: "
+                android:text="CURRENT: "
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tv_currentCreditCount"
@@ -86,8 +86,7 @@
                 android:paddingLeft="15dp"
                 android:text="0"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/current_coin_icon"

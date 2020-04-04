@@ -39,9 +39,9 @@
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-smallcaps"
                 android:singleLine="true"
-                android:text="TIME INFORMATION"
+                android:text="CO2 RECOVERY INFORMATION"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <Button
@@ -64,19 +64,18 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/tv_totalTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-smallcaps"
                 android:singleLine="true"
-                android:text="TOTAL TIME: "
+                android:text="TOTAL CO2 RECOVERY: "
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/tv_currentCreditCount"
+                android:id="@+id/tv_currentCO2Recovery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -84,7 +83,7 @@
                 android:layout_toRightOf="@+id/tv_currentCredit"
                 android:fontFamily="sans-serif-smallcaps"
                 android:paddingLeft="15dp"
-                android:text="0 MIN"
+                android:text="0 KG"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -92,17 +91,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/round_layout_white_otp"
+            android:background="@drawable/border"
             android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-smallcaps"
-                android:paddingLeft="10dp"
-                android:paddingTop="25dp">
-
-            </android.support.v7.widget.RecyclerView>
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif"
+                android:paddingLeft="5dp"
+                android:paddingTop="20dp"
+                android:text="Burada co2 salinimi hakkinda bilgiler yer alacak !!!!
+ne yazilacagina daha sonra karar verilebilir veya daha da isi ileri goturup sosyal sorumluluk projeleri
+bilgileri verilebilir Bunlari buraya burasi dolu gozuksun diye yaziyorum sakin yanlis anlamayin saygilar..."
+                android:textColor="@color/blue"
+                android:textSize="13sp" />
 
 
         </LinearLayout>

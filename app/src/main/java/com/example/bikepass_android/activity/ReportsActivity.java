@@ -53,6 +53,9 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     private String bikeId = null;
     private String user_name;
 
+    private String _time_double;
+    private String co2String;
+
     TextView totalTimeCount;
     TextView totalRecoveryCount;
     TextView totalCreditCount;
@@ -114,13 +117,13 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         double time_double = Double.parseDouble(time);
         time_double = time_double / 60;
         DecimalFormat df2 = new DecimalFormat("#.##");
-        String _time_double = df2.format(time_double);
+        _time_double = df2.format(time_double);
         totalTimeCount.setText(_time_double + " min");
 
         double _time = Double.parseDouble(time);
         double co2 = (_time / 180.0) * 0.271;
         DecimalFormat df = new DecimalFormat("#.###");
-        String co2String = df.format(co2);
+        co2String = df.format(co2);
         totalRecoveryCount.setText(co2String + " kg");
 
         totalCreditCount.setText(total_credit + " Credit");
@@ -239,10 +242,13 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         dialog.show();
     }
 
-    public void showDialogForTime(Activity activity) {
+    public void showDialogForTime(Activity activity) { //TODO: query den gelen response a kullanicinin hangi tarihte ne kadar sure surdugu listview seklinde gosterilecek
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialogbox_for_time);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView tv_currentCreditCount = (TextView) dialog.findViewById(R.id.tv_currentCreditCount);
+        tv_currentCreditCount.setText(_time_double + " MIN");
 
         Button close_button = (Button) dialog.findViewById(R.id.close_button);
         close_button.setOnClickListener(new View.OnClickListener() {
@@ -255,14 +261,32 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         dialog.show();
     }
 
-    public void showDialogForCO2(Activity activity) {
+    public void showDialogForCO2(Activity activity) { //TODO: co2 salinimi hakkinda genel bilgilendirici yazi olabilir
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialogbox_for_co2);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
+        TextView tv_currentCO2Recovery = (TextView) dialog.findViewById(R.id.tv_currentCO2Recovery);
+        tv_currentCO2Recovery.setText(co2String + " KG");
+
+        Button close_button = (Button) dialog.findViewById(R.id.close_button);
+        close_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
-    public void showDialogForCredit(Activity activity) {
+    public void showDialogForCredit(Activity activity) { //TODO: cardviewler satin alma islevi icin tiklanabilir hale getirilecek
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialogbox_for_credit);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView tv_currentCreditCount = (TextView) dialog.findViewById(R.id.tv_currentCreditCount);
+        tv_currentCreditCount.setText(total_credit);
 
         Button close_button = (Button) dialog.findViewById(R.id.close_button);
         close_button.setOnClickListener(new View.OnClickListener() {
