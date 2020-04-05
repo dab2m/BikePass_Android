@@ -4,8 +4,10 @@ package com.example.bikepass_android.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,6 +22,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.bikepass_android.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -37,7 +46,7 @@ import java.util.concurrent.ExecutionException;
  * Created by Dilan on 18.01.2020
  */
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
-
+    GoogleSignInClient mGoogleSignInClient;
     EditText username;
     EditText password;
     EditText mail;
@@ -50,6 +59,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     Spinner spinner;
     String selectedItemText;
     String questionAnswer;
+    Button signout;
     public void backToMainActivity(View view){
 
         intent=new Intent(getApplicationContext(), LoginActivity.class);
@@ -59,10 +69,48 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this
+        );
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+
+            Log.i("Name:",personName);
+            Log.i("Email:",personEmail);
+        }
+
+
+
         setContentView(R.layout.activity_sign_up);
         button = findViewById(R.id.signupButton);
         button.setOnClickListener(this);
         spinner=findViewById(R.id.spinner);
+        signout=findViewById(R.id.signoutButton);
+        signout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (v.getId()) {
+                    case R.id.signoutButton:
+                        signOut();
+                        break;
+                    // ...
+
+                }
+            }
+        });
+
         final Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
         // Initializing a String Array
@@ -129,6 +177,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
+    }
+
+    private void signOut(){
+        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                startActivity(new Intent(SignUpActivity.this,PremierActivity.class));
+                finish();
+            }
+        });
     }
      public void setUserInfo(){
 

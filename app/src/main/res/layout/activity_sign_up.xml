@@ -49,7 +49,6 @@
             android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="72dp"
-            android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_button_white"
             android:radius="30dp"
             android:text="SIGN UP"
@@ -58,6 +57,24 @@
             app:layout_constraintStart_toStartOf="@+id/passwordsignup"
             app:layout_constraintTop_toBottomOf="@+id/passwordsignup"
             app:layout_constraintVertical_bias="0.608"
+            tools:layout_conversion_absoluteHeight="58dp"
+            tools:layout_conversion_absoluteWidth="266dp" />
+
+        <Button
+            android:id="@+id/signoutButton"
+            android:layout_width="266dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_button_white"
+            android:radius="30dp"
+            android:text="Choose a dıfferent acount"
+            android:textColor="#05368F"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/signupButton"
+            app:layout_constraintTop_toBottomOf="@+id/signupButton"
+            app:layout_constraintVertical_bias="0.0"
             tools:layout_conversion_absoluteHeight="58dp"
             tools:layout_conversion_absoluteWidth="266dp" />
 
@@ -199,8 +216,8 @@
             android:text="Already member ? Sign in"
             android:textColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/signupButton"
-            app:layout_constraintTop_toBottomOf="@+id/signupButton"
+            app:layout_constraintStart_toStartOf="@+id/signoutButton"
+            app:layout_constraintTop_toBottomOf="@+id/signoutButton"
             app:layout_constraintVertical_bias="0.315" />
 
         <TextView
