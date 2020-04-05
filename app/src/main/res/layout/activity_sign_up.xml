@@ -42,12 +42,13 @@
             app:layout_constraintStart_toStartOf="@+id/textView6"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
+
         <Button
             android:id="@+id/signupButton"
             android:layout_width="266dp"
             android:layout_height="45dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="72dp"
             android:background="@drawable/rounded_button_white"
             android:radius="30dp"
@@ -56,26 +57,25 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/passwordsignup"
             app:layout_constraintTop_toBottomOf="@+id/passwordsignup"
-            app:layout_constraintVertical_bias="0.608"
+            app:layout_constraintVertical_bias="0.544"
             tools:layout_conversion_absoluteHeight="58dp"
             tools:layout_conversion_absoluteWidth="266dp" />
 
-
-        <Button
+        <TextView
             android:id="@+id/signoutButton"
             android:layout_width="266dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_button_white"
             android:radius="30dp"
-            android:text="Choose a dıfferent acount"
-            android:textColor="#05368F"
+            android:text="Choose a dıfferent google acount"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/signupButton"
             app:layout_constraintTop_toBottomOf="@+id/signupButton"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="0.303"
             tools:layout_conversion_absoluteHeight="58dp"
             tools:layout_conversion_absoluteWidth="266dp" />
 
@@ -149,7 +149,6 @@
             android:background="@drawable/rounded_button_white"
             android:backgroundTint="@color/white"
             android:gravity="center_horizontal"
-            android:hint="Username"
             android:paddingTop="5dp"
             android:textAlignment="center"
             android:textColor="#007DAE"
@@ -176,7 +175,6 @@
             android:background="@drawable/rounded_button_white"
             android:backgroundTint="@color/white"
             android:gravity="center_horizontal"
-            android:hint="Email"
             android:paddingTop="5dp"
             android:textAlignment="center"
             android:textColor="#007DAE"
@@ -209,8 +207,8 @@
             android:id="@+id/textView8"
             android:layout_width="160dp"
             android:layout_height="19dp"
-            android:layout_marginStart="48dp"
-            android:layout_marginLeft="48dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="16dp"
             android:onClick="backToMainActivity"
@@ -219,7 +217,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/signoutButton"
             app:layout_constraintTop_toBottomOf="@+id/signoutButton"
-            app:layout_constraintVertical_bias="0.315" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/textView9"

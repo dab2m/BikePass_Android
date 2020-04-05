@@ -59,7 +59,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     Spinner spinner;
     String selectedItemText;
     String questionAnswer;
-    Button signout;
+    String email_user;
+    TextView signout;
     public void backToMainActivity(View view){
 
         intent=new Intent(getApplicationContext(), LoginActivity.class);
@@ -69,6 +70,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_up);
+        username = findViewById(R.id.usernamesignup);
+        password = findViewById(R.id.passwordsignup);
+        mail = findViewById(R.id.emailsignup);
+        qanswer=findViewById(R.id.answerspinner);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -79,20 +85,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this
         );
         if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            Uri personPhoto = acct.getPhotoUrl();
 
-            Log.i("Name:",personName);
-            Log.i("Email:",personEmail);
+            email_user = acct.getEmail();
+            setView();
+
         }
 
-
-
-        setContentView(R.layout.activity_sign_up);
         button = findViewById(R.id.signupButton);
         button.setOnClickListener(this);
         spinner=findViewById(R.id.spinner);
@@ -179,6 +177,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    public void setView(){
+        username.setTextColor(Color.parseColor("#007DAE"));
+        username.setText(email_user.substring(0,email_user.indexOf('@')));
+        username.setEnabled(false);
+        mail.setTextColor(Color.parseColor("#007DAE"));
+        mail.setText(email_user);
+        mail.setEnabled(false);
+
+    }
     private void signOut(){
         mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
@@ -213,14 +220,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     public void trySignup(View view) {
 
-
-        username = findViewById(R.id.usernamesignup);
         userName=username.getText().toString();
-        password = findViewById(R.id.passwordsignup);
         passwordUser=password.getText().toString();
-        mail = findViewById(R.id.emailsignup);
         email=mail.getText().toString();
-        qanswer=findViewById(R.id.answerspinner);
         questionAnswer=qanswer.getText().toString();
 
         if (username.getText().toString().isEmpty())
