@@ -346,7 +346,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         log.setText("This bike is not avaliable right now!");
         btnreserved = (Button) myDialog.findViewById(R.id.btnrzrv);
         if (status.get(bikenum).getStatus_code() != 1) {
-            //btnreserved.setEnabled(false);
+
             btnreserved.setVisibility(View.GONE);
         } else {
             log.setVisibility(View.GONE);
@@ -354,6 +354,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 @Override
                 public void onClick(View v) {
                     try {
+
                         SetBikeRez async = new SetBikeRez(status.get(bikenum).getId());
                         try {
 
@@ -397,6 +398,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
 
         }
+
         whichBike=-1;
         return true;
     }
@@ -546,25 +548,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                             boolean flag=true;
                             int count=0;
                             JSONObject values = bikes.getJSONObject(String.valueOf(i));
-
                             for(Bike bike:status){
                                 if(bike.getId()== Integer.parseInt(values.getString("name").substring(4))){
                                     flag=false;
-                                    if(bike.getStatus_code()!=Integer.parseInt(values.getString("status"))){
-                                       update_bike(bike,values.getString("status"));
+                                    if(bike.getStatus_code()!=Integer.parseInt(values.getString("status")) || bike.getLatitude()!=Double.parseDouble(values.getString("lat"))
+                                            || bike.getLongitude()!=Double.parseDouble(values.getString("long"))){
+                                       update_bike(bike,values.getString("status"),values.getString("lat"),values.getString("long"),count);
+                                       break;
                                     }
-                                    break;
                                 }
                                 count++;
                             }
                             if(flag) {
-                                add_bike(values.getString("status"),values.getString("name").substring(4));
-                                loc_list.add(new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
+                                status.add(add_bike(values.getString("status"),values.getString("name").substring(4),values.getString("lat"),values.getString("long")));
+                               // loc_list.add(new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
                             }
-                            else{
-                                loc_list.remove(count);
-                                loc_list.add(count,new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
-                            }
+                            //else{
+                               // loc_list.remove(count);
+                               // loc_list.add(count,new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
+                           // }
 
                         }
 
@@ -575,16 +577,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                 mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
 
-                                for (int i = 0; i < loc_list.size(); i++) {
+                                for (int i = 0; i < status.size(); i++) {
                                     boolean flag=true;
                                     for(Marker marker:marker) {
-                                        if (marker.getPosition().latitude == loc_list.get(i).latitude && marker.getPosition().longitude == loc_list.get(i).longitude) {
+                                        if (marker.getPosition().latitude == status.get(i).getLatitude() && marker.getPosition().longitude == status.get(i).getLongitude()) {
                                             flag = false;
                                         }
 
                                     }
                                     if(flag) {
-                                        marker.add(mMap.addMarker(new MarkerOptions().position(loc_list.get(i)).title(status.get(i).getStatus_name() + " bike in  " + getAddress(loc_list.get(i).latitude, loc_list.get(i).longitude)).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
+                                        marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(status.get(i).getLatitude(),status.get(i).getLongitude())).title(status.get(i).getStatus_name() + " bike in  " + getAddress(status.get(i).getLatitude(), status.get(i).getLongitude())).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
                                     }
                                 }
 
@@ -610,7 +612,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             return null;
         }
 
-        public void update_bike(Bike bike,String status){
+        public void update_bike(final Bike bike, String status, String latitude, String longitude, final int hangi){
+
             if (status.equals("0")) {
                 bike.setStatus_code(0);
                 bike.setLogo_name(R.drawable.bike_offservice);
@@ -628,22 +631,29 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 bike.setLogo_name(R.drawable.bike_busy);
                 bike.setStatus_name("Rezerved");
             }
+            bike.setLatitude(Double.parseDouble(latitude));
+            bike.setLongitude(Double.parseDouble(longitude));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    marker.remove(hangi);
+                    marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(bike.getLatitude(), bike.getLongitude())).title(bike.getStatus_name() + " bike in  " + getAddress(bike.getLatitude(), bike.getLongitude())).icon(BitmapDescriptorFactory.fromResource(bike.getLogo_name()))));
+                }
+                });
         }
 
-        public void add_bike(String status_code,String name){
+        public Bike add_bike(String status_code,String name,String latitude,String longitude){
+            Bike bike;
             if (status_code.equals("0")) {
-                Bike bike = new Bike(0, "Off service", R.drawable.bike_offservice, Integer.parseInt(name));
-                status.add(bike);
+                bike = new Bike(0, "Off service", R.drawable.bike_offservice, Integer.parseInt(name),Double.parseDouble(latitude),Double.parseDouble(longitude));
             } else if (status_code.equals("1")) {
-                Bike bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt( name));
-                status.add(bike);
+                bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt( name),Double.parseDouble(latitude),Double.parseDouble(longitude));
             } else if (status_code.equals("2")) {
-                Bike bike = new Bike(2, "Busy", R.drawable.bike_busy, Integer.parseInt(name));
-                status.add(bike);
-            } else if (status_code.equals("3")) {
-                Bike bike = new Bike(3, "Rezerved", R.drawable.bike_busy, Integer.parseInt(name));
-                status.add(bike);
+                bike = new Bike(2, "Busy", R.drawable.bike_busy, Integer.parseInt(name),Double.parseDouble(latitude),Double.parseDouble(longitude));
+            } else {
+                bike = new Bike(3, "Rezerved", R.drawable.bike_busy, Integer.parseInt(name),Double.parseDouble(latitude),Double.parseDouble(longitude));
             }
+            return bike;
         }
 
     }
