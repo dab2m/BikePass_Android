@@ -150,9 +150,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account!=null){
+       /*  if(account!=null){
+            Log.i("hello","hello");
             startActivity(new Intent(LoginActivity.this,SignUpActivity.class));
-        }
+        }  */
         // updateUI(account);
     }
 

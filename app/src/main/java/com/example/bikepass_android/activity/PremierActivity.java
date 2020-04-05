@@ -110,7 +110,7 @@ public class PremierActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+ /*    @Override
     protected void onStart() {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -119,7 +119,7 @@ public class PremierActivity extends AppCompatActivity {
         }
         // updateUI(account);
         super.onStart();
-    }
+    } */
 
 
     /*public void toSignUp(View view){
