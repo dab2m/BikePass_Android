@@ -155,6 +155,12 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("username", user_name);
                 editor.commit();
+
+                SharedPreferences preferences2 = getSharedPreferences("total_credit", getApplicationContext().MODE_PRIVATE);
+                SharedPreferences.Editor editor2 = preferences2.edit();
+                editor2.putString("total_credit", total_credit);
+                editor2.commit();
+
                 Intent intent1 = new Intent(this, RentBikeActivity.class);
                 Intent intent2 = new Intent(this, BikeUsingActivity.class);
                 intent2.putExtra("bikeId", bikeId);
@@ -273,8 +279,12 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         tv_co2Info.setText("Çevre dostu bisikletler ile karbon salınımına savaş açıyoruz.\n" +
                 "Günlük koşuşturma içerisinde bizi gideceğimiz yere hızlı ve kolay bir şekilde götüren motorlu taşıtları tercih ediyoruz." +
                 "Bu nedenle çoğu zaman çevremizdeki birçok güzelliği keşfedemediğimiz gibi kirliliği de fark etmiyoruz." +
-                "Hatta her bir yolcu için 271 gram karbon emisyonu üreten araçlar ve 101 gram karbon emisyonu üreten otobüsler ile hem çevreyi hem de insan sağlığını tehdit etmeye devam ediyoruz." +
-                "Bu sorunun önüne geçebilecek en önemli çözüm yollarından biri ise kilometre başına karbon emisyonunu 21 grama düşüren bisiklet kullanımını artırmak.");
+                "Hatta her bir yolcu için 271 gram karbon emisyonu üreten araçlar ve 101 gram karbon emisyonu üreten otobüsler ile " +
+                "hem çevreyi hem de insan sağlığını tehdit etmeye devam ediyoruz." +
+                "Bu sorunun önüne geçebilecek en önemli çözüm yollarından biri ise kilometre başına karbon emisyonunu 21 grama düşüren bisiklet kullanımını artırmak." +
+                "Bugün bir yolcu araçla 271, otobüsle 101 gram karbon salıyor. Bisiklet kullanıcıları ise kilometre başına sadece 21 gram karbon emisyonu üretiyor." +
+                "Özellikle yakın mesafelerde bisiklet kullanımının artması; karbon emisyonlarını azaltıyor, obeziteyi önlüyor ve daha gürültüsüz " +
+                "şehirlerde yaşamaya imkan sağlıyor.");
 
         Button close_button = (Button) dialog.findViewById(R.id.close_button);
         close_button.setOnClickListener(new View.OnClickListener() {

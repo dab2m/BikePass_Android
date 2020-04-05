@@ -69,7 +69,7 @@
         android:layout_below="@id/minuteText"
         android:layout_centerHorizontal="true"
         android:paddingTop="30dp"
-        android:text="Start Fee: 1.5 TL"
+        android:text="Start Fee: 600 coin"
         android:textColor="@color/paleBlueDarker"
         android:textSize="18dp"
         android:textStyle="bold" />
@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/startFeeText"
         android:layout_toRightOf="@id/totalPaymentText"
-        android:text="1.5 TL"
+        android:text="600 coin"
         android:textColor="@color/paleBlueDarker"
         android:textSize="18dp"
         android:textStyle="bold" />
@@ -104,7 +104,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:paddingTop="20dp"
-        android:text="( 0.25 TL per minute )"
+        android:text="( 600 coin per minutes )"
         android:textColor="@color/paleBlue"
         android:textSize="15dp"
         android:textStyle="bold" />

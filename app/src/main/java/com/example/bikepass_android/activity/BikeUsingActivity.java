@@ -3,6 +3,7 @@ package com.example.bikepass_android.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -44,10 +45,13 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
     ChronometerHelper chronometerHelper;
 
-    private double totalPayment = 1.5;
+    private int totalPayment = 600;
 
     private String username;
     private int bikeTime;
+    private String total_credit;
+    private String total_coin;
+    private int new_total_credit;
 
 
     @Override
@@ -60,6 +64,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         totalPaymentCount = (TextView) findViewById(R.id.totalPaymentCount);
         stopAndPayButton = (Button) findViewById(R.id.stopAndPayButton);
         stopAndPayButton.setOnClickListener(this);
+
+        SharedPreferences preferences = getSharedPreferences("total_credit", getApplicationContext().MODE_PRIVATE);
+        total_credit = preferences.getString("total_credit", null);
 
         /**
          * Asagidaki kod parcasi RentBikeActivity'den bikeId'yi almak icin yazilmistir.
@@ -90,15 +97,15 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         long elapsedSeconds = elapsedTimeInMillis / 1000;
         totalPayment = totalPayment + ((int) (elapsedSeconds / 60)) * 0.25; // activity'de geri gidip tekrar sayfa acildiginda kaldigi ucretten devam etmesi icin yazildi
         */
-        totalPaymentCount.setText(totalPayment + " TL");
+        totalPaymentCount.setText(totalPayment + " coin");
 
         final Handler ha = new Handler();
         ha.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(chronometer.getText().toString().substring(6).equals("59")) // kronometre ekrani kapatilip acildiginda yanlis zamanda ucret eklemesi yapilmasin diye yazildi
-                    totalPayment = totalPayment + 0.25;
-                totalPaymentCount.setText(totalPayment + " TL");
+                if (chronometer.getText().toString().substring(6).equals("59")) // kronometre ekrani kapatilip acildiginda yanlis zamanda ucret eklemesi yapilmasin diye yazildi
+                    totalPayment = totalPayment + 600;
+                totalPaymentCount.setText(totalPayment + " coin");
 
                 ha.postDelayed(this, 60000);
             }
@@ -130,7 +137,13 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 long elapsedTimeInMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
                 long elapsedSeconds = elapsedTimeInMillis / 1000;
                 bikeTime = (int) elapsedSeconds;
-                showDialog(this, "TOTAL PAYMENT : " + totalPaymentCount.getText());
+                total_coin = (String) totalPaymentCount.getText().subSequence(0, totalPaymentCount.getText().toString().indexOf(" "));
+                showDialog(this, "TOTAL PAYMENT : " + total_coin);
+
+
+                new_total_credit = Integer.parseInt(total_credit) - Integer.parseInt(total_coin);
+
+
                 break;
         }
     }
@@ -211,8 +224,16 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 }
                 //bikeStatusParser(bikeStatus);
 
+                MyAsyncForUpdateCredit creditUpdater = new MyAsyncForUpdateCredit();
+                try {
+                    creditUpdater.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-                Toast.makeText(getApplicationContext(), totalPaymentCount.getText() + " PAYMENT RECEIVED", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), total_coin.toUpperCase() + " COINS ARE DEDUCTED FROM YOUR TOTAL COINS", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -240,7 +261,67 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 jsonObject.put("username", username);
                 jsonObject.put("bike_id", bikeId.getText());
                 jsonObject.put("bike_time", bikeTime);
-                jsonObject.put("bike_km", 5);
+                //jsonObject.put("bike_km", 0);
+                //jsonObject.put("credit",25); //TODO: databasede creditten dusecek ve credit kullanilan sureye gore belirlenecek
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
+
+                isr.close();
+                reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
+                return status;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    class MyAsyncForUpdateCredit extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+            String message;
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("usernamecredit", username);
+                jsonObject.put("credit", new_total_credit);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
