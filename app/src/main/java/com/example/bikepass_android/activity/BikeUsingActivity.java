@@ -138,6 +138,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 long elapsedSeconds = elapsedTimeInMillis / 1000;
                 bikeTime = (int) elapsedSeconds;
                 total_coin = (String) totalPaymentCount.getText().subSequence(0, totalPaymentCount.getText().toString().indexOf(" "));
+
                 showDialog(this, "TOTAL PAYMENT : " + total_coin);
 
 
@@ -233,7 +234,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                     e.printStackTrace();
                 }
 
-                Toast.makeText(getApplicationContext(), total_coin.toUpperCase() + " COINS ARE DEDUCTED FROM YOUR TOTAL COINS", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), total_coin.toUpperCase() + " COINS ARE DEDUCTED FROM YOUR TOTAL COINS", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -262,7 +263,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 jsonObject.put("bike_id", bikeId.getText());
                 jsonObject.put("bike_time", bikeTime);
                 //jsonObject.put("bike_km", 0);
-                //jsonObject.put("credit",25); //TODO: databasede creditten dusecek ve credit kullanilan sureye gore belirlenecek
             } catch (JSONException e) {
                 e.printStackTrace();
             }

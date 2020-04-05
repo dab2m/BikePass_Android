@@ -267,7 +267,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         dialog.show();
     }
 
-    public void showDialogForCO2(Activity activity) { //TODO: co2 salinimi hakkinda genel bilgilendirici yazi olabilir
+    public void showDialogForCO2(Activity activity) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialogbox_for_co2);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
