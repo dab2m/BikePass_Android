@@ -48,6 +48,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     TextView view;
     GridLayout gl;
 
+    private JSONArray data_list; // user's all bike usage data inside this list
+
     private String time = null;
     private String total_credit = null;
     private String bikeId = null;
@@ -100,8 +102,19 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         user_name = sharedpreferences.getString("username", "");
         view.setText("Welcome back, " + user_name);
 
+        // REST API FOR GETTING USAGE DATA
+        MyAsyncForGetUsageData dataGetter = new MyAsyncForGetUsageData();
+        String usage_data = null;
+        try {
+            usage_data = dataGetter.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        // REST API
+
+        // REST API FOR GETTING TIME AND CREDIT
         MyAsync async = new MyAsync();
         String time_and_credit = null;
         try {
@@ -304,6 +317,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         dialog.setContentView(R.layout.dialogbox_for_credit);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
+
         TextView tv_currentCreditCount = (TextView) dialog.findViewById(R.id.tv_currentCreditCount);
         tv_currentCreditCount.setText(total_credit);
 
@@ -392,6 +406,63 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 Log.i("total_credit", total_credit);
 
                 return time + " " + total_credit;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    class MyAsyncForGetUsageData extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+            data_list = new JSONArray();
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("username", user_name);
+                jsonObject.put("type", "time");
+                jsonObject.put("all", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+
+                data_list = jObj.getJSONArray("data");
+
+                isr.close();
+                reader.close();
+
+                return data_list.toString();
             } catch (IOException e) {
                 // Error
                 e.printStackTrace();
