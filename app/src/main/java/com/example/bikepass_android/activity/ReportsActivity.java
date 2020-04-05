@@ -128,7 +128,9 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
         totalCreditCount.setText(total_credit + " Credit");
     }
-
+    public void onBackPressed() {
+        //do nothing
+    }
     @Override
     public void onStart() {
         super.onStart();
