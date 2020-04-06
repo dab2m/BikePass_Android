@@ -36,6 +36,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -72,7 +73,7 @@ import com.example.bikepass_android.directionhelpers.*;
 /**
  * Created by Dilan on 02.02.2020
  */
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback, GoogleMap.OnMarkerClickListener {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
     JSONParser jsonParser;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -114,13 +115,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         locationRequest.setInterval(10 * 1000); // 10 seconds
         locationRequest.setFastestInterval(5 * 1000); // 5 seconds
 
-        imgMyLocation = (ImageView) findViewById(R.id.imgMyLocation);
+       /* imgMyLocation = (ImageView) findViewById(R.id.imgMyLocation);
         imgMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getMyLocation();
             }
-        });
+        }); */
 
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
@@ -135,6 +136,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private void getMyLocation() {
+        Log.i("Get my location:","Location");
         LatLng latLng = new LatLng(Double.parseDouble(String.valueOf(userLoc.latitude)), Double.parseDouble(String.valueOf(userLoc.longitude)));
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
         mMap.animateCamera(cameraUpdate);
@@ -153,6 +155,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(MapActivity.this);
+        mMap.setOnMyLocationClickListener(MapActivity.this);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        GoogleMapOptions option=new GoogleMapOptions().zoomControlsEnabled(true);
+        //SupportMapFragment fragmen
 
         if (!isGPS) {
             Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
@@ -186,7 +195,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         setRepeatingAsyncTask();
        // getHotSpots();
-        LatLng hotspot=new LatLng(37.4220041,-122.0862462);
+        LatLng hotspot=new LatLng(39.9275646,32.8001692);
         mMap.addCircle(
                 new CircleOptions()
                         .center(hotspot)
@@ -239,6 +248,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
+                        Log.i("scheduled","scheduled");
                         try {
                             BikeReq async = new BikeReq();
                             try {
@@ -258,7 +268,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         };
 
-        timer.schedule(task, 0, 30 * 1000);  // interval of one 30 seconds
+        timer.schedule(task, 0, 5 * 1000);  // interval of one 30 seconds
 
     }
 
@@ -463,6 +473,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return 6366000 * tt;
     }
 
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+      //  Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        getMyLocation();
+        return false;
+    }
 
     class SetBikeRez extends AsyncTask<String, String, String> {
 
@@ -686,8 +709,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                             @Override
                             public void run() {
 
-                                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
+                                //mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
 
                                 for (int i = 0; i < status.size(); i++) {
                                     boolean flag=true;
