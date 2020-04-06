@@ -213,26 +213,10 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // REST API
-                MyAsyncBikeId async = new MyAsyncBikeId();
-                String bikeStatus = null;
-                try {
-                    bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //bikeStatusParser(bikeStatus);
 
-                MyAsyncForUpdateCredit creditUpdater = new MyAsyncForUpdateCredit();
-                try {
-                    creditUpdater.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                getRequestForFinish();
+
+                getRequestForUpdateCredit();
 
                 Toast.makeText(getApplicationContext(), total_coin.toUpperCase() + " COINS ARE DEDUCTED FROM YOUR TOTAL COINS", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
@@ -245,6 +229,30 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         dialog.show();
     }
 
+    private void getRequestForUpdateCredit() {
+        MyAsyncForUpdateCredit creditUpdater = new MyAsyncForUpdateCredit();
+        try {
+            creditUpdater.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getRequestForFinish() {
+        // REST API
+        MyAsyncBikeId async = new MyAsyncBikeId();
+        String bikeStatus = null;
+        try {
+            bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //bikeStatusParser(bikeStatus);
+    }
 
     class MyAsyncBikeId extends AsyncTask<String, Void, String> {
 

@@ -13,9 +13,11 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.bikepass_android.R;
@@ -33,7 +35,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -49,6 +53,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     GridLayout gl;
 
     private JSONArray data_list; // user's all bike usage data inside this list
+    private List<String> data_list_inString = new ArrayList<>();
 
     private String time = null;
     private String total_credit = null;
@@ -96,12 +101,31 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         bGoMap.setOnClickListener(this);
         bSettings.setOnClickListener(this);
 
-
         view = findViewById(R.id.textview);
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
         view.setText("Welcome back, " + user_name);
 
+        getRequestForUsageData();
+
+        getRequestForTimeAndCredit();
+    }
+
+    public void onBackPressed() {
+        //do nothing
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            time = extras.getString("time");
+            bikeId = extras.getString("bikeId");
+        }
+    }
+
+    public void getRequestForUsageData() {
         // REST API FOR GETTING USAGE DATA
         MyAsyncForGetUsageData dataGetter = new MyAsyncForGetUsageData();
         String usage_data = null;
@@ -112,8 +136,9 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
 
-
+    public void getRequestForTimeAndCredit() {
         // REST API FOR GETTING TIME AND CREDIT
         MyAsync async = new MyAsync();
         String time_and_credit = null;
@@ -140,18 +165,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         totalRecoveryCount.setText(co2String + " kg");
 
         totalCreditCount.setText(total_credit + " Credit");
-    }
-    public void onBackPressed() {
-        //do nothing
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            time = extras.getString("time");
-            bikeId = extras.getString("bikeId");
-        }
     }
 
     public void goToMapActivity(View view) {
@@ -193,7 +206,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.time_cardView:
-                showDialogForTime(this);
+                try {
+                    showDialogForTime(this);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.co2_cardView:
                 showDialogForCO2(this);
@@ -263,13 +280,20 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         dialog.show();
     }
 
-    public void showDialogForTime(Activity activity) { //TODO: query den gelen response a kullanicinin hangi tarihte ne kadar sure surdugu listview seklinde gosterilecek
+    public void showDialogForTime(Activity activity) throws JSONException {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialogbox_for_time);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         TextView tv_currentCreditCount = (TextView) dialog.findViewById(R.id.tv_currentCreditCount);
         tv_currentCreditCount.setText(_time_double + " MIN");
+
+        ListView listView = (ListView) dialog.findViewById(R.id.list_view_for_time);
+
+        itemParser();
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data_list_inString);
+        listView.setAdapter(arrayAdapter);
 
         Button close_button = (Button) dialog.findViewById(R.id.close_button);
         close_button.setOnClickListener(new View.OnClickListener() {
@@ -471,6 +495,33 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             return null;
+        }
+    }
+
+    public void itemParser() throws JSONException { // parse from json object array to string array
+        if (data_list.length() != 0) {
+            for (int i = 0; i < data_list.length(); i++) {
+                String date = data_list.getJSONObject(i).getString("day");
+                String time = data_list.getJSONObject(i).getString("bike_using_time");
+
+                ListItem item = new ListItem(date, time);
+
+                data_list_inString.add(item.toString());
+            }
+        }
+    }
+
+    class ListItem {
+        private String date;
+        private String time;
+
+        public ListItem(String date, String time) {
+            this.date = date;
+            this.time = time;
+        }
+
+        public String toString() {
+            return "Date: " + date + "  ||  Bike Using Time: " + time + " sec";
         }
     }
 }

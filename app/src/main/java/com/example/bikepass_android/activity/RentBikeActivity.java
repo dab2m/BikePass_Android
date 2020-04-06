@@ -157,6 +157,11 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         qrCode = myResult;
         bikeId = qrCode.substring(qrCode.lastIndexOf(" ") + 1);
 
+        getRequestForUnlockBike();
+
+    }
+
+    private void getRequestForUnlockBike() {
         // REST API
         MyAsyncBikeIdForUnlock async = new MyAsyncBikeIdForUnlock();
         String bikeStatus = null;
@@ -168,9 +173,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             e.printStackTrace();
         }
 
-
         bikeStatusParser(bikeStatus);
-
     }
 
     public void showDialogForStart(Activity activity, String msg) {

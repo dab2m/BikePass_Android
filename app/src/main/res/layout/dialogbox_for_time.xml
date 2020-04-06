@@ -95,14 +95,11 @@
             android:background="@drawable/round_layout_white_otp"
             android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
+            <ListView
+                android:id="@+id/list_view_for_time"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="sans-serif-smallcaps"
-                android:paddingLeft="10dp"
-                android:paddingTop="25dp">
-
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+            </ListView>
 
 
         </LinearLayout>
