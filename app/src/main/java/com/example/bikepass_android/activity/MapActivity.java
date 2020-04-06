@@ -160,6 +160,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.setOnMyLocationButtonClickListener(MapActivity.this);
         mMap.setOnMyLocationClickListener(MapActivity.this);
         mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
         GoogleMapOptions option=new GoogleMapOptions().zoomControlsEnabled(true);
         //SupportMapFragment fragmen
 
@@ -709,7 +710,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                             @Override
                             public void run() {
 
-                                //mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
 
                                 for (int i = 0; i < status.size(); i++) {
