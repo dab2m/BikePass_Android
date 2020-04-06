@@ -40,6 +40,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -47,6 +48,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +84,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     ArrayList<Marker> marker = new ArrayList<Marker>();
     LatLng userLoc;
     private Polyline currentPolyline;
-    final ArrayList<LatLng> loc_list = new ArrayList<LatLng>();
+    final ArrayList<LatLng> hotspots = new ArrayList<LatLng>();
     final ArrayList<Bike> status = new ArrayList<Bike>();
     Button getPath;
     Dialog myDialog;
@@ -180,10 +183,52 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             }
         };
-        setRepeatingAsyncTask();
 
+        setRepeatingAsyncTask();
+       // getHotSpots();
+        LatLng hotspot=new LatLng(37.4220041,-122.0862462);
+        mMap.addCircle(
+                new CircleOptions()
+                        .center(hotspot)
+                        .radius(100.0)
+                        .strokeWidth(3f)
+                        .strokeColor(Color.BLUE)
+                        .fillColor(Color.argb(70, 255, 20, 20))
+
+
+        );
     }
 
+    private void getHotSpots() {
+        try {
+            GetHotspotAndIssues async = new GetHotspotAndIssues();
+            try {
+               String result= async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+               if(result.equals("0"))
+                  setHotspots();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+
+        }
+    }
+    public void setHotspots(){
+        for(LatLng hotspot:hotspots) {
+            mMap.addCircle(
+                    new CircleOptions()
+                            .center(hotspot)
+                            .radius(100.0)
+                            .strokeWidth(3f)
+                            .strokeColor(Color.BLUE)
+                            .fillColor(Color.argb(70, 150, 50, 50))
+
+
+            );
+        }
+    }
     private void setRepeatingAsyncTask() {
 
         final Handler handler = new Handler();
@@ -213,7 +258,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         };
 
-        timer.schedule(task, 0, 3 * 1000);  // interval of one 30 seconds
+        timer.schedule(task, 0, 30 * 1000);  // interval of one 30 seconds
 
     }
 
@@ -357,7 +402,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                         SetBikeRez async = new SetBikeRez(status.get(bikenum).getId());
                         try {
-
                             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
                            // mMap.clear();
                         } catch (ExecutionException e) {
@@ -497,6 +541,74 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
+    class GetHotspotAndIssues extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonReqData = new JSONObject();
+            try {
+                jsonReqData.put("hotspot", "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonReqData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                // Response from server after rezerving process will be stored in response variable.
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                String status = jObj.getString("status");
+                String jsonString = response;
+                if (jsonString != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        JSONArray hotspot_array = jsonObject.getJSONArray("hotspots");
+                        for (int i = 0; i < hotspot_array.length(); i++) {
+                            JSONObject values = hotspot_array.getJSONObject(i);
+                            LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
+                            hotspots.add(lat);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                    }
+                }
+                isr.close();
+                reader.close();
+
+                return status;
+            } catch (IOException | JSONException e) {
+                // Error
+                e.printStackTrace();
+
+                return null;
+
+
+            }
+
+        }
+    }
     class BikeReq extends AsyncTask<String, String, String> {
 
 
