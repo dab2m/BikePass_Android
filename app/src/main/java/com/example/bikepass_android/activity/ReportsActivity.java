@@ -457,6 +457,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 jsonObject.put("username", user_name);
                 jsonObject.put("type", "time");
                 jsonObject.put("all", true);
+                jsonObject.put("date", true);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -521,7 +522,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         public String toString() {
-            return "Date: " + date + "  ||  Bike Using Time: " + time + " sec";
+            return "Date: " + date + "  ||  Usage: " + time + " sec";
         }
     }
 }
