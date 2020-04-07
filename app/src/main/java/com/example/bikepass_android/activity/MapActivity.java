@@ -97,6 +97,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private MapFragment mapFragment;
     SharedPreferences sharedpreferences ;
     private String user_name;
+    boolean setRequest=false;
+    int deger=1;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -113,12 +115,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         myDialog = new Dialog(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         seecards=findViewById(R.id.seecards);
-        seecards.setOnClickListener(new View.OnClickListener(){
+        seecards.setVisibility(View.GONE);
+
+     /*   seecards.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 manageBlinkEffect();
             }
-        });
+        }); */
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000); // 10 seconds
@@ -135,9 +139,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     @SuppressLint("WrongConstant")
     private void manageBlinkEffect() {
+        seecards.setVisibility(View.VISIBLE);
         //ObjectAnimator anim = ObjectAnimator.ofInt(seecards, "backgroundColor", Color.WHITE, Color.RED,Color.WHITE);
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(250); //You can manage the blinking time with this parameter
+        anim.setDuration(350); //You can manage the blinking time with this parameter
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
@@ -204,6 +209,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         };
 
         setRepeatingAsyncTask();
+
        // getHotSpots();
         LatLng hotspot=new LatLng(39.9275646,32.8001692);
         mMap.addCircle(
@@ -216,6 +222,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
 
         );
+
     }
 
     private void getHotSpots() {
@@ -258,12 +265,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
-                        Log.i("scheduled","scheduled");
                         try {
                             BikeReq async = new BikeReq();
                             try {
 
-                                async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+                              String result= async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+
                                 //mMap.clear();
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
@@ -276,6 +283,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     }
                 });
             }
+
         };
 
         timer.schedule(task, 0, 5 * 1000);  // interval of one 30 seconds
@@ -391,6 +399,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
+    public void showSetRequest(){
+
+        for(Bike bike:status){
+            int distance=(int)(meterDistanceBetweenPoints((float)bike.getLatitude(),(float)bike.getLongitude(),(float)userLoc.latitude,(float)userLoc.longitude));
+  
+            if(distance<1000)
+            setRequest=true;
+        }
+        if(setRequest){
+            manageBlinkEffect();
+        }
+    }
+
 
     public void setDialog(final int bikenum) {
 
@@ -424,6 +445,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         try {
                             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
                            // mMap.clear();
+
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
@@ -634,10 +656,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             } catch (IOException | JSONException e) {
                 // Error
                 e.printStackTrace();
-
                 return null;
-
-
             }
 
         }
@@ -706,15 +725,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                             }
                             if(flag) {
                                 status.add(add_bike(values.getString("status"),values.getString("name").substring(4),values.getString("lat"),values.getString("long")));
-                               // loc_list.add(new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
+
                             }
-                            //else{
-                               // loc_list.remove(count);
-                               // loc_list.add(count,new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
-                           // }
 
                         }
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -734,7 +748,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                         marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(status.get(i).getLatitude(),status.get(i).getLongitude())).title(status.get(i).getStatus_name() + " bike in  " + getAddress(status.get(i).getLatitude(), status.get(i).getLongitude())).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
                                     }
                                 }
-
+                                if(deger==1) {
+                                    showSetRequest();
+                                    deger++;
+                                }
                             }
                         });
 
