@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,7 +22,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -100,6 +104,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     boolean setRequest=false;
     int deger=1;
     Animation anim ;
+    Dialog popupdialog;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -114,6 +119,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mapFragment.getMapAsync(this);
         //getPath.setOnClickListener(this);
         myDialog = new Dialog(this);
+        popupdialog=new Dialog(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         seecards=findViewById(R.id.seecards);
         seecards.setVisibility(View.GONE);
@@ -140,14 +146,54 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
    public void createRequest(){
        endAnimation();
        seecards.setVisibility(View.GONE);
-       marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(userLoc.latitude,userLoc.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+       popupdialog.setContentView(R.layout.set_request_popup);
+       TextView txttoclose = (TextView) popupdialog.findViewById(R.id.close);
+       txttoclose.setText("X");
+       txttoclose.setTextColor(Color.BLACK);
+       txttoclose.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               popupdialog.dismiss();
+           }
+       });
+       popupdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+       TextView textmessage=(TextView) popupdialog.findViewById(R.id.textviewmessage);
+       textmessage.setText("Please click the position you want to set request");
+       Window window = popupdialog.getWindow();
+       WindowManager.LayoutParams wlp = window.getAttributes();
+       wlp.gravity = Gravity.TOP;
+       wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+       window.setAttributes(wlp);
+       window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
+       popupdialog.show();
+       // Hide after some seconds
+       final Handler handler  = new Handler();
+       final Runnable runnable = new Runnable() {
+           @Override
+           public void run() {
+               if (popupdialog.isShowing()) {
+                   popupdialog.dismiss();
+               }
+           }
+       };
+
+       popupdialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+           @Override
+           public void onDismiss(DialogInterface dialog) {
+               handler.removeCallbacks(runnable);
+           }
+       });
+
+       handler.postDelayed(runnable, 5000);
+
+       //marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(userLoc.latitude,userLoc.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
 
    }
     @SuppressLint("WrongConstant")
     private void manageBlinkEffect() {
         seecards.setVisibility(View.VISIBLE);
         //ObjectAnimator anim = ObjectAnimator.ofInt(seecards, "backgroundColor", Color.WHITE, Color.RED,Color.WHITE);
-        anim.setDuration(250); //You can manage the blinking time with this parameter
+        anim.setDuration(350); //You can manage the blinking time with this parameter
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
@@ -480,6 +526,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+
 
     @Override
     public boolean onMarkerClick(Marker myMarker) {

@@ -4,9 +4,9 @@
     android:layout_height="300dp"
     android:layout_gravity="center"
     android:background="@drawable/border"
+    android:backgroundTint="@color/colorPrimary2"
     android:orientation="vertical"
-    android:padding="5dp"
-    android:backgroundTint="@color/colorPrimary2">
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/txtclose"
@@ -127,10 +127,11 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginTop="20dp"
-            android:textColor="@color/red"
             android:gravity="center"
+            android:textColor="@color/red"
             android:textSize="18sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
