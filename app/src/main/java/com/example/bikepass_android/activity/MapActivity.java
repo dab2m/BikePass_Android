@@ -1,6 +1,7 @@
 package com.example.bikepass_android.activity;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,6 +22,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,7 +90,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private Polyline currentPolyline;
     final ArrayList<LatLng> hotspots = new ArrayList<LatLng>();
     final ArrayList<Bike> status = new ArrayList<Bike>();
-    Button getPath;
+    Button seecards;
     Dialog myDialog;
     int whichBike = -1;
     private ImageView imgMyLocation;
@@ -98,31 +101,28 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
         sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.bikes);
         mapFragment.getMapAsync(this);
         //getPath.setOnClickListener(this);
         myDialog = new Dialog(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        seecards=findViewById(R.id.seecards);
+        seecards.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                manageBlinkEffect();
+            }
+        });
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000); // 10 seconds
         locationRequest.setFastestInterval(5 * 1000); // 5 seconds
-
-       /* imgMyLocation = (ImageView) findViewById(R.id.imgMyLocation);
-        imgMyLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMyLocation();
-            }
-        }); */
-
 
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
@@ -131,8 +131,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 isGPS = isGPSEnable;
             }
         });
+    }
 
-
+    @SuppressLint("WrongConstant")
+    private void manageBlinkEffect() {
+        //ObjectAnimator anim = ObjectAnimator.ofInt(seecards, "backgroundColor", Color.WHITE, Color.RED,Color.WHITE);
+        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(250); //You can manage the blinking time with this parameter
+        anim.setStartOffset(20);
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatCount(Animation.INFINITE);
+        seecards.startAnimation(anim);
     }
 
     private void getMyLocation() {
