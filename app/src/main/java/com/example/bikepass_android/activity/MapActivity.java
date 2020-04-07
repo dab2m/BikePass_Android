@@ -99,6 +99,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private String user_name;
     boolean setRequest=false;
     int deger=1;
+    Animation anim ;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -107,7 +108,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_map);
         sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
-
+        anim = new AlphaAnimation(0.0f, 1.0f);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.bikes);
         mapFragment.getMapAsync(this);
@@ -117,12 +118,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         seecards=findViewById(R.id.seecards);
         seecards.setVisibility(View.GONE);
 
-     /*   seecards.setOnClickListener(new View.OnClickListener(){
+       seecards.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                manageBlinkEffect();
+                createRequest();
             }
-        }); */
+        });
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000); // 10 seconds
@@ -136,19 +137,28 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         });
     }
+   public void createRequest(){
+       endAnimation();
+       seecards.setVisibility(View.GONE);
+       marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(userLoc.latitude,userLoc.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
 
+   }
     @SuppressLint("WrongConstant")
     private void manageBlinkEffect() {
         seecards.setVisibility(View.VISIBLE);
         //ObjectAnimator anim = ObjectAnimator.ofInt(seecards, "backgroundColor", Color.WHITE, Color.RED,Color.WHITE);
-        Animation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(350); //You can manage the blinking time with this parameter
+        anim.setDuration(250); //You can manage the blinking time with this parameter
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
         seecards.startAnimation(anim);
     }
 
+
+    public void endAnimation() {
+        anim.cancel();
+
+    }
     private void getMyLocation() {
         Log.i("Get my location:","Location");
         LatLng latLng = new LatLng(Double.parseDouble(String.valueOf(userLoc.latitude)), Double.parseDouble(String.valueOf(userLoc.longitude)));
@@ -403,11 +413,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         for(Bike bike:status){
             int distance=(int)(meterDistanceBetweenPoints((float)bike.getLatitude(),(float)bike.getLongitude(),(float)userLoc.latitude,(float)userLoc.longitude));
-  
             if(distance<1000)
             setRequest=true;
         }
-        if(setRequest){
+        if(setRequest){ //if(!setRequest) yap
             manageBlinkEffect();
         }
     }
