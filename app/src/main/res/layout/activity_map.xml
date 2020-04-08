@@ -1,7 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
 
     <fragment
         android:id="@+id/bikes"
@@ -10,8 +12,10 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
-
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="-2dp"
+        android:layout_marginLeft="-2dp"
+        android:layout_marginTop="-1dp" />
 
     <Button
         android:id="@+id/seecards"
@@ -23,6 +27,16 @@
         android:gravity="center|center_vertical"
         android:text="Set Request"
         android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/tasks"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="350dp"
+        android:layout_marginTop="500dp"
+        android:background="@drawable/arrow_up"
+        android:gravity="center"
+        android:text="See Tasks" />
 
     <!--  <Button
          android:id="@+id/createcard"

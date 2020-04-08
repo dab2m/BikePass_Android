@@ -29,7 +29,6 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,10 +42,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -108,8 +105,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Animation anim ;
     Dialog popupdialog;
     Dialog canceldialog;
-    int count=1;
     Marker request;
+    Button tasks;
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +115,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
         anim = new AlphaAnimation(0.0f, 1.0f);
+        tasks=(Button)findViewById(R.id.tasks);
+        tasks.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this,MapRequests.class));
+            }
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.bikes);
         mapFragment.getMapAsync(this);
@@ -391,36 +395,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        }
        return false;
    }
- /*   private void getHotSpots() {
-        try {
-            GetHotspotAndIssues async = new GetHotspotAndIssues();
-            try {
-               String result= async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-               if(result.equals("0"))
-                  setHotspots();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-
-        }
-    }   */
-    public void setHotspots(){
-        for(LatLng hotspot:hotspots) {
-            mMap.addCircle(
-                    new CircleOptions()
-                            .center(hotspot)
-                            .radius(100.0)
-                            .strokeWidth(3f)
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.argb(70, 150, 50, 50))
-
-
-            );
-        }
-    }
     private void setRepeatingAsyncTask() {
 
         final Handler handler = new Handler();
@@ -1007,7 +981,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONArray bikes = jsonObject.getJSONArray("bikes");
                         has_request=Integer.parseInt(jsonObject.getString("status"));
-                        Log.i("has_reg:",has_request+"");
                         if(has_request==0){
                              user_request_lat=Double.parseDouble(jsonObject.getString("lat"));
                              user_request_long=Double.parseDouble(jsonObject.getString("long"));
