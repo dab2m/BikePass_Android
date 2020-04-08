@@ -97,15 +97,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Button seecards;
     Dialog myDialog;
     int whichBike = -1;
-    private ImageView imgMyLocation;
     private MapFragment mapFragment;
     SharedPreferences sharedpreferences ;
     private String user_name;
+    private int has_request=-1;
+    private double user_request_lat;
+    private double user_request_long;
     boolean setRequest=false;
     int deger=1;
     Animation anim ;
     Dialog popupdialog;
-
+    Dialog canceldialog;
+    int count=1;
+    Marker request;
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,24 +121,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.bikes);
         mapFragment.getMapAsync(this);
-        //getPath.setOnClickListener(this);
         myDialog = new Dialog(this);
         popupdialog=new Dialog(this);
+        canceldialog=new Dialog(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         seecards=findViewById(R.id.seecards);
         seecards.setVisibility(View.GONE);
-
-       seecards.setOnClickListener(new View.OnClickListener(){
+        seecards.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                createRequest();
+                createRequest("Please click the position you want to set request");
             }
         });
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000); // 10 seconds
         locationRequest.setFastestInterval(5 * 1000); // 5 seconds
-
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
             public void gpsStatus(boolean isGPSEnable) {
@@ -143,9 +145,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         });
     }
-   public void createRequest(){
+
+   public void createRequest(String title) {
        endAnimation();
-       seecards.setVisibility(View.GONE);
        popupdialog.setContentView(R.layout.set_request_popup);
        TextView txttoclose = (TextView) popupdialog.findViewById(R.id.close);
        txttoclose.setText("X");
@@ -157,8 +159,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
            }
        });
        popupdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-       TextView textmessage=(TextView) popupdialog.findViewById(R.id.textviewmessage);
-       textmessage.setText("Please click the position you want to set request");
+       TextView textmessage = (TextView) popupdialog.findViewById(R.id.textviewmessage);
+       textmessage.setText(title);
        Window window = popupdialog.getWindow();
        WindowManager.LayoutParams wlp = window.getAttributes();
        wlp.gravity = Gravity.TOP;
@@ -167,7 +169,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
        popupdialog.show();
        // Hide after some seconds
-       final Handler handler  = new Handler();
+       final Handler handler = new Handler();
        final Runnable runnable = new Runnable() {
            @Override
            public void run() {
@@ -176,7 +178,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                }
            }
        };
-
        popupdialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
            @Override
            public void onDismiss(DialogInterface dialog) {
@@ -185,14 +186,77 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        });
 
        handler.postDelayed(runnable, 5000);
-
-       //marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(userLoc.latitude,userLoc.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
-
    }
+
+    public void cancelRequestDialog() {
+
+        canceldialog.setContentView(R.layout.cancel_request_popup);
+        TextView txttoclose = (TextView) canceldialog.findViewById(R.id.close);
+        txttoclose.setText("X");
+        txttoclose.setTextColor(Color.BLACK);
+        txttoclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupdialog.dismiss();
+            }
+        });
+        TextView textmessage = (TextView) canceldialog.findViewById(R.id.textviewmessage);
+        textmessage.setText("You have a request created.Do you want tou continue or cancel the request?");
+        textmessage.setTextColor(Color.BLACK);
+        Window window = canceldialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.TOP;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+        window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
+        Button continue_reuqest;
+        continue_reuqest= (Button) canceldialog.findViewById(R.id.cont);
+        continue_reuqest.setTextColor(Color.BLACK);
+        continue_reuqest.setText("Continue");
+        Button cancel_reuqest;
+        cancel_reuqest= (Button) canceldialog.findViewById(R.id.cancelreq);
+        cancel_reuqest.setTextColor(Color.BLACK);
+        cancel_reuqest.setText("Cancel");
+        canceldialog.show();
+        continue_reuqest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                canceldialog.dismiss();
+            }
+        });
+        cancel_reuqest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                canceldialog.dismiss();
+                cancelRequest();
+            }
+        });
+
+    }
+
+    private void cancelRequest() {
+        try {
+
+            CancelRequest async = new CancelRequest();
+            try {
+             String result=   async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+             if(result.equals("0")){
+                 request.remove();
+             }
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+
+        }
+
+    }
+
     @SuppressLint("WrongConstant")
     private void manageBlinkEffect() {
         seecards.setVisibility(View.VISIBLE);
-        //ObjectAnimator anim = ObjectAnimator.ofInt(seecards, "backgroundColor", Color.WHITE, Color.RED,Color.WHITE);
         anim.setDuration(350); //You can manage the blinking time with this parameter
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
@@ -203,10 +267,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     public void endAnimation() {
         anim.cancel();
-
+        seecards.setVisibility(View.GONE);
     }
     private void getMyLocation() {
-        Log.i("Get my location:","Location");
         LatLng latLng = new LatLng(Double.parseDouble(String.valueOf(userLoc.latitude)), Double.parseDouble(String.valueOf(userLoc.longitude)));
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
         mMap.animateCamera(cameraUpdate);
@@ -231,7 +294,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.setOnMyLocationClickListener(MapActivity.this);
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        GoogleMapOptions option=new GoogleMapOptions().zoomControlsEnabled(true);
+        //GoogleMapOptions option=new GoogleMapOptions().zoomControlsEnabled(true);
         //SupportMapFragment fragmen
 
         if (!isGPS) {
@@ -279,9 +342,56 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         );
 
-    }
+         if(has_request!=0) {
 
-    private void getHotSpots() {
+             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+                 @Override
+                 public void onMapClick(LatLng latLng) {
+
+                     endAnimation();
+
+                     if(makeRequest(latLng.latitude+"",latLng.longitude+"")) {
+
+                         MarkerOptions markerOptions = new MarkerOptions();
+
+                         markerOptions.position(latLng);
+
+                         markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+
+                         request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)).snippet("Position:" + getAddress(latLng.latitude, latLng.longitude)));
+
+                         marker.add(request);
+
+                         request.showInfoWindow();
+                     }
+                 }
+             });
+
+         }
+         else{
+             createRequest("You have already request in "+getAddress(user_request_lat,user_request_long));
+         }
+    }
+   public boolean makeRequest(String lat,String lng){
+
+       try {
+           MakeRequest async = new MakeRequest(lat,lng);
+           try {
+               String result= async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+               if(result.equals("0"))
+                   return true;
+           } catch (ExecutionException e) {
+               e.printStackTrace();
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+       } catch (Exception e) {
+
+       }
+       return false;
+   }
+ /*   private void getHotSpots() {
         try {
             GetHotspotAndIssues async = new GetHotspotAndIssues();
             try {
@@ -296,7 +406,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         } catch (Exception e) {
 
         }
-    }
+    }   */
     public void setHotspots(){
         for(LatLng hotspot:hotspots) {
             mMap.addCircle(
@@ -324,10 +434,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         try {
                             BikeReq async = new BikeReq();
                             try {
-
                               String result= async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-
-                                //mMap.clear();
+                              if(result.equals("0"))
+                                  showSetRequest();
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
                             } catch (InterruptedException e) {
@@ -346,21 +455,29 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-    private String getAddress(double lat, double lng) {
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-        try {
+    private String getAddress(final double lat, final double lng) {
+        Log.i("message:","lat:"+lat+"lng"+lng);
+        final String[] add = {""};
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+              try {
+
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-            String add = obj.getAddressLine(0);
-            //Toast.makeText(getApplicationContext(), "Address=>" + add, Toast.LENGTH_SHORT).show();
-            return add;
-            // TennisAppActivity.showDialog(add);
+            add[0] = obj.getAddressLine(0);
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
 
         }
-        return null;
+            }
+        };
+        thread.start();
+        Log.i("add:",add[0]);
+        return add[0];
     }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
@@ -499,7 +616,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         SetBikeRez async = new SetBikeRez(status.get(bikenum).getId());
                         try {
                             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                           // mMap.clear();
 
                         } catch (ExecutionException e) {
                             e.printStackTrace();
@@ -538,9 +654,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 new FetchURL(MapActivity.this).execute(url, "walking");
                 setDialog(whichBike);
             }
-
         }
-
         whichBike=-1;
         return true;
     }
@@ -568,9 +682,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     @Override
     public boolean onMyLocationButtonClick() {
-      //  Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
         getMyLocation();
         return false;
     }
@@ -651,7 +762,138 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
 
     }
+    class MakeRequest extends AsyncTask<String, String, String> {
+        String lat;
+        String lng;
 
+        public MakeRequest(String lat,String lng){
+            this.lat=lat;
+            this.lng=lng;
+        }
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonLocData = new JSONObject();
+            try {
+                jsonLocData.put("usernamereq", user_name);
+                jsonLocData.put("lat",this.lat);
+                jsonLocData.put("long",this.lng);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonLocData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                // Response from server after rezerving process will be stored in response variable.
+                response = sb.toString().trim();
+                JSONObject jsonObject = new JSONObject(response);
+                String status = jsonObject.getString("status");
+                isr.close();
+                reader.close();
+                Log.i("heyoo:",status);
+                return status;
+
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+
+                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
+
+    class CancelRequest extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonLocData = new JSONObject();
+            try {
+                jsonLocData.put("deletereq", user_name);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonLocData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                // Response from server after rezerving process will be stored in response variable.
+                response = sb.toString().trim();
+                JSONObject jsonObject = new JSONObject(response);
+                String status = jsonObject.getString("status");
+                isr.close();
+                reader.close();
+                Log.i("statusss:",status);
+                if (status.equals("0")) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Request canceled", Toast.LENGTH_SHORT).show();
+                        }});
+                    return "0";
+                }
+                else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Error when canceling request", Toast.LENGTH_SHORT).show();
+                        }});
+                    return "1";
+                }
+
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+
+                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
+/*
     class GetHotspotAndIssues extends AsyncTask<String, String, String> {
 
         @Override
@@ -717,6 +959,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         }
     }
+
+    */
     class BikeReq extends AsyncTask<String, String, String> {
 
 
@@ -732,7 +976,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             try {
                 jsonLocData.put("lat", wayLatitude);
                 jsonLocData.put("long", wayLongitude);
-
+                jsonLocData.put("usernamebikes",user_name);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -760,14 +1004,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String jsonString = response;
                 if (jsonString != null) {
                     try {
-
                         JSONObject jsonObject = new JSONObject(jsonString);
-                        JSONObject bikes = jsonObject.getJSONObject("bikes");
-
+                        JSONArray bikes = jsonObject.getJSONArray("bikes");
+                        has_request=Integer.parseInt(jsonObject.getString("status"));
+                        Log.i("has_reg:",has_request+"");
+                        if(has_request==0){
+                             user_request_lat=Double.parseDouble(jsonObject.getString("lat"));
+                             user_request_long=Double.parseDouble(jsonObject.getString("long"));
+                         }
                         for (int i = 0; i < bikes.length(); i++) {
                             boolean flag=true;
                             int count=0;
-                            JSONObject values = bikes.getJSONObject(String.valueOf(i));
+                            JSONObject values = bikes.getJSONObject(i);
                             for(Bike bike:status){
                                 if(bike.getId()== Integer.parseInt(values.getString("name").substring(4))){
                                     flag=false;
@@ -779,11 +1027,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                 }
                                 count++;
                             }
-                            if(flag) {
+                            if(flag)
                                 status.add(add_bike(values.getString("status"),values.getString("name").substring(4),values.getString("lat"),values.getString("long")));
-
-                            }
-
                         }
                         runOnUiThread(new Runnable() {
                             @Override
@@ -791,20 +1036,23 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                                 mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
-
                                 for (int i = 0; i < status.size(); i++) {
                                     boolean flag=true;
                                     for(Marker marker:marker) {
                                         if (marker.getPosition().latitude == status.get(i).getLatitude() && marker.getPosition().longitude == status.get(i).getLongitude()) {
                                             flag = false;
                                         }
-
                                     }
                                     if(flag) {
                                         marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(status.get(i).getLatitude(),status.get(i).getLongitude())).title(status.get(i).getStatus_name() + " bike in  " + getAddress(status.get(i).getLatitude(), status.get(i).getLongitude())).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
                                     }
                                 }
-                                if(deger==1) {
+                                if(has_request==0 && deger==1){
+                                    putRequestedMarker();
+                                    deger++;
+                                    cancelRequestDialog();
+                                }
+                                else if(has_request==2 && deger==1 ) {
                                     showSetRequest();
                                     deger++;
                                 }
@@ -830,6 +1078,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             return null;
         }
 
+
+      public void putRequestedMarker(){
+       request=mMap.addMarker((new MarkerOptions().position(new LatLng(user_request_lat,user_request_long)).title( "Your request in " + getAddress(user_request_lat,user_request_long)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+       request.showInfoWindow();
+       }
         public void update_bike(final Bike bike, String status, String latitude, String longitude, final int hangi){
 
             if (status.equals("0")) {
