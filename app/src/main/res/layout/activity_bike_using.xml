@@ -32,12 +32,11 @@
         android:textSize="30dp"
         android:textStyle="bold" />
 
-
     <pl.droidsonroids.gif.GifImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
         android:layout_above="@id/chronometer"
+        android:layout_centerHorizontal="true"
         android:background="@color/zxing_transparent"
         android:src="@drawable/cycle_gif" />
 
@@ -110,9 +109,21 @@
         android:textStyle="bold" />
 
     <Button
+        android:id="@+id/map_button"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/world_1"
+        android:text="hotpoint map"
+        android:textColor="@color/backgroudBike"
+        android:textStyle="bold" />
+
+    <Button
         android:id="@+id/stopAndPayButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="10dp"

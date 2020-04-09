@@ -1,5 +1,6 @@
 package com.example.bikepass_android.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private Chronometer chronometer;
     private TextView totalPaymentCount;
     private Button stopAndPayButton;
+    private Button mapButton;
 
     ChronometerHelper chronometerHelper;
 
@@ -66,7 +69,10 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         totalPaymentCount = (TextView) findViewById(R.id.totalPaymentCount);
         stopAndPayButton = (Button) findViewById(R.id.stopAndPayButton);
+        mapButton = (Button) findViewById(R.id.map_button);
+
         stopAndPayButton.setOnClickListener(this);
+        mapButton.setOnClickListener(this);
 
         SharedPreferences preferences = getSharedPreferences("total_credit", getApplicationContext().MODE_PRIVATE);
         total_credit = preferences.getString("total_credit", null);
@@ -153,10 +159,11 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
                 showDialog(this, "TOTAL PAYMENT : " + total_coin);
 
-
                 new_total_credit = Integer.parseInt(total_credit) - Integer.parseInt(total_coin);
 
-
+                break;
+            case R.id.map_button:
+                startActivity(new Intent(BikeUsingActivity.this, MapActivity.class));
                 break;
         }
     }

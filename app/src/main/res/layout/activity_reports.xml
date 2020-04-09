@@ -248,7 +248,9 @@
                 android:layout_marginLeft="36dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudWorld"
-                android:src="@drawable/world_1" />
+                android:src="@drawable/world_1"
+                android:scaleType="fitXY"
+                />
 
             <ImageButton
                 android:id="@+id/settings"
