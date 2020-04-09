@@ -1,17 +1,14 @@
 package com.example.bikepass_android.activity;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -22,12 +19,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,7 +58,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +74,7 @@ import com.example.bikepass_android.directionhelpers.*;
  */
 public class MapRequests extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
     JSONParser jsonParser;
+    Dialog myDialog;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
@@ -89,11 +85,13 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     ArrayList<Marker> marker = new ArrayList<Marker>();
     LatLng userLoc;
     private Polyline currentPolyline;
-    final ArrayList<LatLng> hotspots = new ArrayList<LatLng>();
+    final ArrayList<Hotspots> hotspots = new ArrayList<Hotspots>();
     private String user_name;
     int whichBike = -1;
     private MapFragment mapFrag;
     SharedPreferences sharedpreferences ;
+    Button scanqr;
+
 
     @SuppressLint("MissingPermission")
     @Override
@@ -109,6 +107,15 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000); // 10 seconds
         locationRequest.setFastestInterval(5 * 1000); // 5 seconds
+        scanqr=findViewById(R.id.btnreq);
+        scanqr.setVisibility(View.GONE);
+        scanqr.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                scanqr.setVisibility(View.GONE);
+                //Burada Qr kod okuma sayfasına yönlendirilsin
+            }
+        });
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
             @Override
             public void gpsStatus(boolean isGPSEnable) {
@@ -116,8 +123,14 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                 isGPS = isGPSEnable;
             }
         });
-    }
 
+        myDialog = new Dialog(this);
+
+    }
+    public static int getPixelsFromDp(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale + 0.5f);
+    }
     private void getMyLocation() {
         LatLng latLng = new LatLng(Double.parseDouble(String.valueOf(userLoc.latitude)), Double.parseDouble(String.valueOf(userLoc.longitude)));
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
@@ -176,15 +189,68 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
         getHotSpots();
         LatLng hotspot=new LatLng(39.9275646,32.8001692);
-       /* mMap.addCircle(
-                new CircleOptions()
-                        .center(hotspot)
-                        .radius(100.0)
-                        .strokeWidth(3f)
-                        .strokeColor(Color.BLUE)
-                        .fillColor(Color.argb(70, 255, 20, 20))
 
-        ); */
+    }
+
+    @SuppressLint("ResourceAsColor")
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        String url = getUrl(userLoc, marker.getPosition(), "walking");
+        new FetchURL(MapRequests.this).execute(url, "walking");
+        int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude,(float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
+        myDialog.setContentView(R.layout.custom_infowindow);
+        Window window = myDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.TOP;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+        window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
+        TextView textmoney=myDialog.findViewById(R.id.creditTxt);
+        textmoney.setText("You will get 1000 credit if you manage this in 30 minutes!");
+        TextView adressText=myDialog.findViewById(R.id.addressTxt);
+        adressText.setText("It's only "+distance+" M away from you");
+        TextView txtclose=myDialog.findViewById(R.id.txtclose);
+        txtclose.setText("X");
+        txtclose.setTextColor(Color.BLACK);
+        txtclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+        Button btnOne=myDialog.findViewById(R.id.btnOne);
+        btnOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+
+                scanqr.setVisibility(View.VISIBLE);
+            }
+        });
+        myDialog.show();
+        marker.showInfoWindow();
+
+        return true;
+    }
+
+    private void startTask() {//Burada görev süresi  baslasın
+    }
+
+
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        return url;
     }
 
       private void getHotSpots() {
@@ -221,16 +287,14 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
        }
     public void setHotspots(){
-        for(LatLng hotspot:hotspots) {
+        for(Hotspots hotspot:hotspots) {
             mMap.addCircle(
                     new CircleOptions()
-                            .center(hotspot)
-                            .radius(100.0)
+                            .center(new LatLng(hotspot.getLatitude(),hotspot.getLongitude()))
+                            .radius(hotspot.getRadius())
                             .strokeWidth(3f)
                             .strokeColor(Color.BLUE)
                             .fillColor(Color.argb(70, 150, 50, 50))
-
-
             );
         }
     }
@@ -308,22 +372,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                 isGPS = true; // flag maintain before get location
             }
         }
-    }
-
-
-    @Override
-    public boolean onMarkerClick(Marker myMarker) {
-
-        for (Marker marker : marker) {
-            whichBike++;
-            if (marker.equals(myMarker)) {
-               //String url = getUrl(userLoc, marker.getPosition(), "walking");
-                //new FetchURL(MapRequest.this).execute(url, "walking");
-                //setDialog(whichBike);
-            }
-        }
-        whichBike=-1;
-        return true;
     }
 
     private double meterDistanceBetweenPoints(float lat_a, float lng_a, float lat_b, float lng_b) {
@@ -423,7 +471,8 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                             for (int i = 0; i < hotspot_array.length(); i++) {
                                 JSONObject values = hotspot_array.getJSONObject(i);
                                 LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
-                                hotspots.add(lat);
+                                Hotspots spot=new Hotspots(Double.parseDouble(values.getString("radius")),values.getString("point_name"),Integer.parseInt(values.getString("frequency")),Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
+                                hotspots.add(spot);
                             }
                             JSONArray request_array = jsonObject.getJSONArray("requests");
                             for (int i = 0; i < request_array.length(); i++) {
@@ -435,9 +484,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                                       marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in "+getAddress(lat.latitude,lat.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
                                     }
                                 });
-
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
 

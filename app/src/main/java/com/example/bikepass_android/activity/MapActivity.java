@@ -201,7 +201,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         txttoclose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popupdialog.dismiss();
+                canceldialog.dismiss();
             }
         });
         TextView textmessage = (TextView) canceldialog.findViewById(R.id.textviewmessage);
@@ -332,19 +332,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         };
 
         setRepeatingAsyncTask();
-
-       // getHotSpots();
-        LatLng hotspot=new LatLng(39.9275646,32.8001692);
-        mMap.addCircle(
-                new CircleOptions()
-                        .center(hotspot)
-                        .radius(100.0)
-                        .strokeWidth(3f)
-                        .strokeColor(Color.BLUE)
-                        .fillColor(Color.argb(70, 255, 20, 20))
-
-
-        );
 
          if(has_request!=0) {
 
@@ -578,7 +565,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         log.setText("This bike is not avaliable right now!");
         btnreserved = (Button) myDialog.findViewById(R.id.btnrzrv);
         if (status.get(bikenum).getStatus_code() != 1) {
-
             btnreserved.setVisibility(View.GONE);
         } else {
             log.setVisibility(View.GONE);
@@ -782,7 +768,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String status = jsonObject.getString("status");
                 isr.close();
                 reader.close();
-                Log.i("heyoo:",status);
                 return status;
 
             } catch (IOException e) {
@@ -867,74 +852,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
 
     }
-/*
-    class GetHotspotAndIssues extends AsyncTask<String, String, String> {
 
-        @Override
-        protected String doInBackground(String[] urls) {
-
-            HttpURLConnection connection;
-            OutputStreamWriter request = null;
-
-            URL url = null;
-            String response = null;
-            JSONObject jsonReqData = new JSONObject();
-            try {
-                jsonReqData.put("hotspot", "");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setRequestMethod("POST");
-                request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(String.valueOf(jsonReqData));
-                request.flush();
-                request.close();
-                String line = "";
-                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                // Response from server after rezerving process will be stored in response variable.
-                response = sb.toString().trim();
-                JSONObject jObj = new JSONObject(response);
-                String status = jObj.getString("status");
-                String jsonString = response;
-                if (jsonString != null) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(jsonString);
-                        JSONArray hotspot_array = jsonObject.getJSONArray("hotspots");
-                        for (int i = 0; i < hotspot_array.length(); i++) {
-                            JSONObject values = hotspot_array.getJSONObject(i);
-                            LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
-                            hotspots.add(lat);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                    }
-                }
-                isr.close();
-                reader.close();
-
-                return status;
-            } catch (IOException | JSONException e) {
-                // Error
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-    }
-
-    */
     class BikeReq extends AsyncTask<String, String, String> {
 
 
