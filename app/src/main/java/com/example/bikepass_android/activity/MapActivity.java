@@ -277,6 +277,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         LatLng latLng = new LatLng(Double.parseDouble(String.valueOf(userLoc.latitude)), Double.parseDouble(String.valueOf(userLoc.longitude)));
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
         mMap.animateCamera(cameraUpdate);
+
+        SharedPreferences.Editor editor = getSharedPreferences("LOCATION", MODE_PRIVATE).edit();
+        editor.putFloat("lat", (float) userLoc.latitude);
+        editor.putFloat("lng", (float) userLoc.longitude);
+        editor.apply();
     }
 
 

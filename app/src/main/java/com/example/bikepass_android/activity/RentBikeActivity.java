@@ -54,6 +54,9 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private String myResult;
     private String message;
 
+    private float lat;
+    private float lng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +68,11 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         SharedPreferences preferences = getSharedPreferences("username", getApplicationContext().MODE_PRIVATE);
         username = preferences.getString("username", null);
 
+        SharedPreferences prefs = getSharedPreferences("LOCATION", MODE_PRIVATE);
+        lat = prefs.getFloat("lat", 0);
+        lng = prefs.getFloat("lng", 0);
+        Log.i("LAT", String.valueOf(lat));
+        Log.i("LONG", String.valueOf(lng));
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             if (checkPermission()) {
@@ -289,6 +297,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 // QR kodunun icinde "Bike Id: 1" tarzinda bir icerik olacak bu yuzden bike id'yi almak icin bosluktan sonrasi okunur.
                 jsonObject.put("bike_id", qrCode.substring(qrCode.lastIndexOf(" ") + 1)); // okunan qr kodun icinde id olacak ona gore rest ile search yapacak
                 jsonObject.put("username", username); // qr kod okunduktan sonra bisikleti hangi kullanici kiraladi ona gore server'a haber verecek
+                jsonObject.put("lat", lat);
+                jsonObject.put("long", lng);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

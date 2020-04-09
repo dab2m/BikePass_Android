@@ -112,7 +112,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void onBackPressed() {
-        //do nothing
+        super.onBackPressed();
     }
 
     @Override
@@ -149,22 +149,24 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        time = time_and_credit.substring(0, time_and_credit.indexOf(" "));
-        total_credit = time_and_credit.substring(time_and_credit.indexOf(" ") + 1);
+        if (time != null) {
+            time = time_and_credit.substring(0, time_and_credit.indexOf(" "));
+            total_credit = time_and_credit.substring(time_and_credit.indexOf(" ") + 1);
 
-        double time_double = Double.parseDouble(time);
-        time_double = time_double / 60;
-        DecimalFormat df2 = new DecimalFormat("#.##");
-        _time_double = df2.format(time_double);
-        totalTimeCount.setText(_time_double + " min");
+            double time_double = Double.parseDouble(time);
+            time_double = time_double / 60;
+            DecimalFormat df2 = new DecimalFormat("#.##");
+            _time_double = df2.format(time_double);
+            totalTimeCount.setText(_time_double + " min");
 
-        double _time = Double.parseDouble(time);
-        double co2 = (_time / 180.0) * 0.271;
-        DecimalFormat df = new DecimalFormat("#.###");
-        co2String = df.format(co2);
-        totalRecoveryCount.setText(co2String + " kg");
+            double _time = Double.parseDouble(time);
+            double co2 = (_time / 180.0) * 0.271;
+            DecimalFormat df = new DecimalFormat("#.###");
+            co2String = df.format(co2);
+            totalRecoveryCount.setText(co2String + " kg");
 
-        totalCreditCount.setText(total_credit + " Credit");
+            totalCreditCount.setText(total_credit + " Credit");
+        }
     }
 
     public void goToMapActivity(View view) {
@@ -385,8 +387,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String[] urls) {
-            String time;
-            String total_credit;
 
             HttpURLConnection connection;
             OutputStreamWriter request = null;
@@ -419,7 +419,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                time = jObj.getString("bike using time"); // request sonucu donen bisikletin durum mesaji
+                time = jObj.getString("bike using time");
                 total_credit = jObj.getString("total_credit");
 
                 isr.close();

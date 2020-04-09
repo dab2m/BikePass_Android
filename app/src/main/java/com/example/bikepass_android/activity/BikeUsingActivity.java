@@ -53,6 +53,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private String total_coin;
     private int new_total_credit;
 
+    private float lat;
+    private float lng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,15 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
         SharedPreferences preferences = getSharedPreferences("total_credit", getApplicationContext().MODE_PRIVATE);
         total_credit = preferences.getString("total_credit", null);
+
+
+        SharedPreferences prefs = getSharedPreferences("LOCATION", MODE_PRIVATE);
+        lat = prefs.getFloat("lat", 0);
+        lng = prefs.getFloat("lng", 0);
+        Log.i("LAT", String.valueOf(lat));
+        Log.i("LONG", String.valueOf(lng));
+
+
 
         /**
          * Asagidaki kod parcasi RentBikeActivity'den bikeId'yi almak icin yazilmistir.
@@ -270,6 +282,8 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 jsonObject.put("username", username);
                 jsonObject.put("bike_id", bikeId.getText());
                 jsonObject.put("bike_time", bikeTime);
+                jsonObject.put("lat", lat);
+                jsonObject.put("long", lng);
                 //jsonObject.put("bike_km", 0);
             } catch (JSONException e) {
                 e.printStackTrace();
