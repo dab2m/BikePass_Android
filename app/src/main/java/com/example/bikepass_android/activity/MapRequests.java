@@ -99,12 +99,15 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
     private Polyline currentPolyline;
     final ArrayList<Hotspots> hotspots = new ArrayList<Hotspots>();
+    final ArrayList<Bike> bike_request = new ArrayList<Bike>();
+    final ArrayList<Bike> bike_avaliable = new ArrayList<Bike>();
     private String user_name;
     int whichBike = -1;
     private MapFragment mapFrag;
 
     SharedPreferences sharedpreferences;
     Button scanqr;
+    private Marker requested_bike;
 
 
     @SuppressLint("MissingPermission")
@@ -272,48 +275,54 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         };
 
         getHotSpots();
-        LatLng hotspot = new LatLng(39.9275646, 32.8001692);
 
     }
 
     @SuppressLint("ResourceAsColor")
     @Override
     public boolean onMarkerClick(Marker marker) {
+        boolean showdialog=false;
+        for(Bike bike:bike_request){
+            if(bike.getLatitude()==marker.getPosition().latitude && bike.getLongitude()==marker.getPosition().longitude){
+                showdialog=true;
+            }
+        }
         String url = getUrl(userLoc, marker.getPosition(), "walking");
         new FetchURL(MapRequests.this).execute(url, "walking");
-        int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude, (float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
-        myDialog.setContentView(R.layout.custom_infowindow);
-        Window window = myDialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.TOP;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-        window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
-        TextView textmoney = myDialog.findViewById(R.id.creditTxt);
-        textmoney.setText("You will get 1000 credit if you manage this in 30 minutes!");
-        TextView adressText = myDialog.findViewById(R.id.addressTxt);
-        adressText.setText("It's only " + distance + " M away from you");
-        TextView txtclose = myDialog.findViewById(R.id.txtclose);
-        txtclose.setText("X");
-        txtclose.setTextColor(Color.BLACK);
-        txtclose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myDialog.dismiss();
-            }
-        });
-        Button btnOne = myDialog.findViewById(R.id.btnOne);
-        btnOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myDialog.dismiss();
+        int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude,(float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
+        if(showdialog) {
+            myDialog.setContentView(R.layout.custom_infowindow);
+            Window window = myDialog.getWindow();
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            wlp.gravity = Gravity.TOP;
+            wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            window.setAttributes(wlp);
+            window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
+            TextView textmoney = myDialog.findViewById(R.id.creditTxt);
+            textmoney.setText("You will get 1000 credit if you manage this in 30 minutes!");
+            TextView adressText = myDialog.findViewById(R.id.addressTxt);
+            adressText.setText("It's only " + distance + " M away from you");
+            TextView txtclose = myDialog.findViewById(R.id.txtclose);
+            txtclose.setText("X");
+            txtclose.setTextColor(Color.BLACK);
+            txtclose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    myDialog.dismiss();
+                }
+            });
+            Button btnOne = myDialog.findViewById(R.id.btnOne);
+            btnOne.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    myDialog.dismiss();
 
-                scanqr.setVisibility(View.VISIBLE);
-            }
-        });
-        myDialog.show();
-        marker.showInfoWindow();
-
+                    scanqr.setVisibility(View.VISIBLE);
+                }
+            });
+            myDialog.show();
+            marker.showInfoWindow();
+        }
         return true;
     }
 
@@ -511,6 +520,34 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         Log.i("add:", add[0]);
         return add[0];
     }
+    public void update_bike(final Bike bike, String status, String latitude, String longitude){
+
+        if (status.equals("0")) {
+            bike.setStatus_code(0);
+            bike.setLogo_name(R.drawable.bike_offservice);
+            bike.setStatus_name("Off service");
+        } else if (status.equals("1")) {
+            bike.setStatus_code(1);
+            bike.setLogo_name(R.drawable.bike_available);
+            bike.setStatus_name("Available");
+        } else if (status.equals("2")) {
+            bike.setStatus_code(2);
+            bike.setLogo_name(R.drawable.bike_busy);
+            bike.setStatus_name("Busy");
+        } else if (status.equals("3")) {
+            bike.setStatus_code(3);
+            bike.setLogo_name(R.drawable.bike_busy);
+            bike.setStatus_name("Rezerved");
+        }
+        bike.setLatitude(Double.parseDouble(latitude));
+        bike.setLongitude(Double.parseDouble(longitude));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(bike.getLatitude(), bike.getLongitude())).title(bike.getStatus_name() + " bike in  " + getAddress(bike.getLatitude(), bike.getLongitude())).icon(BitmapDescriptorFactory.fromResource(bike.getLogo_name()))));
+            }
+        });
+    }
 
     class GetHotspotAndIssues extends AsyncTask<String, String, String> {
 
@@ -554,22 +591,67 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONArray hotspot_array = jsonObject.getJSONArray("hotpoints");
                         for (int i = 0; i < hotspot_array.length(); i++) {
+                            boolean addpoint=true;
                             JSONObject values = hotspot_array.getJSONObject(i);
-                            LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
-                            Hotspots spot = new Hotspots(Double.parseDouble(values.getString("radius")), values.getString("point_name"), Integer.parseInt(values.getString("frequency")), Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
-                            hotspots.add(spot);
+                            for(Hotspots spot:hotspots){
+                                if(spot.getPoint_name().equals(values.getString("point_name"))){
+                                    addpoint=false;
+                                }
+                            }
+                            if(addpoint) {
+                                Hotspots spot = new Hotspots(Double.parseDouble(values.getString("radius")), values.getString("point_name"), Integer.parseInt(values.getString("frequency")), Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
+                                hotspots.add(spot);
+                            }
                         }
                         JSONArray request_array = jsonObject.getJSONArray("requests");
                         for (int i = 0; i < request_array.length(); i++) {
+                            boolean add_request=true;
                             JSONObject values = request_array.getJSONObject(i);
-                            final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in " + getAddress(lat.latitude, lat.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
-                                }
-                            });
+                            final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
+                            for(Bike bike:bike_request){
+                                if(bike.getId()==Integer.parseInt(values.getString("id")))
+                                    add_request=false;
+                            }
+                            if(add_request) {
+                                Bike bike=new Bike(1,"Requested",R.drawable.bike_requested,Integer.parseInt(values.getString("id")),lat.latitude,lat.longitude);
+                                bike_request.add(bike);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in " + getAddress(lat.latitude, lat.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+                                    }
+                                });
+                            }
                         }
+
+                        JSONArray available_array = jsonObject.getJSONArray("bikes");
+                        for (int i = 0; i < available_array.length(); i++) {
+                            boolean add_bike = true;
+                            JSONObject values = available_array.getJSONObject(i);
+                            final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
+                            for (Bike bike : bike_avaliable) {
+                                if (bike.getId() == Integer.parseInt(values.getString("name").substring(4))) {
+                                    add_bike = false;
+                                    if (bike.getLatitude() != lat.latitude || bike.getLongitude() != lat.longitude) {
+                                        LatLng old_lat = new LatLng(bike.getLatitude(), bike.getLongitude());
+                                        marker.remove(old_lat);
+                                        update_bike(bike, "1", values.getString("lat"), values.getString("long"));
+                                    }
+
+                                }
+                            }
+                            if (add_bike){
+                                Bike bike=new Bike(1,"Available",R.drawable.bike_available,Integer.parseInt(values.getString("name").substring(4)),lat.latitude,lat.longitude);
+                                bike_avaliable.add(bike);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Available in " + getAddress(lat.latitude, lat.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_available))));
+                                    }
+                                });
+                            }
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
 
