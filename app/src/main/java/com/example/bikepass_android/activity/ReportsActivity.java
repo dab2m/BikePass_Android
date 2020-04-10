@@ -60,6 +60,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     private String bikeId = null;
     private String user_name;
 
+    private int earnCredit = 0;
+
     private String _time_double;
     private String co2String;
 
@@ -105,6 +107,15 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
         view.setText("Welcome back, " + user_name);
+
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            earnCredit = extras.getInt("earnCredit");
+        }
+
+        if (earnCredit > 0)
+            showDialogForEarnCredit(this);
 
         getRequestForUsageData();
 
@@ -381,6 +392,32 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         });
 
         dialog.show();
+    }
+
+    public void showDialogForEarnCredit(Activity activity) {
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_warning);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText("THANK YOU");
+
+        TextView text2 = (TextView) dialog.findViewById(R.id.tv_info);
+        text2.setText("You earned " + earnCredit + " credits for dropping the bike on hotpoints.");
+
+        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
     }
 
     class MyAsync extends AsyncTask<String, Void, String> {

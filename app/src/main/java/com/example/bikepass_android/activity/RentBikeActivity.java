@@ -206,7 +206,10 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
-        text.setText(msg);
+        if (!isPromotion)
+            text.setText(msg);
+        else
+            text.setText("PROMOTION IS STARTING");
 
         Button dialogBtn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
         dialogBtn_cancel.setOnClickListener(new View.OnClickListener() {

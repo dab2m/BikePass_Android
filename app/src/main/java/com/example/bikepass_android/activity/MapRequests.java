@@ -510,7 +510,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                     add[0] = obj.getAddressLine(0);
 
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
 
                 }
