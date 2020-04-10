@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <fragment
         android:id="@+id/requests"
         class="com.google.android.gms.maps.MapFragment"
@@ -12,14 +13,26 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
+    <TextView
+        android:id="@+id/timer_textview"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_button_white"
+        android:text="00:00"
+        android:gravity="center"
+        android:textColor="@color/backgroudBike"
+        android:textSize="40sp" />
+
     <Button
         android:id="@+id/btnreq"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginLeft="160dp"
-        android:layout_marginTop="550dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/roundedbutton"
-        android:gravity="center|center_vertical"
         android:text="Scan QR Code"
         android:textColor="@android:color/white" />
 

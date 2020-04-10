@@ -1,6 +1,5 @@
 package com.example.bikepass_android.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -18,12 +17,12 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +32,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -59,6 +60,8 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private float lat;
     private float lng;
 
+    private List<Hotspots> hotpointList = new ArrayList<Hotspots>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +80,13 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         SharedPreferences preferences = getSharedPreferences("total_credit", getApplicationContext().MODE_PRIVATE);
         total_credit = preferences.getString("total_credit", null);
 
-
         SharedPreferences prefs = getSharedPreferences("LOCATION", MODE_PRIVATE);
         lat = prefs.getFloat("lat", 0);
         lng = prefs.getFloat("lng", 0);
         Log.i("LAT", String.valueOf(lat));
         Log.i("LONG", String.valueOf(lng));
 
+        getRequestForHotpoints(); // store in hotpointList
 
 
         /**
@@ -145,7 +148,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     @Override
@@ -163,7 +165,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
                 break;
             case R.id.map_button:
-                startActivity(new Intent(BikeUsingActivity.this, MapActivity.class));
+                startActivity(new Intent(BikeUsingActivity.this, MapRequests.class));
                 break;
         }
     }
@@ -262,15 +264,26 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private void getRequestForFinish() {
         // REST API
         MyAsyncBikeId async = new MyAsyncBikeId();
-        String bikeStatus = null;
         try {
-            bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //bikeStatusParser(bikeStatus);
+    }
+
+    private void getRequestForHotpoints() {
+        // REST API
+        MyAsyncForGetHotpoints async = new MyAsyncForGetHotpoints();
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(hotpointList);
     }
 
     class MyAsyncBikeId extends AsyncTask<String, Void, String> {
@@ -376,6 +389,80 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 JSONObject jObj = new JSONObject(response);
                 message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
                 String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
+
+                isr.close();
+                reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
+                return status;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    class MyAsyncForGetHotpoints extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+            String message;
+            String status;
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("hotpoints", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                message = jObj.getString("message");
+                status = jObj.getString("status");
+                JSONArray jsonArray = jObj.getJSONArray("hotpoints");
+
+                if (jsonArray != null) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        double radius = obj.getDouble("radius");
+                        String point_name = obj.getString("point_name");
+                        int frequency = obj.getInt("frequency");
+                        double latitude = obj.getDouble("lat");
+                        double longitude = obj.getDouble("long");
+
+                        Hotspots hotpoint = new Hotspots(radius, point_name, frequency, latitude, longitude);
+                        hotpointList.add(hotpoint);
+                    }
+                }
 
                 isr.close();
                 reader.close();

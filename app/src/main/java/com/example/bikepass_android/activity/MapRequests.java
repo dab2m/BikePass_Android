@@ -14,6 +14,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,8 +75,10 @@ import com.example.bikepass_android.directionhelpers.*;
  * Created by Dilan on 02.02.2020
  */
 public class MapRequests extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+
     JSONParser jsonParser;
     Dialog myDialog;
+
     private double wayLatitude = 0.0, wayLongitude = 0.0;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
@@ -82,14 +86,24 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     private GoogleMap mMap;
     private boolean isGPS = false;
     private boolean isContinue = false;
+
+    private TextView timer_textview;
+    private CountDownTimer countDownTimer;
+    private long timeLeftInMillis = 1800000; // 30 min
+    private boolean timerRunning;
+    private boolean isPromotion = true;
+    private boolean isQrScanned = false;
+
     ArrayList<Marker> marker = new ArrayList<Marker>();
     LatLng userLoc;
+
     private Polyline currentPolyline;
     final ArrayList<Hotspots> hotspots = new ArrayList<Hotspots>();
     private String user_name;
     int whichBike = -1;
     private MapFragment mapFrag;
-    SharedPreferences sharedpreferences ;
+
+    SharedPreferences sharedpreferences;
     Button scanqr;
 
 
@@ -101,19 +115,40 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
         mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.requests);
+
+        timer_textview = (TextView) findViewById(R.id.timer_textview);
+        /**
+         * Asagidaki kod parcasi RentBikeActivity'den isQrScanned'i almak icin yazilmistir.
+         */
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isQrScanned = extras.getBoolean("isQrScanned");
+        }
+        if (!isQrScanned) {
+            timer_textview.setVisibility(View.GONE);
+        } else {
+            timer_textview.setVisibility(View.VISIBLE);
+            startTimer();
+        }
+
         mapFrag.getMapAsync(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000); // 10 seconds
         locationRequest.setFastestInterval(5 * 1000); // 5 seconds
-        scanqr=findViewById(R.id.btnreq);
+        scanqr = findViewById(R.id.btnreq);
         scanqr.setVisibility(View.GONE);
-        scanqr.setOnClickListener(new View.OnClickListener(){
+        scanqr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 scanqr.setVisibility(View.GONE);
-                //Burada Qr kod okuma sayfasına yönlendirilsin
+                /**
+                 * Bu kod parcasi isPromotion'i RentBİkeActivity'e gecirmek icin yazildi.
+                 */
+                Intent intent = new Intent(MapRequests.this, RentBikeActivity.class);
+                intent.putExtra("isPromotion", isPromotion);
+                startActivity(intent);
             }
         });
         new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
@@ -127,10 +162,59 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         myDialog = new Dialog(this);
 
     }
+
+    @Override
+    public void onBackPressed() { // timer calisiyorsa o sayfadan geri gitme
+        if (timerRunning)
+            Toast.makeText(this, "You can't go back when timer is running!", Toast.LENGTH_SHORT).show();
+        else
+            super.onBackPressed();
+    }
+
+    public void setTimer(int min) {
+        this.timeLeftInMillis = min * 6000;
+    }
+
+    public void startTimer() {
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long l) {
+                timeLeftInMillis = l;
+                updateTimer();
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        }.start();
+
+        timerRunning = true;
+    }
+
+    public void stopTimer() {
+        countDownTimer.cancel();
+        timerRunning = false;
+    }
+
+    public void updateTimer() {
+        int min = (int) timeLeftInMillis / 60000;
+        int sec = (int) timeLeftInMillis % 60000 / 1000;
+
+        String timeLeftText;
+        timeLeftText = "" + min;
+        timeLeftText += ":";
+        if (sec < 10)
+            timeLeftText += "0";
+        timeLeftText += sec;
+        timer_textview.setText(timeLeftText);
+    }
+
     public static int getPixelsFromDp(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
-        return (int)(dp * scale + 0.5f);
+        return (int) (dp * scale + 0.5f);
     }
+
     private void getMyLocation() {
         LatLng latLng = new LatLng(Double.parseDouble(String.valueOf(userLoc.latitude)), Double.parseDouble(String.valueOf(userLoc.longitude)));
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
@@ -188,7 +272,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         };
 
         getHotSpots();
-        LatLng hotspot=new LatLng(39.9275646,32.8001692);
+        LatLng hotspot = new LatLng(39.9275646, 32.8001692);
 
     }
 
@@ -197,7 +281,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     public boolean onMarkerClick(Marker marker) {
         String url = getUrl(userLoc, marker.getPosition(), "walking");
         new FetchURL(MapRequests.this).execute(url, "walking");
-        int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude,(float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
+        int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude, (float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
         myDialog.setContentView(R.layout.custom_infowindow);
         Window window = myDialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
@@ -205,11 +289,11 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
         window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
-        TextView textmoney=myDialog.findViewById(R.id.creditTxt);
+        TextView textmoney = myDialog.findViewById(R.id.creditTxt);
         textmoney.setText("You will get 1000 credit if you manage this in 30 minutes!");
-        TextView adressText=myDialog.findViewById(R.id.addressTxt);
-        adressText.setText("It's only "+distance+" M away from you");
-        TextView txtclose=myDialog.findViewById(R.id.txtclose);
+        TextView adressText = myDialog.findViewById(R.id.addressTxt);
+        adressText.setText("It's only " + distance + " M away from you");
+        TextView txtclose = myDialog.findViewById(R.id.txtclose);
         txtclose.setText("X");
         txtclose.setTextColor(Color.BLACK);
         txtclose.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +302,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                 myDialog.dismiss();
             }
         });
-        Button btnOne=myDialog.findViewById(R.id.btnOne);
+        Button btnOne = myDialog.findViewById(R.id.btnOne);
         btnOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,44 +337,45 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         return url;
     }
 
-      private void getHotSpots() {
+    private void getHotSpots() {
 
-          final Handler handler = new Handler();
-          Timer timer = new Timer();
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
 
-          TimerTask task = new TimerTask() {
-              @Override
-              public void run() {
-                  handler.post(new Runnable() {
-                      public void run() {
-                          try {
-                              GetHotspotAndIssues async = new GetHotspotAndIssues();
-                              try {
-                                  String result= async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                                  if(result.equals("0"))
-                                      setHotspots();
-                              } catch (ExecutionException e) {
-                                  e.printStackTrace();
-                              } catch (InterruptedException e) {
-                                  e.printStackTrace();
-                              }
-                          } catch (Exception e) {
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            GetHotspotAndIssues async = new GetHotspotAndIssues();
+                            try {
+                                String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+                                if (result.equals("0"))
+                                    setHotspots();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
 
-                          }
-                      }
-                  });
-              }
+                        }
+                    }
+                });
+            }
 
-          };
+        };
 
-          timer.schedule(task, 0, 5 * 1000);  // interval of one 30 seconds
+        timer.schedule(task, 0, 5 * 1000);  // interval of one 30 seconds
 
-       }
-    public void setHotspots(){
-        for(Hotspots hotspot:hotspots) {
+    }
+
+    public void setHotspots() {
+        for (Hotspots hotspot : hotspots) {
             mMap.addCircle(
                     new CircleOptions()
-                            .center(new LatLng(hotspot.getLatitude(),hotspot.getLongitude()))
+                            .center(new LatLng(hotspot.getLatitude(), hotspot.getLongitude()))
                             .radius(hotspot.getRadius())
                             .strokeWidth(3f)
                             .strokeColor(Color.BLUE)
@@ -403,7 +488,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
 
     private String getAddress(final double lat, final double lng) {
-        Log.i("message:","lat:"+lat+"lng"+lng);
+        Log.i("message:", "lat:" + lat + " lng:" + lng);
         final String[] add = {""};
         Thread thread = new Thread() {
             @Override
@@ -423,84 +508,84 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
             }
         };
         thread.start();
-        Log.i("add:",add[0]);
+        Log.i("add:", add[0]);
         return add[0];
     }
 
-        class GetHotspotAndIssues extends AsyncTask<String, String, String> {
+    class GetHotspotAndIssues extends AsyncTask<String, String, String> {
 
-            @Override
-            protected String doInBackground(String[] urls) {
+        @Override
+        protected String doInBackground(String[] urls) {
 
-                HttpURLConnection connection;
-                OutputStreamWriter request = null;
-                URL url = null;
-                String response = null;
-                JSONObject jsonReqData = new JSONObject();
-                try {
-                    jsonReqData.put("hotpoints", "hotpoints");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    url = new URL(urls[0]);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setDoOutput(true);
-                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    connection.setRequestMethod("POST");
-                    request = new OutputStreamWriter(connection.getOutputStream());
-                    request.write(String.valueOf(jsonReqData));
-                    request.flush();
-                    request.close();
-                    String line = "";
-                    InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-                    BufferedReader reader = new BufferedReader(isr);
-                    StringBuilder sb = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    // Response from server after rezerving process will be stored in response variable.
-                    response = sb.toString().trim();
-                    JSONObject jObj = new JSONObject(response);
-                    String status = jObj.getString("status");
-                    String jsonString = response;
-                    if (jsonString != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(jsonString);
-                            JSONArray hotspot_array = jsonObject.getJSONArray("hotpoints");
-                            for (int i = 0; i < hotspot_array.length(); i++) {
-                                JSONObject values = hotspot_array.getJSONObject(i);
-                                LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
-                                Hotspots spot=new Hotspots(Double.parseDouble(values.getString("radius")),values.getString("point_name"),Integer.parseInt(values.getString("frequency")),Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
-                                hotspots.add(spot);
-                            }
-                            JSONArray request_array = jsonObject.getJSONArray("requests");
-                            for (int i = 0; i < request_array.length(); i++) {
-                                JSONObject values = request_array.getJSONObject(i);
-                                final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                      marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in "+getAddress(lat.latitude,lat.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-
-                        }
-                    }
-                    isr.close();
-                    reader.close();
-                    return status;
-                } catch (IOException | JSONException e) {
-                    // Error
-                    e.printStackTrace();
-                    return null;
-                }
-
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonReqData = new JSONObject();
+            try {
+                jsonReqData.put("hotpoints", "hotpoints");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonReqData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                // Response from server after rezerving process will be stored in response variable.
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                String status = jObj.getString("status");
+                String jsonString = response;
+                if (jsonString != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        JSONArray hotspot_array = jsonObject.getJSONArray("hotpoints");
+                        for (int i = 0; i < hotspot_array.length(); i++) {
+                            JSONObject values = hotspot_array.getJSONObject(i);
+                            LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
+                            Hotspots spot = new Hotspots(Double.parseDouble(values.getString("radius")), values.getString("point_name"), Integer.parseInt(values.getString("frequency")), Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
+                            hotspots.add(spot);
+                        }
+                        JSONArray request_array = jsonObject.getJSONArray("requests");
+                        for (int i = 0; i < request_array.length(); i++) {
+                            JSONObject values = request_array.getJSONObject(i);
+                            final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in " + getAddress(lat.latitude, lat.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                    }
+                }
+                isr.close();
+                reader.close();
+                return status;
+            } catch (IOException | JSONException e) {
+                // Error
+                e.printStackTrace();
+                return null;
+            }
+
         }
+    }
 
 }
 

@@ -57,6 +57,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private float lat;
     private float lng;
 
+    private boolean isPromotion = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,14 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         lng = prefs.getFloat("lng", 0);
         Log.i("LAT", String.valueOf(lat));
         Log.i("LONG", String.valueOf(lng));
+
+        /**
+         * Asagidaki kod parcasi MapRequests'den isPromotion'u almak icin yazilmistir.
+         */
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isPromotion = extras.getBoolean("isPromotion");
+        }
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             if (checkPermission()) {
@@ -211,14 +221,21 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         dialogBtn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
-                /**
-                 * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
-                 */
-                Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
-                intent.putExtra("key", bikeId);
-                intent.putExtra("username", username);
-                startActivity(intent);
+                if (!isPromotion) {
+                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
+                    /**
+                     * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
+                     */
+                    Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                    intent.putExtra("key", bikeId);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(RentBikeActivity.this, MapRequests.class);
+                    intent.putExtra("isQrScanned", true);
+                    startActivity(intent);
+                }
+
                 dialog.cancel();
             }
         });
