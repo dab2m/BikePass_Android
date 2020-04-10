@@ -3,9 +3,9 @@
 
     <!-- <corners android:radius="10dp" /> -->
     <corners
-        android:bottomLeftRadius="18dp"
+        android:bottomLeftRadius="16dp"
         android:bottomRightRadius="16dp"
-        android:topLeftRadius="38dp"
+        android:topLeftRadius="36dp"
         android:topRightRadius="36dp" />
     <solid android:color="#C0C0C0" />
 </shape>

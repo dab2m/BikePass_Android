@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/leaderboard_activity"
+    android:orientation="vertical"
     tools:context=".activity.ReportsActivity">
 
     <LinearLayout
@@ -16,44 +17,213 @@
             android:id="@+id/textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:paddingLeft="16dp"
+            android:paddingTop="10dp"
             android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
-            android:textSize="28sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:paddingLeft="16dp"
+            android:paddingTop="10dp"
             android:text="How much did you cycle this week"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="300dp"
             android:layout_height="240dp"
-            android:layout_marginLeft="50dp"
+            android:layout_gravity="center"
             android:src="@drawable/report_picture" />
 
         <Button
             android:id="@+id/worldleaderboard"
-            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="30dp"
+            android:layout_gravity="bottom"
             android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginRight="50dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@color/colorPrimary"
             android:text="Leaderboard"
             android:textColor="@color/white"
             android:textSize="18sp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+
+            <GridLayout
+                android:id="@+id/grid_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:alignmentMode="alignMargins"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:rowCount="3"
+                android:useDefaultMargins="true">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/time_cardView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dip">
+
+                        <ImageView
+                            android:id="@+id/ivInvite"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@mipmap/ic_launcher_foreground" />
+
+
+                        <TextView
+                            android:id="@+id/tv_totalTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="Time: "
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/totalTimeCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="0 sec"
+                            android:textColor="@color/blue"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/co2_cardView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dip">
+
+                        <ImageView
+                            android:id="@+id/ivNotificationOff"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/co2" />
+
+                        <TextView
+                            android:id="@+id/tv_totalRecovery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="CO2: "
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/totalRecoveryCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="0.0 kg"
+                            android:textColor="@color/blue"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/credit_cardView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dip">
+
+                        <ImageView
+                            android:id="@+id/credit_icon"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/credit_icon" />
+
+
+                        <TextView
+                            android:id="@+id/tv_totalCredit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="Credit: "
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/totalCreditCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="0 Credit"
+                            android:textColor="@color/blue"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+            </GridLayout>
+        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,7 +248,9 @@
                 android:layout_marginLeft="36dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudWorld"
-                android:src="@drawable/world_1" />
+                android:src="@drawable/world_1"
+                android:scaleType="fitXY"
+                />
 
             <ImageButton
                 android:id="@+id/settings"

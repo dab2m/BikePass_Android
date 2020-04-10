@@ -36,8 +36,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -54,6 +52,12 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private String qrCode;
     private String username;
     private String myResult;
+    private String message;
+
+    private float lat;
+    private float lng;
+
+    private boolean isPromotion = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,19 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         SharedPreferences preferences = getSharedPreferences("username", getApplicationContext().MODE_PRIVATE);
         username = preferences.getString("username", null);
 
+        SharedPreferences prefs = getSharedPreferences("LOCATION", MODE_PRIVATE);
+        lat = prefs.getFloat("lat", 0);
+        lng = prefs.getFloat("lng", 0);
+        Log.i("LAT", String.valueOf(lat));
+        Log.i("LONG", String.valueOf(lng));
+
+        /**
+         * Asagidaki kod parcasi MapRequests'den isPromotion'u almak icin yazilmistir.
+         */
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isPromotion = extras.getBoolean("isPromotion");
+        }
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             if (checkPermission()) {
@@ -158,8 +175,13 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         qrCode = myResult;
         bikeId = qrCode.substring(qrCode.lastIndexOf(" ") + 1);
 
+        getRequestForUnlockBike();
+
+    }
+
+    private void getRequestForUnlockBike() {
         // REST API
-        MyAsyncBikeId async = new MyAsyncBikeId();
+        MyAsyncBikeIdForUnlock async = new MyAsyncBikeIdForUnlock();
         String bikeStatus = null;
         try {
             bikeStatus = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
@@ -169,9 +191,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             e.printStackTrace();
         }
 
-
         bikeStatusParser(bikeStatus);
-
     }
 
     public void showDialogForStart(Activity activity, String msg) {
@@ -201,13 +221,21 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         dialogBtn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
-                /**
-                 * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
-                 */
-                Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
-                intent.putExtra("key", bikeId);
-                startActivity(intent);
+                if (!isPromotion) {
+                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
+                    /**
+                     * Bu kod parcasi bikeId'yi BikeUsingActivity'e gecirmek icin yazildi.
+                     */
+                    Intent intent = new Intent(RentBikeActivity.this, BikeUsingActivity.class);
+                    intent.putExtra("key", bikeId);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(RentBikeActivity.this, MapRequests.class);
+                    intent.putExtra("isQrScanned", true);
+                    startActivity(intent);
+                }
+
                 dialog.cancel();
             }
         });
@@ -252,25 +280,26 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
+                showDialogForWarning(this, "INFO : " + message);
             } else if (bikeStatus.equals("3")) { // Bike is not available
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
+                showDialogForWarning(this, "INFO : " + message);
             } else if (bikeStatus.equals("4")) { // Database error!
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(30);
 
-                showDialogForWarning(this, "INFO : " + myResult.toUpperCase());
+                showDialogForWarning(this, "INFO : " + message);
             }
         } else {
-            Toast.makeText(getApplicationContext(), "Bike Status is null !", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Connection Error !", Toast.LENGTH_LONG).show();
+            scannerView.resumeCameraPreview(RentBikeActivity.this);
         }
 
     }
 
-    class MyAsyncBikeId extends AsyncTask<String, Void, String> {
+    class MyAsyncBikeIdForUnlock extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String[] urls) {
@@ -285,6 +314,8 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                 // QR kodunun icinde "Bike Id: 1" tarzinda bir icerik olacak bu yuzden bike id'yi almak icin bosluktan sonrasi okunur.
                 jsonObject.put("bike_id", qrCode.substring(qrCode.lastIndexOf(" ") + 1)); // okunan qr kodun icinde id olacak ona gore rest ile search yapacak
                 jsonObject.put("username", username); // qr kod okunduktan sonra bisikleti hangi kullanici kiraladi ona gore server'a haber verecek
+                jsonObject.put("lat", lat);
+                jsonObject.put("long", lng);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -308,11 +339,15 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
 
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                final String message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
                 String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
 
                 isr.close();
                 reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
                 return status;
             } catch (IOException e) {
                 // Error
@@ -324,6 +359,5 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
             return null;
         }
     }
-
 
 }

@@ -2,23 +2,31 @@ package com.example.bikepass_android.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.bikepass_android.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Berk on 11.02.2020
@@ -34,9 +42,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Intent intent=getIntent();
+        Intent intent = getIntent();
         //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bCardDetails = (Button)findViewById(R.id.bCard);
+        bCardDetails = (Button) findViewById(R.id.bCard);
         bCardDetails.setOnClickListener(this);
         bLogout = findViewById(R.id.bLogout);
         bLogout.setOnClickListener(this);
@@ -44,13 +52,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         final String username = prefs.getString("username", "UNKNOWN");
         final String password = prefs.getString("password", "UNKNOWN");
         final String email = prefs.getString("email", "UNKNOWN");
-        System.out.println(username);
-        System.out.println(password);
-        System.out.println(email);
     }
 
-    public  void logout(View view){
-        SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
+    public void logout(View view) {
+        SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.clear();
         editor.commit();
@@ -70,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(new Intent(this, CardDetailsActivity.class));
                 //Toast.makeText(getApplicationContext(), "You need to define credit card as well for payment", Toast.LENGTH_LONG).show();
                 break;
-           case R.id.bLogout:
+            case R.id.bLogout:
                 logout(v);
                 break;
         }
@@ -105,5 +110,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
         thread.start();
+    }
+
+    public void restQueryForTimeAndCO() {
+
     }
 }

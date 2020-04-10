@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.bikepass_android.R;
-import com.example.bikepass_android.network.MultipartEntity;
+import com.example.bikepass_android.network.*;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

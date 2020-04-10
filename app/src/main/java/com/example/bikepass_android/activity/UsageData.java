@@ -1,9 +1,9 @@
-package com.example.bikepass_android.model;
+package com.example.bikepass_android.activity;
 
 /**
  * Created by Dilan on 10.03.2020
  */
-public class UsageData {
+ class UsageData {
 
     private int usage;
     private String user_name;

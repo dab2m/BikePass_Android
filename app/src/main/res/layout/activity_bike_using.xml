@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:paddingTop="20dp"
         android:paddingLeft="20dp"
+        android:paddingTop="20dp"
         android:text="Bike Number: "
         android:textColor="@color/paleBlueDarker"
         android:textSize="30dp"
@@ -27,11 +26,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/bikeNumberText"
-        android:text="00"
         android:paddingTop="20dp"
+        android:text="00"
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_above="@id/chronometer"
+        android:layout_centerHorizontal="true"
+        android:background="@color/zxing_transparent"
+        android:src="@drawable/cycle_gif" />
 
     <Chronometer
         android:id="@+id/chronometer"
@@ -48,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/chronometer"
         android:layout_centerHorizontal="true"
+        android:paddingTop="0dp"
         android:text="minutes"
         android:textColor="@color/colorPrimary"
-        android:paddingTop="0dp"
         android:textSize="30dp"
         android:textStyle="bold" />
 
@@ -61,7 +68,7 @@
         android:layout_below="@id/minuteText"
         android:layout_centerHorizontal="true"
         android:paddingTop="30dp"
-        android:text="Start Fee: 1.5 TL"
+        android:text="Start Fee: 600 coin"
         android:textColor="@color/paleBlueDarker"
         android:textSize="18dp"
         android:textStyle="bold" />
@@ -83,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/startFeeText"
         android:layout_toRightOf="@id/totalPaymentText"
-        android:text="1.5 TL"
+        android:text="600 coin"
         android:textColor="@color/paleBlueDarker"
         android:textSize="18dp"
         android:textStyle="bold" />
@@ -94,21 +101,33 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/totalPaymentCount"
         android:layout_alignParentRight="true"
-        android:text="( 0.25 TL per minute )"
-        android:textColor="@color/paleBlue"
+        android:layout_marginRight="10dp"
         android:paddingTop="20dp"
+        android:text="( 600 coin per minutes )"
+        android:textColor="@color/paleBlue"
         android:textSize="15dp"
-        android:textStyle="bold"
-        android:layout_marginRight="10dp"/>
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/map_button"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/world_1"
+        android:text="hotpoint map"
+        android:textColor="@color/backgroudBike"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/stopAndPayButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/round_button"
         android:text="Stop &amp; \n Pay"
         android:textColor="#6638e2"
