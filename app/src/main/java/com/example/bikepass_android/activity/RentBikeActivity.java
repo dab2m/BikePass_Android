@@ -58,6 +58,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
     private float lng;
 
     private boolean isPromotion = false;
+    private String deleteRequest_username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isPromotion = extras.getBoolean("isPromotion");
+            deleteRequest_username = extras.getString("deletereq");
         }
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
@@ -239,6 +241,7 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                     Intent intent = new Intent(RentBikeActivity.this, MapRequests.class);
                     intent.putExtra("isQrScanned", true);
                     intent.putExtra("bikeId", Integer.parseInt(bikeId));
+                    intent.putExtra("deletereq",deleteRequest_username);
                     startActivity(intent);
                 }
 

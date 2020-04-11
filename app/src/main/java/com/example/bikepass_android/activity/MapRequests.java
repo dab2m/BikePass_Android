@@ -108,6 +108,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     private int bikeId;
     private int elapsedTime;
     private int earnCredit;
+    private String deleteRequest_username;
 
     private List<Request> requestList = new ArrayList<>();
 
@@ -143,6 +144,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         finishPromotion_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                earnCredit = 1500;
                 if (earnCredit > 0) {
                     showDialogForEarnCredit(MapRequests.this);
                     finishPromotion_button.setVisibility(View.GONE);
@@ -164,6 +166,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         if (extras != null) {
             isQrScanned = extras.getBoolean("isQrScanned");
             bikeId = extras.getInt("bikeId");
+            deleteRequest_username = extras.getString("deletereq");
         }
         if (!isQrScanned) {
             timer_textview.setVisibility(View.GONE);
@@ -191,6 +194,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                  */
                 Intent intent = new Intent(MapRequests.this, RentBikeActivity.class);
                 intent.putExtra("isPromotion", isPromotion);
+                intent.putExtra("deletereq", deleteRequest_username);
                 startActivity(intent);
             }
         });
@@ -329,6 +333,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                 for (Request request : requestList) {
                     if (request.lat == marker.getPosition().latitude && request.lng == marker.getPosition().longitude) {
                         String requestTime = request.requestTime;
+                        deleteRequest_username = request.username;
                         try {
                             creditToBeEarned = getCreditToBeEarned(requestTime);
                         } catch (ParseException e) {
@@ -376,9 +381,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
             marker.showInfoWindow();
         }
         return true;
-    }
-
-    private void startTask() {//Burada görev süresi  baslasın
     }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
@@ -952,6 +954,75 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
+    class MyAsyncDeleteRequest extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("deletereq", deleteRequest_username);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                String message = jObj.getString("message");
+                String status = jObj.getString("status");
+
+                isr.close();
+                reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
+                return status;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    private void getRequestForDeleteRequest() {
+        // REST API
+        MyAsyncDeleteRequest async = new MyAsyncDeleteRequest();
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void getRequestForFinish() {
         // REST API
         MyAsyncForFinish async = new MyAsyncForFinish();
@@ -1018,6 +1089,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getRequestForDeleteRequest();
 
                 getRequestForFinish();
 
