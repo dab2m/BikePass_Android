@@ -1,4 +1,4 @@
-package com.example.bikepass_android.activity;
+package com.example.bikepass_android.adapter;
 
 import android.app.Activity;
 import android.app.Service;
