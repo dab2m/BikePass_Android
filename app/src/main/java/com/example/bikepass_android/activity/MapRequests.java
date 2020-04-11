@@ -9,14 +9,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -61,7 +64,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -93,6 +103,13 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     private boolean timerRunning;
     private boolean isPromotion = true;
     private boolean isQrScanned = false;
+    private Button finishPromotion_button;
+    private int distance;
+    private int bikeId;
+    private int elapsedTime;
+    private int earnCredit;
+
+    private List<Request> requestList = new ArrayList<>();
 
     ArrayList<Marker> marker = new ArrayList<Marker>();
     LatLng userLoc;
@@ -114,11 +131,31 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getRequestForHotpoints();
+
         setContentView(R.layout.activity_map_requests);
         sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
         mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.requests);
 
+        finishPromotion_button = (Button) findViewById(R.id.finishPromotion_button);
+        finishPromotion_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (earnCredit > 0) {
+                    showDialogForEarnCredit(MapRequests.this);
+                    finishPromotion_button.setVisibility(View.GONE);
+
+                    stopTimer();
+                    updateTimer();
+                    timer_textview.setVisibility(View.GONE);
+                } else {
+                    showDialogForWarning(MapRequests.this);
+                }
+
+            }
+        });
         timer_textview = (TextView) findViewById(R.id.timer_textview);
         /**
          * Asagidaki kod parcasi RentBikeActivity'den isQrScanned'i almak icin yazilmistir.
@@ -126,11 +163,14 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isQrScanned = extras.getBoolean("isQrScanned");
+            bikeId = extras.getInt("bikeId");
         }
         if (!isQrScanned) {
             timer_textview.setVisibility(View.GONE);
+            finishPromotion_button.setVisibility(View.GONE);
         } else {
             timer_textview.setVisibility(View.VISIBLE);
+            finishPromotion_button.setVisibility(View.VISIBLE);
             startTimer();
         }
 
@@ -278,19 +318,31 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("ResourceAsColor")
     @Override
     public boolean onMarkerClick(Marker marker) {
-        boolean showdialog=false;
-        for(Bike bike:bike_request){
-            if(bike.getLatitude()==marker.getPosition().latitude && bike.getLongitude()==marker.getPosition().longitude){
-                showdialog=true;
+        boolean showdialog = false;
+        int creditToBeEarned = 0;
+        for (Bike bike : bike_request) {
+            if (bike.getLatitude() == marker.getPosition().latitude && bike.getLongitude() == marker.getPosition().longitude) {
+                for (Request request : requestList) {
+                    if (request.lat == marker.getPosition().latitude && request.lng == marker.getPosition().longitude) {
+                        String requestTime = request.requestTime;
+                        try {
+                            creditToBeEarned = getCreditToBeEarned(requestTime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                showdialog = true;
             }
         }
         String url = getUrl(userLoc, marker.getPosition(), "walking");
         new FetchURL(MapRequests.this).execute(url, "walking");
-        int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude,(float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
-        if(showdialog) {
+        distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude, (float) marker.getPosition().latitude, (float) marker.getPosition().longitude);
+        if (showdialog) {
             myDialog.setContentView(R.layout.custom_infowindow);
             Window window = myDialog.getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
@@ -299,7 +351,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
             window.setAttributes(wlp);
             window.getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
             TextView textmoney = myDialog.findViewById(R.id.creditTxt);
-            textmoney.setText("You will get 1000 credit if you manage this in 30 minutes!");
+            textmoney.setText("You will get " + creditToBeEarned + " credit if you manage this in 30 minutes!");
             TextView adressText = myDialog.findViewById(R.id.addressTxt);
             adressText.setText("It's only " + distance + " M away from you");
             TextView txtclose = myDialog.findViewById(R.id.txtclose);
@@ -328,7 +380,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
     private void startTask() {//Burada görev süresi  baslasın
     }
-
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
         // Origin of route
@@ -519,7 +570,8 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         Log.i("add:", add[0]);
         return add[0];
     }
-    public void update_bike(final Bike bike, String status, String latitude, String longitude){
+
+    public void update_bike(final Bike bike, String status, String latitude, String longitude) {
 
         if (status.equals("0")) {
             bike.setStatus_code(0);
@@ -590,29 +642,29 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONArray hotspot_array = jsonObject.getJSONArray("hotpoints");
                         for (int i = 0; i < hotspot_array.length(); i++) {
-                            boolean addpoint=true;
+                            boolean addpoint = true;
                             JSONObject values = hotspot_array.getJSONObject(i);
-                            for(Hotspots spot:hotspots){
-                                if(spot.getPoint_name().equals(values.getString("point_name"))){
-                                    addpoint=false;
+                            for (Hotspots spot : hotspots) {
+                                if (spot.getPoint_name().equals(values.getString("point_name"))) {
+                                    addpoint = false;
                                 }
                             }
-                            if(addpoint) {
+                            if (addpoint) {
                                 Hotspots spot = new Hotspots(Double.parseDouble(values.getString("radius")), values.getString("point_name"), Integer.parseInt(values.getString("frequency")), Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
                                 hotspots.add(spot);
                             }
                         }
                         JSONArray request_array = jsonObject.getJSONArray("requests");
                         for (int i = 0; i < request_array.length(); i++) {
-                            boolean add_request=true;
+                            boolean add_request = true;
                             JSONObject values = request_array.getJSONObject(i);
-                            final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")),Double.parseDouble(values.getString("long")));
-                            for(Bike bike:bike_request){
-                                if(bike.getId()==Integer.parseInt(values.getString("id")))
-                                    add_request=false;
+                            final LatLng lat = new LatLng(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")));
+                            for (Bike bike : bike_request) {
+                                if (bike.getId() == Integer.parseInt(values.getString("id")))
+                                    add_request = false;
                             }
-                            if(add_request) {
-                                Bike bike=new Bike(1,"Requested",R.drawable.bike_requested,Integer.parseInt(values.getString("id")),lat.latitude,lat.longitude);
+                            if (add_request) {
+                                Bike bike = new Bike(1, "Requested", R.drawable.bike_requested, Integer.parseInt(values.getString("id")), lat.latitude, lat.longitude);
                                 bike_request.add(bike);
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -639,8 +691,8 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
                                 }
                             }
-                            if (add_bike){
-                                Bike bike=new Bike(1,"Available",R.drawable.bike_available,Integer.parseInt(values.getString("name").substring(4)),lat.latitude,lat.longitude);
+                            if (add_bike) {
+                                Bike bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt(values.getString("name").substring(4)), lat.latitude, lat.longitude);
                                 bike_avaliable.add(bike);
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -668,5 +720,317 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
+    class MyAsyncForGetRequests extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+            String message;
+            String status;
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("hotpoints", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                message = jObj.getString("message");
+                status = jObj.getString("status");
+                JSONArray jsonArray = jObj.getJSONArray("requests");
+
+                if (jsonArray != null) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        String username = obj.getString("username");
+                        double latitude = obj.getDouble("lat");
+                        double longitude = obj.getDouble("long");
+                        double radius = obj.getDouble("radius");
+                        String requestTime = obj.getString("request_time");
+                        int id = obj.getInt("id");
+
+
+                        Request response_request = new Request(username, latitude, longitude, radius, requestTime, id);
+                        requestList.add(response_request);
+                    }
+                }
+
+                isr.close();
+                reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
+                return status;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    private class Request {
+        private String username;
+        private double lat;
+        private double lng;
+        private double radius;
+        private String requestTime;
+        private int id;
+
+        public Request(String username, double lat, double lng, double radius, String requestTime, int id) {
+            this.username = username;
+            this.lat = lat;
+            this.lng = lng;
+            this.radius = radius;
+            this.requestTime = requestTime;
+            this.id = id;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public double getLat() {
+            return lat;
+        }
+
+        public void setLat(double lat) {
+            this.lat = lat;
+        }
+
+        public double getLng() {
+            return lng;
+        }
+
+        public void setLng(double lng) {
+            this.lng = lng;
+        }
+
+        public double getRadius() {
+            return radius;
+        }
+
+        public void setRadius(double radius) {
+            this.radius = radius;
+        }
+
+        public String getRequestTime() {
+            return requestTime;
+        }
+
+        public void setRequestTime(String requestTime) {
+            this.requestTime = requestTime;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+    }
+
+    private void getRequestForHotpoints() {
+        // REST API
+        MyAsyncForGetRequests async = new MyAsyncForGetRequests();
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public int getCreditToBeEarned(String requestTime) throws ParseException {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss");  //it will give you the date in the formate that is given in the image
+        String current_time = dateformat.format(c.getTime());
+
+
+        SimpleDateFormat dt = new SimpleDateFormat("HH:mm:ss");
+        Date dt2 = dt.parse(current_time);
+        Date dt3 = dt.parse(requestTime);
+
+        elapsedTime = (int) (dt2.getTime() - dt3.getTime()) / 60000;
+
+        return 2000 - elapsedTime;
+    }
+
+    class MyAsyncForFinish extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("username", user_name);
+                jsonObject.put("bike_id", bikeId);
+                jsonObject.put("lat", userLoc.latitude);
+                jsonObject.put("long", userLoc.longitude);
+                jsonObject.put("bike_time", 1800);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                String message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
+                earnCredit = jObj.getInt("credit"); // promosyondan kazanilan credit miktari
+
+                isr.close();
+                reader.close();
+
+                Log.i("status", status);
+                Log.i("message", message);
+
+                return status;
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    private void getRequestForFinish() {
+        // REST API
+        MyAsyncForFinish async = new MyAsyncForFinish();
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showDialogForWarning(Activity activity) {
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_warning);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText("WARNING !");
+
+        TextView text2 = (TextView) dialog.findViewById(R.id.tv_info);
+        text2.setText("You must drop the bike on request point which taken by you.");
+
+
+        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    public void showDialogForEarnCredit(Activity activity) {
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_finish);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText("HAVE YOU ARRIVED?");
+
+        TextView text2 = (TextView) dialog.findViewById(R.id.finish_text);
+        text2.setText("Do you want to finish?");
+
+        Button dialogBtn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        dialogBtn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Button dialogBtn_finish = (Button) dialog.findViewById(R.id.btn_finish);
+        dialogBtn_finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getRequestForFinish();
+
+                Toast.makeText(getApplicationContext(), "You earned " + earnCredit + " credit.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MapRequests.this, MapRequests.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("earnCredit", earnCredit);
+                startActivity(intent);
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
 }
 

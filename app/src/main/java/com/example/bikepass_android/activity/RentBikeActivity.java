@@ -234,8 +234,11 @@ public class RentBikeActivity extends AppCompatActivity implements ZXingScannerV
                     intent.putExtra("username", username);
                     startActivity(intent);
                 } else {
+                    bikeId = myResult.substring(myResult.lastIndexOf(" ") + 1);
+
                     Intent intent = new Intent(RentBikeActivity.this, MapRequests.class);
                     intent.putExtra("isQrScanned", true);
+                    intent.putExtra("bikeId", Integer.parseInt(bikeId));
                     startActivity(intent);
                 }
 

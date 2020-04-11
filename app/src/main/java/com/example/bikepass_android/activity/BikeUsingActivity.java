@@ -285,7 +285,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(hotpointList);
     }
 
     class MyAsyncBikeId extends AsyncTask<String, Void, String> {
@@ -302,9 +301,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
             try {
                 jsonObject.put("username", username);
                 jsonObject.put("bike_id", bikeId.getText());
-                jsonObject.put("bike_time", bikeTime);
                 jsonObject.put("lat", lat);
                 jsonObject.put("long", lng);
+                jsonObject.put("bike_time", bikeTime);
                 //jsonObject.put("bike_km", 0);
             } catch (JSONException e) {
                 e.printStackTrace();
