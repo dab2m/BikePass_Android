@@ -17,13 +17,26 @@
         android:id="@+id/timer_textview"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:background="@drawable/rounded_button_white"
-        android:text="00:00"
         android:gravity="center"
+        android:text="00:00"
         android:textColor="@color/backgroudBike"
         android:textSize="40sp" />
+
+    <Button
+        android:id="@+id/finishPromotion_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/roundedbutton"
+        android:backgroundTint="@color/red"
+        android:text="End"
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btnreq"

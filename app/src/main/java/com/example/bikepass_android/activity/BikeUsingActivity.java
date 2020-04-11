@@ -56,6 +56,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private String total_credit;
     private String total_coin;
     private int new_total_credit;
+    private int earnCredit;
 
     private float lat;
     private float lng;
@@ -242,6 +243,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
                 Toast.makeText(getApplicationContext(), total_coin.toUpperCase() + " COINS ARE DEDUCTED FROM YOUR TOTAL COINS", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(BikeUsingActivity.this, ReportsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("earnCredit", earnCredit);
                 startActivity(intent);
                 dialog.cancel();
             }
@@ -283,14 +285,12 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(hotpointList);
     }
 
     class MyAsyncBikeId extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String[] urls) {
-            String message;
 
             HttpURLConnection connection;
             OutputStreamWriter request = null;
@@ -301,9 +301,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
             try {
                 jsonObject.put("username", username);
                 jsonObject.put("bike_id", bikeId.getText());
-                jsonObject.put("bike_time", bikeTime);
                 jsonObject.put("lat", lat);
                 jsonObject.put("long", lng);
+                jsonObject.put("bike_time", bikeTime);
                 //jsonObject.put("bike_km", 0);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -328,8 +328,9 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
 
                 response = sb.toString().trim();
                 JSONObject jObj = new JSONObject(response);
-                message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
+                String message = jObj.getString("message"); // request sonucu donen bisikletin durum mesaji
                 String status = jObj.getString("status"); // request sonucu donen bisikletin statusu
+                earnCredit = jObj.getInt("credit"); // kiralama sonunda bisiklet hotpoints bolgesindeyse geri kazandigi kredi miktari
 
                 isr.close();
                 reader.close();
