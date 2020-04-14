@@ -99,7 +99,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
     private TextView timer_textview;
     private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 1800000; // 30 min
+    private long timeLeftInMillis = 10000; // 30 min
     private boolean timerRunning;
     private boolean isPromotion = true;
     private boolean isQrScanned = false;
@@ -144,7 +144,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         finishPromotion_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                earnCredit = 1500;
                 if (earnCredit > 0) {
                     showDialogForEarnCredit(MapRequests.this);
                     finishPromotion_button.setVisibility(View.GONE);
@@ -232,7 +231,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
             @Override
             public void onFinish() {
-
+                showDialogForPenalty(MapRequests.this);
             }
         }.start();
 
@@ -256,6 +255,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         timeLeftText += sec;
         timer_textview.setText(timeLeftText);
     }
+
 
     public static int getPixelsFromDp(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -1055,6 +1055,40 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    public void showDialogForPenalty(Activity activity) {
+
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogbox_for_warning);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_file_path);
+        text.setText("WARNING !");
+
+        TextView text2 = (TextView) dialog.findViewById(R.id.tv_info);
+        text2.setText("You have not completed the task. Redirecting to Bike Rent Page.");
+
+
+        Button dialogBtn_okay = (Button) dialog.findViewById(R.id.btn_okay);
+        dialogBtn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapRequests.this, BikeUsingActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("penaltyCredit", "18000");
+                intent.putExtra("username", user_name);
+                intent.putExtra("bikeId", String.valueOf(bikeId));
+                startActivity(intent);
                 dialog.dismiss();
             }
         });

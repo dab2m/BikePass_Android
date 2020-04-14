@@ -547,7 +547,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             if (distance < 1000)
                 setRequest = true;
         }
-        if (setRequest) { //if(!setRequest) yap
+        if (!setRequest) { //if(!setRequest) yap
             manageBlinkEffect();
         }
     }

@@ -57,6 +57,7 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
     private String total_coin;
     private int new_total_credit;
     private int earnCredit;
+    private String penaltyCredit = null;
 
     private float lat;
     private float lng;
@@ -101,10 +102,21 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         if (extras != null && extras.getString("bikeId") != null) {
             id = extras.getString("bikeId");
         }
+        if (extras != null && extras.getString("penaltyCredit") != null) {
+            penaltyCredit = extras.getString("penaltyCredit");
+        }
+        if (penaltyCredit != null) {
+            setTotalPayment(Integer.parseInt(penaltyCredit));
+            totalPaymentCount.setText(penaltyCredit + " Coin");
+        }
         if (extras != null && extras.get("username") != null) {
             username = extras.getString("username");
         }
         bikeId.setText(id);
+
+        System.out.println("PENALTYYY:" + penaltyCredit);
+        System.out.println("BİKEIDDDD:" + bikeId.getText());
+        System.out.println("USERNAMEE:" + username);
 
 
         chronometer.setFormat("00:%s");
@@ -112,6 +124,10 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         chronometerHelper = new ChronometerHelper();
         chronometerHelper.setStartTime(null);
         startStopWatch();
+    }
+
+    public void setTotalPayment(int totalPayment) {
+        this.totalPayment = totalPayment;
     }
 
     public void totalPaymentUpdater() {
