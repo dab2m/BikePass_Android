@@ -99,7 +99,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
 
     private TextView timer_textview;
     private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 10000; // 30 min
+    private long timeLeftInMillis = 1800000; // 30 min
     private boolean timerRunning;
     private boolean isPromotion = true;
     private boolean isQrScanned = false;

@@ -114,10 +114,6 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
         }
         bikeId.setText(id);
 
-        System.out.println("PENALTYYY:" + penaltyCredit);
-        System.out.println("BİKEIDDDD:" + bikeId.getText());
-        System.out.println("USERNAMEE:" + username);
-
 
         chronometer.setFormat("00:%s");
         chronometer.setBase(SystemClock.elapsedRealtime());
@@ -194,6 +190,10 @@ public class BikeUsingActivity extends AppCompatActivity implements View.OnClick
             chronometer.setBase(startTime);
         } else {
             chronometer.setBase(chronometerHelper.getStartTime());
+        }
+
+        if (penaltyCredit != null) {
+            chronometer.setBase(SystemClock.elapsedRealtime() - (30 * 60000));
         }
 
         chronometer.start();
