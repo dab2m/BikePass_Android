@@ -70,7 +70,6 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-
 import com.example.bikepass_android.directionhelpers.*;
 
 
@@ -94,6 +93,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Button seecards;
     Dialog myDialog;
     int whichBike = -1;
+    boolean clicked=false;
     private MapFragment mapFragment;
     SharedPreferences sharedpreferences;
     private String user_name;
@@ -135,6 +135,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         seecards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clicked=true;
                 createRequest("Please click the position you want to set request");
             }
         });
@@ -347,21 +348,28 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 @Override
                 public void onMapClick(LatLng latLng) {
 
-                    endAnimation();
 
-                    if (makeRequest(latLng.latitude + "", latLng.longitude + "")) {
+                    if (clicked) {
+                        endAnimation();
+                        if (makeRequest(latLng.latitude + "", latLng.longitude + "")) {
 
-                        MarkerOptions markerOptions = new MarkerOptions();
+                            MarkerOptions markerOptions = new MarkerOptions();
 
-                        markerOptions.position(latLng);
+                            markerOptions.position(latLng);
 
-                        markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+                            markerOptions.title(latLng.latitude + " : " + latLng.longitude);
 
-                        request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)).snippet("Position:" + getAddress(latLng.latitude, latLng.longitude)));
+                            request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)).snippet("Position:" + getAddress(latLng.latitude, latLng.longitude)));
 
-                        marker.add(request);
+                            marker.add(request);
 
-                        request.showInfoWindow();
+                            request.showInfoWindow();
+                        }
+                        else{
+                            createRequest("Please choose another location,this location is not managed right now");
+                            manageBlinkEffect();
+
+                        }
                     }
                 }
             });
@@ -547,7 +555,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             if (distance < 1000)
                 setRequest = true;
         }
-        if (!setRequest) { //if(!setRequest) yap
+        if (setRequest) { //if(!setRequest) yap
             manageBlinkEffect();
         }
     }
@@ -778,6 +786,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String status = jsonObject.getString("status");
                 isr.close();
                 reader.close();
+                Log.i("statusss:",status);
                 return status;
 
             } catch (IOException e) {
