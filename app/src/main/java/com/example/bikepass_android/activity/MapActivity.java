@@ -33,6 +33,7 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +76,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+
 import com.example.bikepass_android.directionhelpers.*;
 
 
@@ -98,7 +100,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Button seecards;
     Dialog myDialog;
     int whichBike = -1;
-    boolean clicked=false;
+    boolean clicked = false;
     private MapFragment mapFragment;
     SharedPreferences sharedpreferences;
     private String user_name;
@@ -114,6 +116,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Button tasks;
     ImageView report_problem;
     Dialog infodialog;
+    private ImageButton returnBikes;
+
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,14 +140,23 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         myDialog = new Dialog(this);
         popupdialog = new Dialog(this);
         canceldialog = new Dialog(this);
-        infodialog=new Dialog(this);
+        infodialog = new Dialog(this);
+
+        returnBikes = (ImageButton) findViewById(R.id.returnbikes);
+        returnBikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MapActivity.this, RentBikeActivity.class));
+            }
+        });
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         seecards = findViewById(R.id.seecards);
         seecards.setVisibility(View.GONE);
         seecards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clicked=true;
+                clicked = true;
                 createRequest("Please click the position you want to set request");
             }
         });
@@ -157,7 +171,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 isGPS = isGPSEnable;
             }
         });
-        report_problem=(ImageView)findViewById(R.id.report_problem);
+        report_problem = (ImageView) findViewById(R.id.report_problem);
         report_problem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,17 +181,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
-    public void showReportDialog(){
+    public void showReportDialog() {
 
         //infodialog.setContentView(R.layout.report_problem_popup);
         Rect displayRectangle = new Rect();
         Window window = infodialog.getWindow();
         window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this,R.style.CustomAlertDialog);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this, R.style.CustomAlertDialog);
         ViewGroup viewGroup = findViewById(android.R.id.content);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.report_problem_popup, viewGroup, false);
-        dialogView.setMinimumWidth((int)(displayRectangle.width() * 2.1f));
-        dialogView.setMinimumHeight((int)(displayRectangle.height() * 2.1f));
+        dialogView.setMinimumWidth((int) (displayRectangle.width() * 2.1f));
+        dialogView.setMinimumHeight((int) (displayRectangle.height() * 2.1f));
         builder.setView(dialogView);
         final AlertDialog alertDialog = builder.create();
        /* Button buttonOk=dialogView.findViewById(R.id.buttonOK);
@@ -191,6 +205,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         //infodialog.show();
 
     }
+
     public void createRequest(String title) {
         endAnimation();
         popupdialog.setContentView(R.layout.set_request_popup);
@@ -403,8 +418,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                             marker.add(request);
 
                             request.showInfoWindow();
-                        }
-                        else{
+                        } else {
                             createRequest("Please choose another location,this location is not managed right now");
                             manageBlinkEffect();
 
@@ -825,7 +839,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String status = jsonObject.getString("status");
                 isr.close();
                 reader.close();
-                Log.i("statusss:",status);
+                Log.i("statusss:", status);
                 return status;
 
             } catch (IOException e) {
