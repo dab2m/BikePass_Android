@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -23,12 +25,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,7 +112,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     Dialog canceldialog;
     Marker request;
     Button tasks;
-
+    ImageView report_problem;
+    Dialog infodialog;
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +135,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         myDialog = new Dialog(this);
         popupdialog = new Dialog(this);
         canceldialog = new Dialog(this);
+        infodialog=new Dialog(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         seecards = findViewById(R.id.seecards);
         seecards.setVisibility(View.GONE);
@@ -150,8 +157,40 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 isGPS = isGPSEnable;
             }
         });
+        report_problem=(ImageView)findViewById(R.id.report_problem);
+        report_problem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReportDialog();
+            }
+        });
     }
 
+
+    public void showReportDialog(){
+
+        //infodialog.setContentView(R.layout.report_problem_popup);
+        Rect displayRectangle = new Rect();
+        Window window = infodialog.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this,R.style.CustomAlertDialog);
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.report_problem_popup, viewGroup, false);
+        dialogView.setMinimumWidth((int)(displayRectangle.width() * 2.1f));
+        dialogView.setMinimumHeight((int)(displayRectangle.height() * 2.1f));
+        builder.setView(dialogView);
+        final AlertDialog alertDialog = builder.create();
+       /* Button buttonOk=dialogView.findViewById(R.id.buttonOK);
+        buttonOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        }); */
+        alertDialog.show();
+        //infodialog.show();
+
+    }
     public void createRequest(String title) {
         endAnimation();
         popupdialog.setContentView(R.layout.set_request_popup);
