@@ -122,7 +122,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     private String user_name;
     int whichBike = -1;
     private MapFragment mapFrag;
-
+    boolean addpoint = true;
     SharedPreferences sharedpreferences;
     Button scanqr;
     private Marker requested_bike;
@@ -213,8 +213,12 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     public void onBackPressed() { // timer calisiyorsa o sayfadan geri gitme
         if (timerRunning)
             Toast.makeText(this, "You can't go back when timer is running!", Toast.LENGTH_SHORT).show();
-        else
+        else {
+
             super.onBackPressed();
+            startActivity(new Intent(this, MapActivity.class));
+
+        }
     }
 
     public void setTimer(int min) {
@@ -434,15 +438,19 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     }
 
     public void setHotspots() {
-        for (Hotspots hotspot : hotspots) {
-            mMap.addCircle(
-                    new CircleOptions()
-                            .center(new LatLng(hotspot.getLatitude(), hotspot.getLongitude()))
-                            .radius(hotspot.getRadius())
-                            .strokeWidth(3f)
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.argb(70, 150, 50, 50))
-            );
+        Log.i("size:",hotspots.size()+"");
+        Log.i("add point:",addpoint+"");
+        if(addpoint) {
+            for (Hotspots hotspot : hotspots) {
+                mMap.addCircle(
+                        new CircleOptions()
+                                .center(new LatLng(hotspot.getLatitude(), hotspot.getLongitude()))
+                                .radius(hotspot.getRadius())
+                                .strokeWidth(3f)
+                                .strokeColor(Color.BLUE)
+                                .fillColor(Color.argb(70, 150, 50, 50))
+                );
+            }
         }
     }
 
@@ -520,6 +528,8 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
             }
         }
     }
+
+
 
     private double meterDistanceBetweenPoints(float lat_a, float lng_a, float lat_b, float lng_b) {
         float pk = (float) (180.f / Math.PI);
@@ -644,7 +654,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONArray hotspot_array = jsonObject.getJSONArray("hotpoints");
                         for (int i = 0; i < hotspot_array.length(); i++) {
-                            boolean addpoint = true;
+                            addpoint = true;
                             JSONObject values = hotspot_array.getJSONObject(i);
                             for (Hotspots spot : hotspots) {
                                 if (spot.getPoint_name().equals(values.getString("point_name"))) {

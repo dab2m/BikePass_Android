@@ -142,13 +142,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         canceldialog = new Dialog(this);
         infodialog = new Dialog(this);
 
-        returnBikes = (ImageButton) findViewById(R.id.returnbikes);
+     /*   returnBikes = (ImageButton) findViewById(R.id.returnbikes);
         returnBikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MapActivity.this, RentBikeActivity.class));
             }
-        });
+        }); */
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         seecards = findViewById(R.id.seecards);
@@ -171,13 +171,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 isGPS = isGPSEnable;
             }
         });
-        report_problem = (ImageView) findViewById(R.id.report_problem);
+      /*  report_problem = (ImageView) findViewById(R.id.report_problem);
         report_problem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showReportDialog();
             }
-        });
+        }); */
     }
 
 
