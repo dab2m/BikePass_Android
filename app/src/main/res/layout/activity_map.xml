@@ -38,28 +38,21 @@
         android:gravity="center"
         android:text="See Tasks" />
 
- <!--  <ImageView
+    <ImageView
         android:id="@+id/report_problem"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_above="@+id/returnbikes"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/info"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/yeni"
         android:textColor="@android:color/black" />
 
     <ImageButton
         android:id="@+id/returnbikes"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/round_button"
-        android:backgroundTint="@color/backgroudBike"
-        android:scaleType="fitXY"
-        android:minHeight="40dp"
-        android:minWidth="40dp"
-        android:src="@drawable/bike1" />  -->
+        android:layout_marginTop="580dp"
+        android:background="@drawable/qqr" />
 
 </RelativeLayout>
