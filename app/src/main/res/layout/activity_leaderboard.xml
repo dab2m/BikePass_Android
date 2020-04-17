@@ -23,7 +23,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="340dp"
             android:layout_marginBottom="8dp"
             android:gravity="bottom"
             android:orientation="horizontal">
@@ -31,7 +31,7 @@
             <ListView
                 android:id="@+id/list_view"
                 android:layout_width="match_parent"
-                android:layout_height="221dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true" />
@@ -74,7 +74,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:gravity="bottom"
             android:orientation="horizontal">
@@ -96,9 +96,8 @@
                 android:layout_marginLeft="36dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudWorld"
-                android:src="@drawable/world_1"
                 android:scaleType="fitXY"
-                />
+                android:src="@drawable/world_1" />
 
             <ImageButton
                 android:id="@+id/settings"
