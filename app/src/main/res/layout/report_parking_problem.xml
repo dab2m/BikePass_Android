@@ -291,6 +291,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="18dp"
+                    android:layout_marginTop="5dp"
                     android:gravity="center"
                     android:text="GÖNDER"
                     android:textColor="@android:color/black"
