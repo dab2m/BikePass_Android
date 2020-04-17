@@ -93,7 +93,7 @@
                     android:id="@+id/parking_button"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/btn_back"
+                    android:background="@drawable/btn_rectangle"
                     android:orientation="horizontal"
                     android:text="Button Background Transparent">
 
@@ -120,9 +120,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/btn_back"
+                    android:background="@drawable/btn_rectangle"
                     android:orientation="horizontal"
-                    android:text="Button Background Transparent">
+                    >
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -141,6 +141,8 @@
                         android:textColor="@android:color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
+
+
 
 
             </LinearLayout>
