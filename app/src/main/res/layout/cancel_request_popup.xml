@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="350dp"
-    android:layout_height="130dp"
+    android:layout_height="150dp"
     android:layout_gravity="center|top"
     android:background="#FAFDFD"
     android:orientation="vertical"
@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/popup"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="85dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -24,9 +24,10 @@
         <TextView
             android:id="@+id/textviewmessage"
             android:layout_width="230dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
+            android:autoSizeTextType="uniform"
             android:text="TextView" />
 
         <TextView

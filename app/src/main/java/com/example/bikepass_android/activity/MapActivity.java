@@ -75,7 +75,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.example.bikepass_android.directionhelpers.*;
 
@@ -95,20 +99,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     ArrayList<Marker> marker = new ArrayList<Marker>();
     LatLng userLoc;
     private Polyline currentPolyline;
-    final ArrayList<LatLng> hotspots = new ArrayList<LatLng>();
     final ArrayList<Bike> status = new ArrayList<Bike>();
     Button seecards;
     Dialog myDialog;
     int whichBike = -1;
     boolean clicked = false;
-    private MapFragment mapFragment;
+    MapFragment mapFragment;
     SharedPreferences sharedpreferences;
-    private String user_name;
-    private int has_request = -1;
-    private double user_request_lat;
-    private double user_request_long;
-    boolean setRequest = false;
-    int deger = 1;
+    String user_name;
+    int has_request = -1;
+    double user_request_lat;
+    double user_request_long;
+    boolean has_created;
     Animation anim;
     Dialog popupdialog;
     Dialog canceldialog;
@@ -117,7 +119,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     ImageView report_problem;
     Dialog infodialog;
     private ImageButton returnBikes;
-
+    String global_Addr;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -134,6 +136,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 startActivity(new Intent(MapActivity.this, MapRequests.class));
             }
         });
+        has_created=true;
+        has_request = -1;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.bikes);
         mapFragment.getMapAsync(this);
@@ -157,7 +161,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             @Override
             public void onClick(View v) {
                 clicked = true;
-                createRequest("Please click the position you want to set request");
+                showInfoDıalog("Please click the position you want to set request");
             }
         });
         locationRequest = LocationRequest.create();
@@ -178,6 +182,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 showReportDialog();
             }
         }); */
+
+
     }
 
 
@@ -206,7 +212,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-    public void createRequest(String title) {
+    public void showInfoDıalog(String title) {
         endAnimation();
         popupdialog.setContentView(R.layout.set_request_popup);
         TextView txttoclose = (TextView) popupdialog.findViewById(R.id.close);
@@ -248,9 +254,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         handler.postDelayed(runnable, 5000);
     }
 
-    public void cancelRequestDialog() {
+    public void cancelRequestDialog(String address) {
 
         canceldialog.setContentView(R.layout.cancel_request_popup);
+        canceldialog.setCancelable(false);
         TextView txttoclose = (TextView) canceldialog.findViewById(R.id.close);
         txttoclose.setText("X");
         txttoclose.setTextColor(Color.BLACK);
@@ -261,7 +268,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         });
         TextView textmessage = (TextView) canceldialog.findViewById(R.id.textviewmessage);
-        textmessage.setText("You have a request created.Do you want tou continue or cancel the request?");
+        textmessage.setText("You have a request created in "+address+".Do you want tou continue or cancel the request?");
         textmessage.setTextColor(Color.BLACK);
         Window window = canceldialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
@@ -289,11 +296,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             public void onClick(View v) {
                 canceldialog.dismiss();
                 cancelRequest();
+                has_created=true;
+
             }
         });
-
     }
-
     private void cancelRequest() {
         try {
 
@@ -302,6 +309,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
                 if (result.equals("0")) {
                     request.remove();
+                    //cagır
+                    // showSetRequest();
                 }
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -395,51 +404,51 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         setRepeatingAsyncTask();
 
-        if (has_request != 0) {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
 
-                @Override
-                public void onMapClick(LatLng latLng) {
+                if (clicked) {
 
+                    endAnimation();
 
-                    if (clicked) {
-                        endAnimation();
-                        if (makeRequest(latLng.latitude + "", latLng.longitude + "")) {
+                    String result=makeRequest(latLng.latitude + "", latLng.longitude + "");
 
-                            MarkerOptions markerOptions = new MarkerOptions();
+                    if (!result.equals("1")) {
 
-                            markerOptions.position(latLng);
+                        MarkerOptions markerOptions = new MarkerOptions();
 
-                            markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+                        markerOptions.position(latLng);
 
-                            request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)).snippet("Position:" + getAddress(latLng.latitude, latLng.longitude)));
+                        markerOptions.title(latLng.latitude + " : " + latLng.longitude);
 
-                            marker.add(request);
+                        request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created in " + result).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)));
 
-                            request.showInfoWindow();
-                        } else {
-                            createRequest("Please choose another location,this location is not managed right now");
-                            manageBlinkEffect();
+                        marker.add(request);
 
-                        }
+                        request.showInfoWindow();
+
                     }
-                }
-            });
 
-        } else {
-            createRequest("You have already request in " + getAddress(user_request_lat, user_request_long));
-        }
+                    clicked=false;
+                }
+
+            }
+        });
+
     }
 
-    public boolean makeRequest(String lat, String lng) {
+    public String makeRequest(String lat, String lng) {
 
         try {
             MakeRequest async = new MakeRequest(lat, lng);
             try {
                 String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-                if (result.equals("0"))
-                    return true;
+                if (result.substring(0,1).equals("0"))
+                    return result.substring(1);
+                else
+                    return "1";
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -448,7 +457,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         } catch (Exception e) {
 
         }
-        return false;
+        return "";
     }
 
     private void setRepeatingAsyncTask() {
@@ -485,29 +494,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-    private String getAddress(final double lat, final double lng) {
-        Log.i("message:", "lat:" + lat + "lng" + lng);
-        final String[] add = {""};
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                try {
 
-                    List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
-                    Address obj = addresses.get(0);
-                    add[0] = obj.getAddressLine(0);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                }
-            }
-        };
-        thread.start();
-        Log.i("add:", add[0]);
-        return add[0];
-    }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
         // Origin of route
@@ -602,7 +589,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     public void showSetRequest() {
-
+        boolean setRequest = false;
         for (Bike bike : status) {
             int distance = (int) (meterDistanceBetweenPoints((float) bike.getLatitude(), (float) bike.getLongitude(), (float) userLoc.latitude, (float) userLoc.longitude));
             if (distance < 1000)
@@ -614,10 +601,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
-    public void setDialog(final int bikenum) {
+    public void setDialog(final int bikenum) throws ExecutionException, InterruptedException {
 
-        //String url=getUrl(marker.get(4).getPosition(),marker.get(5).getPosition(),"walking");
-        //new FetchURL(MapActivity.this).execute(url,"walking");
         int distance = (int) meterDistanceBetweenPoints((float) userLoc.latitude, (float) userLoc.longitude, (float) marker.get(bikenum).getPosition().latitude, (float) marker.get(bikenum).getPosition().longitude);
         TextView txtclose;
         TextView bikestats;
@@ -625,17 +610,26 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         TextView dist;
         TextView log;
         myDialog.setContentView(R.layout.custompopup);
+        myDialog.setCancelable(false);
         bikestats = myDialog.findViewById(R.id.bikestatus);
         bikestats.setText(status.get(bikenum).getStatus_name());
         dist = myDialog.findViewById(R.id.dist);
         dist.setText(distance + " m");
         log = myDialog.findViewById(R.id.log);
-        log.setText("This bike is not avaliable right now!");
         btnreserved = (Button) myDialog.findViewById(R.id.btnrzrv);
         if (status.get(bikenum).getStatus_code() != 1) {
+
+            log.setText("This bike is not avaliable right now!");
+            log.setVisibility(View.VISIBLE);
             btnreserved.setVisibility(View.GONE);
         } else {
-            log.setVisibility(View.GONE);
+
+            log.setTextColor(Color.DKGRAY);
+
+            log.setText("Bike in "+status.get(bikenum).getAddress());
+
+            log.setVisibility(View.VISIBLE);
+
             btnreserved.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -644,7 +638,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         SetBikeRez async = new SetBikeRez(status.get(bikenum).getId());
                         try {
                             async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
@@ -680,7 +673,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             if (marker.equals(myMarker)) {
                 String url = getUrl(userLoc, marker.getPosition(), "walking");
                 new FetchURL(MapActivity.this).execute(url, "walking");
-                setDialog(whichBike);
+                try {
+                    setDialog(whichBike);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         whichBike = -1;
@@ -713,6 +712,60 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         getMyLocation();
         return false;
     }
+
+    public void putRequestedMarker(String address) {
+
+        request = mMap.addMarker((new MarkerOptions().position(new LatLng(user_request_lat, user_request_long)).title("Your request in "+address ).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+        request.showInfoWindow();
+
+    }
+
+    public void update_bike(final Bike bike, String status, String latitude, String longitude, final int hangi, final String address) {
+
+        if (status.equals("0")) {
+            bike.setStatus_code(0);
+            bike.setLogo_name(R.drawable.bike_offservice);
+            bike.setStatus_name("Off service");
+        } else if (status.equals("1")) {
+            bike.setStatus_code(1);
+            bike.setLogo_name(R.drawable.bike_available);
+            bike.setStatus_name("Available");
+        } else if (status.equals("2")) {
+            bike.setStatus_code(2);
+            bike.setLogo_name(R.drawable.bike_busy);
+            bike.setStatus_name("Busy");
+        } else if (status.equals("3")) {
+            bike.setStatus_code(3);
+            bike.setLogo_name(R.drawable.bike_busy);
+            bike.setStatus_name("Rezerved");
+        }
+        bike.setLatitude(Double.parseDouble(latitude));
+        bike.setLongitude(Double.parseDouble(longitude));
+        bike.setAddress(address);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                marker.remove(hangi);
+                marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(bike.getLatitude(), bike.getLongitude())).title(bike.getStatus_name() + " bike in  "+address ).icon(BitmapDescriptorFactory.fromResource(bike.getLogo_name()))));
+
+            }
+        });
+    }
+
+    public Bike add_bike(String status_code, String name, String latitude, String longitude,String address) {
+        Bike bike;
+        if (status_code.equals("0")) {
+            bike = new Bike(0, "Off service", R.drawable.bike_offservice, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude),address);
+        } else if (status_code.equals("1")) {
+            bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude),address);
+        } else if (status_code.equals("2")) {
+            bike = new Bike(2, "Busy", R.drawable.bike_busy, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude),address);
+        } else {
+            bike = new Bike(3, "Rezerved", R.drawable.bike_busy, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude),address);
+        }
+        return bike;
+    }
+
 
     class SetBikeRez extends AsyncTask<String, String, String> {
 
@@ -837,10 +890,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 response = sb.toString().trim();
                 JSONObject jsonObject = new JSONObject(response);
                 String status = jsonObject.getString("status");
+                String addr = jsonObject.getString("address");
                 isr.close();
                 reader.close();
-                Log.i("statusss:", status);
-                return status;
+                return status+addr;
 
             } catch (IOException e) {
                 // Error
@@ -894,7 +947,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String status = jsonObject.getString("status");
                 isr.close();
                 reader.close();
-                Log.i("statusss:", status);
                 if (status.equals("0")) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -969,13 +1021,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 String jsonString = response;
                 if (jsonString != null) {
                     try {
-                        JSONObject jsonObject = new JSONObject(jsonString);
+                        final JSONObject jsonObject = new JSONObject(jsonString);
                         JSONArray bikes = jsonObject.getJSONArray("bikes");
                         has_request = Integer.parseInt(jsonObject.getString("status"));
-                        if (has_request == 0) {
-                            user_request_lat = Double.parseDouble(jsonObject.getString("lat"));
-                            user_request_long = Double.parseDouble(jsonObject.getString("long"));
-                        }
                         for (int i = 0; i < bikes.length(); i++) {
                             boolean flag = true;
                             int count = 0;
@@ -985,20 +1033,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                     flag = false;
                                     if (bike.getStatus_code() != Integer.parseInt(values.getString("status")) || bike.getLatitude() != Double.parseDouble(values.getString("lat"))
                                             || bike.getLongitude() != Double.parseDouble(values.getString("long"))) {
-                                        update_bike(bike, values.getString("status"), values.getString("lat"), values.getString("long"), count);
+                                        update_bike(bike, values.getString("status"), values.getString("lat"), values.getString("long"), count,values.getString("address"));
                                         break;
                                     }
                                 }
                                 count++;
                             }
                             if (flag)
-                                status.add(add_bike(values.getString("status"), values.getString("name").substring(4), values.getString("lat"), values.getString("long")));
+                                status.add(add_bike(values.getString("status"), values.getString("name").substring(4), values.getString("lat"), values.getString("long"),values.getString("address")));
                         }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
-                                mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
+                                if(userLoc!=null)
+                                    mMap.addMarker(new MarkerOptions().position(userLoc).title("You are here"));
                                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 15));
                                 for (int i = 0; i < status.size(); i++) {
                                     boolean flag = true;
@@ -1008,19 +1056,26 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                         }
                                     }
                                     if (flag) {
-                                        marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(status.get(i).getLatitude(), status.get(i).getLongitude())).title(status.get(i).getStatus_name() + " bike in  " + getAddress(status.get(i).getLatitude(), status.get(i).getLongitude())).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
+                                        marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(status.get(i).getLatitude(), status.get(i).getLongitude())).title(status.get(i).getStatus_name() + " bike in  " ).icon(BitmapDescriptorFactory.fromResource(status.get(i).getLogo_name()))));
                                     }
                                 }
-                                if (has_request == 0 && deger == 1) {
-                                    putRequestedMarker();
-                                    deger++;
-                                    cancelRequestDialog();
-                                } else if (has_request == 2 && deger == 1) {
+                                if (has_request == 0 && has_created) {
+                                    try {
+                                        user_request_lat = Double.parseDouble(jsonObject.getString("lat"));
+                                        user_request_long = Double.parseDouble(jsonObject.getString("long"));
+                                        putRequestedMarker(jsonObject.getString("address"));
+                                        cancelRequestDialog(jsonObject.getString("address"));
+                                        has_created=false;
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else if (has_request == 2 && has_created) {
                                     showSetRequest();
-                                    deger++;
+                                    has_created=false;
                                 }
                             }
                         });
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1039,56 +1094,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
 
             return null;
-        }
-
-
-        public void putRequestedMarker() {
-            request = mMap.addMarker((new MarkerOptions().position(new LatLng(user_request_lat, user_request_long)).title("Your request in " + getAddress(user_request_lat, user_request_long)).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
-            request.showInfoWindow();
-        }
-
-        public void update_bike(final Bike bike, String status, String latitude, String longitude, final int hangi) {
-
-            if (status.equals("0")) {
-                bike.setStatus_code(0);
-                bike.setLogo_name(R.drawable.bike_offservice);
-                bike.setStatus_name("Off service");
-            } else if (status.equals("1")) {
-                bike.setStatus_code(1);
-                bike.setLogo_name(R.drawable.bike_available);
-                bike.setStatus_name("Available");
-            } else if (status.equals("2")) {
-                bike.setStatus_code(2);
-                bike.setLogo_name(R.drawable.bike_busy);
-                bike.setStatus_name("Busy");
-            } else if (status.equals("3")) {
-                bike.setStatus_code(3);
-                bike.setLogo_name(R.drawable.bike_busy);
-                bike.setStatus_name("Rezerved");
-            }
-            bike.setLatitude(Double.parseDouble(latitude));
-            bike.setLongitude(Double.parseDouble(longitude));
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    marker.remove(hangi);
-                    marker.add(mMap.addMarker(new MarkerOptions().position(new LatLng(bike.getLatitude(), bike.getLongitude())).title(bike.getStatus_name() + " bike in  " + getAddress(bike.getLatitude(), bike.getLongitude())).icon(BitmapDescriptorFactory.fromResource(bike.getLogo_name()))));
-                }
-            });
-        }
-
-        public Bike add_bike(String status_code, String name, String latitude, String longitude) {
-            Bike bike;
-            if (status_code.equals("0")) {
-                bike = new Bike(0, "Off service", R.drawable.bike_offservice, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude));
-            } else if (status_code.equals("1")) {
-                bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude));
-            } else if (status_code.equals("2")) {
-                bike = new Bike(2, "Busy", R.drawable.bike_busy, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude));
-            } else {
-                bike = new Bike(3, "Rezerved", R.drawable.bike_busy, Integer.parseInt(name), Double.parseDouble(latitude), Double.parseDouble(longitude));
-            }
-            return bike;
         }
 
     }
