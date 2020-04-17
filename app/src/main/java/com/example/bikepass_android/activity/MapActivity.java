@@ -200,15 +200,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         dialogView.setMinimumHeight((int) (displayRectangle.height() * 2.1f));
         builder.setView(dialogView);
         final AlertDialog alertDialog = builder.create();
-       /* Button buttonOk=dialogView.findViewById(R.id.buttonOK);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
+        Button close=dialogView.findViewById(R.id.txtclose);
+        close.setText("X");
+        close.setTextColor(Color.BLACK);
+        close.setVisibility(View.VISIBLE);
+        close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
             }
-        }); */
+        });
         alertDialog.show();
-        //infodialog.show();
 
     }
 
@@ -612,6 +614,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         myDialog.setContentView(R.layout.custompopup);
         myDialog.setCancelable(false);
         bikestats = myDialog.findViewById(R.id.bikestatus);
+        bikestats.setTextColor(Color.DKGRAY);
         bikestats.setText(status.get(bikenum).getStatus_name());
         dist = myDialog.findViewById(R.id.dist);
         dist.setText(distance + " m");
