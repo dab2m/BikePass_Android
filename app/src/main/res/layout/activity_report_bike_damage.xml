@@ -120,6 +120,7 @@
             android:background="#A9A9A9" />
 
         <LinearLayout
+            android:id="@+id/photolayout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal">
@@ -145,6 +146,7 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#A9A9A9" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"

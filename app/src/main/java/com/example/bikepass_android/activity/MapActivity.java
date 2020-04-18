@@ -1050,6 +1050,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                                         e.printStackTrace();
                                     }
                                 } else if (has_request == 2 && has_created) {
+                                    if(userLoc!=null)
                                     showSetRequest();
                                     has_created=false;
                                 }

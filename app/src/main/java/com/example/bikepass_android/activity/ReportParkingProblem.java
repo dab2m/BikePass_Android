@@ -81,6 +81,7 @@ public class ReportParkingProblem extends AppCompatActivity {
                 ozelmulkiyet.setTextColor(Color.WHITE);
             }
         });
+
         final LinearLayout devrilmislayout=findViewById(R.id.devrilmislayout);
         final TextView devrilmis=findViewById(R.id.devrilmis);
         devrilmis.setOnClickListener(new View.OnClickListener() {

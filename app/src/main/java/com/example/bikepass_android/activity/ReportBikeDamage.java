@@ -1,7 +1,14 @@
 package com.example.bikepass_android.activity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bikepass_android.R;
 public class ReportBikeDamage extends AppCompatActivity {
@@ -18,10 +26,15 @@ public class ReportBikeDamage extends AppCompatActivity {
     String reason;
     LinearLayout clickedLayout;
     TextView clickedText;
+    private static final int CAMERA_REQUEST = 1888;
+    ImageView imageView;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    LinearLayout photoButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_bike_damage);
+
         Intent intent=getIntent();
         if(intent.getStringExtra("username")!=null && intent.getStringExtra("useraddr")!=null) {
             user_name=intent.getStringExtra("username");
@@ -30,6 +43,24 @@ public class ReportBikeDamage extends AppCompatActivity {
         TextView loc=findViewById(R.id.userlocation);
         loc.setText(user_addr);
         loc.setTextColor(Color.BLACK);
+        photoButton=findViewById(R.id.photolayout);
+        photoButton.setOnClickListener(new View.OnClickListener()
+        {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v)
+            {
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                }
+                else
+                {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                }
+            }
+        });
         ImageView arrow=findViewById(R.id.txtclose);
         arrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +129,37 @@ public class ReportBikeDamage extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+            else
+            {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
+        {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            TextView damagephoto=findViewById(R.id.damagephoto);
+            damagephoto.setVisibility(View.INVISIBLE);
+            imageView.setImageBitmap(photo);
+            photoButton.addView(imageView);
+        }
+    }
     @Override
     public void onBackPressed() {
 
