@@ -324,7 +324,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(MapActivity.this);
         mMap.setOnMyLocationClickListener(MapActivity.this);
         mMap.getUiSettings().setMapToolbarEnabled(true);
@@ -361,7 +360,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             }
         };
-
+        mMap.setMyLocationEnabled(true);
         setRepeatingAsyncTask();
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
