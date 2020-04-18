@@ -323,12 +323,16 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         boolean showdialog = false;
+        String createdusername="";
         int creditToBeEarned = 0;
         for (Bike bike : bike_request) {
             if (bike.getLatitude() == marker.getPosition().latitude && bike.getLongitude() == marker.getPosition().longitude) {
                 for (Request request : requestList) {
                     if (request.lat == marker.getPosition().latitude && request.lng == marker.getPosition().longitude) {
                         String requestTime = request.requestTime;
+                        String title=marker.getTitle();
+                        String [] arr_title=title.split(" ");
+                        createdusername=arr_title[arr_title.length-1];
                         deleteRequest_username = request.username;
                         try {
                             creditToBeEarned = getCreditToBeEarned(requestTime);
@@ -370,10 +374,20 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                 @Override
                 public void onClick(View v) {
                     myDialog.dismiss();
-
                     scanqr.setVisibility(View.VISIBLE);
                 }
             });
+            Button btnTwo = myDialog.findViewById(R.id.btnTwo);
+            if(!createdusername.equals("BikePass")) {
+                btnTwo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myDialog.dismiss();
+                    }
+                });
+            }else{
+                btnTwo.setVisibility(View.INVISIBLE);
+            }
             myDialog.show();
             marker.showInfoWindow();
         }
@@ -649,13 +663,17 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                                     add_request = false;
                             }
                             if (add_request) {
+                                final String username=values.getString("username");
                                 Bike bike = new Bike(1, "Requested", R.drawable.bike_requested, Integer.parseInt(values.getString("id")), lat.latitude, lat.longitude,values.getString("address"));
                                 bike_request.add(bike);
                                 final String addr=values.getString("address");
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in "+addr ).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+                                        if(!username.equals("null"))
+                                            marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in "+addr+" created by "+username ).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
+                                        else
+                                            marker.add(mMap.addMarker(new MarkerOptions().position(lat).title("Request in "+addr+" created by BikePass" ).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested))));
 
                                     }
                                 });
@@ -760,8 +778,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                         double radius = obj.getDouble("radius");
                         String requestTime = obj.getString("request_time");
                         int id = obj.getInt("id");
-
-
                         Request response_request = new Request(username, latitude, longitude, radius, requestTime, id);
                         requestList.add(response_request);
                     }

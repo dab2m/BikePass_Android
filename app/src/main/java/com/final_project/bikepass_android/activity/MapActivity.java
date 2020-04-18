@@ -382,7 +382,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                         markerOptions.title(latLng.latitude + " : " + latLng.longitude);
 
-                        request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created in " + result).icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)));
+                        request = mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Request created in ").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike_requested)));
 
                         marker.add(request);
 
