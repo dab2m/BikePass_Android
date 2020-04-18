@@ -10,7 +10,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera2"
         android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -33,7 +34,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.ScanQrCode"></activity>
+        <activity android:name=".activity.PhotoActivity"></activity>
+        <activity android:name=".activity.ScanQrCode" />
         <activity android:name=".activity.ReportParkingProblem" />
         <activity android:name=".activity.ReportBikeDamage" />
         <activity android:name=".activity.ReportDamage" />

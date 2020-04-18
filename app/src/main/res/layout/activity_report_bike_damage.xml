@@ -134,13 +134,21 @@
 
             <TextView
                 android:id="@+id/damagephoto"
-                android:layout_width="match_parent"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="15dp"
                 android:gravity="center|start"
                 android:text="Bir fotoğraf çek"
                 android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/putphoto"
+                android:layout_width="43dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp" />
+
         </LinearLayout>
         <View
             android:layout_width="fill_parent"
