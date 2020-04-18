@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bikepass_android">
+    package="com.final_project.bikepass_android">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -16,7 +16,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
@@ -34,24 +33,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.PhotoActivity"></activity>
-        <activity android:name=".activity.ScanQrCode" />
-        <activity android:name=".activity.ReportParkingProblem" />
-        <activity android:name=".activity.ReportBikeDamage" />
-        <activity android:name=".activity.ReportDamage" />
+        <activity android:name="com.final_project.bikepass_android.activity.ScanQrCode"></activity>
+        <activity android:name="com.final_project.bikepass_android.activity.ReportParkingProblem" />
+        <activity android:name="com.final_project.bikepass_android.activity.ReportBikeDamage" />
+        <activity android:name="com.final_project.bikepass_android.activity.ReportDamage" />
         <activity
-            android:name=".activity.MapRequests"
+            android:name="com.final_project.bikepass_android.activity.MapRequests"
             android:label="@string/title_activity_map_requests"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.SignupWithGoogle" />
+        <activity android:name="com.final_project.bikepass_android.activity.SignupWithGoogle" />
         <activity
-            android:name=".activity.ImageActivity"
+            android:name="com.final_project.bikepass_android.activity.ImageActivity"
             android:label="@string/title_activity_image"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.thecodecity.cameraandroid.fileprovider"
+            android:authorities="com.thecodecity.cameraandroid.fileproviderr"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -71,35 +69,35 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapActivity"
+            android:name="com.final_project.bikepass_android.activity.MapActivity"
             android:label="@string/title_activity_map" />
         <activity
-            android:name=".activity.BikeUsingActivity"
+            android:name="com.final_project.bikepass_android.activity.BikeUsingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.RentBikeActivity"
+            android:name="com.final_project.bikepass_android.activity.RentBikeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.ReportsActivity"
+            android:name="com.final_project.bikepass_android.activity.ReportsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.CardDetailsActivity"
+            android:name="com.final_project.bikepass_android.activity.CardDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name="com.final_project.bikepass_android.activity.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.LeaderboardActivity"
+            android:name="com.final_project.bikepass_android.activity.LeaderboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name="com.final_project.bikepass_android.activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SignUpActivity"
+            android:name="com.final_project.bikepass_android.activity.SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.PremierActivity"
+            android:name="com.final_project.bikepass_android.activity.PremierActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
