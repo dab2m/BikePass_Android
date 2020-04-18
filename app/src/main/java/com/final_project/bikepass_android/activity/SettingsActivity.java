@@ -34,9 +34,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Intent intent = getIntent();
+        Intent intent=getIntent();
         //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-        bCardDetails = (Button) findViewById(R.id.bCard);
+        bCardDetails = (Button)findViewById(R.id.bCard);
         bCardDetails.setOnClickListener(this);
         bLogout = findViewById(R.id.bLogout);
         bLogout.setOnClickListener(this);
@@ -44,10 +44,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         final String username = prefs.getString("username", "UNKNOWN");
         final String password = prefs.getString("password", "UNKNOWN");
         final String email = prefs.getString("email", "UNKNOWN");
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(email);
     }
 
-    public void logout(View view) {
-        SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+    public  void logout(View view){
+        SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.clear();
         editor.commit();
@@ -102,9 +105,5 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
         thread.start();
-    }
-
-    public void restQueryForTimeAndCO() {
-
     }
 }
