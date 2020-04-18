@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/info_pupop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,13 +22,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageView
                     android:id="@+id/txtclose"
-                    android:layout_width="62dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/cerclebackground"
+                    android:background="@drawable/arrowbutton"
                     android:gravity="center"
-                    android:text="X"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     tools:visibility="visible" />
@@ -94,6 +92,7 @@
             android:background="#A9A9A9" />
 
         <LinearLayout
+            android:id="@+id/qrscan"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal">
@@ -113,7 +112,6 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center|start"
                 android:text="QR kodu varsa taramak için tıkla"
-                android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </LinearLayout>
         <View
@@ -141,7 +139,6 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center|start"
                 android:text="Bir fotoğraf çek"
-                android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </LinearLayout>
         <View
@@ -163,11 +160,9 @@
             <TextView
                 android:id="@+id/userlocation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
                 android:gravity="center|start"
-                android:text="Bir fotoğraf çek"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -222,6 +217,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/qrcodetext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -241,6 +237,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/tekerpatlamistext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -260,6 +257,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/kilidibozulmustext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -301,4 +299,5 @@
     </LinearLayout>
 
 </LinearLayout>
+
 

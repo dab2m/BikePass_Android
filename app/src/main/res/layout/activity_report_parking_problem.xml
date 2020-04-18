@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/info_pupop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,13 +22,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageView
                     android:id="@+id/txtclose"
-                    android:layout_width="62dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/cerclebackground"
+                    android:background="@drawable/arrowbutton"
                     android:gravity="center"
-                    android:text="X"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     tools:visibility="visible" />
@@ -39,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="0dp"
                     android:gravity="center"
-                    android:text="HASAR BİLDİR"
+                    android:text="KÖTÜ PARK BİLDİR"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                     android:textSize="18sp" />
 
@@ -94,6 +92,7 @@
             android:background="#A9A9A9" />
 
         <LinearLayout
+            android:id="@+id/qrscan"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal">
@@ -112,8 +111,7 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginTop="15dp"
                 android:gravity="center|start"
-                android:text="QR kodu varsa taramak için tıkla"
-                android:textColor="@android:color/black"
+                android:text="Taramak için tıkla"
                 android:textSize="20sp" />
         </LinearLayout>
         <View
@@ -141,7 +139,6 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center|start"
                 android:text="Bir fotoğraf çek"
-                android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </LinearLayout>
         <View
@@ -163,11 +160,9 @@
             <TextView
                 android:id="@+id/userlocation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
                 android:gravity="center|start"
-                android:text="Bir fotoğraf çek"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -214,7 +209,7 @@
             android:background="#A9A9A9" />
 
         <LinearLayout
-            android:id="@+id/qrcodelayout"
+            android:id="@+id/erisilebilirliklayout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
@@ -222,18 +217,19 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/erisilebilirlik"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="QR KODU YOK"
+                android:text="ERİŞİLEBİLİRLİĞİ ENGELLEME"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/tekeripatlamislayout"
+            android:id="@+id/ozelmulkiyetlayout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
@@ -241,18 +237,19 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/ozelmulkiyet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="TEKER PATLAMIŞ"
+                android:text="ÖZEL MÜLKİYETTE"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/kilidibozulmuslayout"
+            android:id="@+id/devrilmislayout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
@@ -260,18 +257,19 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/devrilmis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="KİLİDİ BOZULMUŞ"
+                android:text="DEVRİLMİŞ"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/send_damaged_button"
+            android:id="@+id/damaged_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginLeft="40dp"

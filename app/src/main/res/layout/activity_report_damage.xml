@@ -31,17 +31,6 @@
                     android:text="BikePass"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
-                <Button
-                    android:id="@+id/txtclose"
-                    android:layout_width="62dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/cerclebackground"
-                    android:gravity="center"
-                    android:text="X"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    tools:visibility="visible" />
-
 
             </LinearLayout>
 

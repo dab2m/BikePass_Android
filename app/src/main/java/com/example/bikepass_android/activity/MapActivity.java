@@ -35,6 +35,7 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,7 +120,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     ImageView report_problem;
     Dialog infodialog;
     private ImageButton returnBikes;
-    String global_Addr;
+    String user_addr;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -146,7 +147,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         canceldialog = new Dialog(this);
         infodialog = new Dialog(this);
 
-       returnBikes = (ImageButton) findViewById(R.id.returnbikes);
+        returnBikes = (ImageButton) findViewById(R.id.returnbikes);
         returnBikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,40 +180,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         report_problem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showReportDialog();
+                Intent intent=new Intent(getApplicationContext(), ReportDamage.class);
+                intent.putExtra("username",user_name);
+                intent.putExtra("useraddr",user_addr);
+                startActivity(intent);
             }
         });
-
-
     }
 
-
-    public void showReportDialog() {
-
-        //infodialog.setContentView(R.layout.report_problem_popup);
-        Rect displayRectangle = new Rect();
-        Window window = infodialog.getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this, R.style.CustomAlertDialog);
-        ViewGroup viewGroup = findViewById(android.R.id.content);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.report_problem_popup, viewGroup, false);
-        dialogView.setMinimumWidth((int) (displayRectangle.width() * 2.1f));
-        dialogView.setMinimumHeight((int) (displayRectangle.height() * 2.1f));
-        builder.setView(dialogView);
-        final AlertDialog alertDialog = builder.create();
-        Button close=dialogView.findViewById(R.id.txtclose);
-        close.setText("X");
-        close.setTextColor(Color.BLACK);
-        close.setVisibility(View.VISIBLE);
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
-        alertDialog.show();
-
-    }
 
     public void showInfoDıalog(String title) {
         endAnimation();
@@ -1027,6 +1002,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         final JSONObject jsonObject = new JSONObject(jsonString);
                         JSONArray bikes = jsonObject.getJSONArray("bikes");
                         has_request = Integer.parseInt(jsonObject.getString("status"));
+                        user_addr=jsonObject.getString("useraddress");
+                        Log.i("addr:",user_addr);
                         for (int i = 0; i < bikes.length(); i++) {
                             boolean flag = true;
                             int count = 0;

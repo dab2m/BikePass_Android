@@ -34,10 +34,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.ScanQrCode"></activity>
+        <activity android:name=".activity.ReportParkingProblem" />
+        <activity android:name=".activity.ReportBikeDamage" />
+        <activity android:name=".activity.ReportDamage" />
         <activity
             android:name=".activity.MapRequests"
             android:label="@string/title_activity_map_requests"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.SignupWithGoogle" />
         <activity
             android:name=".activity.ImageActivity"
