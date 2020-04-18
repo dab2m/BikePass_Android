@@ -271,7 +271,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/send_damaged_button"
+            android:id="@+id/send_mail"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginLeft="40dp"

@@ -330,7 +330,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.getUiSettings().setCompassEnabled(true);
         //GoogleMapOptions option=new GoogleMapOptions().zoomControlsEnabled(true);
         //SupportMapFragment fragmen
-
+        mMap.setMyLocationEnabled(true);
         if (!isGPS) {
             Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
             return;
@@ -360,7 +360,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             }
         };
-        mMap.setMyLocationEnabled(true);
+
         setRepeatingAsyncTask();
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
