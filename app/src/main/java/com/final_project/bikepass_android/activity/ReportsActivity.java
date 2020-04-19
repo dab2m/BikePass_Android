@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +27,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +50,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -75,12 +79,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     private String _time_double;
     private String co2String;
     ListView listView;
-    String mTitle[]={"Message","Message"};
-    String mDescription[]={"Message1","Message2"};
-    int images[]={R.drawable.open,R.drawable.open};
+    String mTitle[];
+    String mDescription[];
+    int images[];
     private JSONArray data_list; // user's all bike usage data inside this list
     private List<String> data_list_inString = new ArrayList<>();
-
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +112,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         view = findViewById(R.id.textview);
         SharedPreferences sharedpreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         user_name = sharedpreferences.getString("username", "");
+        getMessages();
         view.setText("Welcome back, "+user_name);
         Bundle extras = getIntent().getExtras();
         if(extras!=null)
@@ -124,7 +128,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(View view) {
                 myDialog.setContentView(R.layout.custom_listview_messages);
                 listView=myDialog.findViewById(R.id.messagelist);
-
                 myDialog.setCancelable(false);
                 TextView txtclose = (TextView) myDialog.findViewById(R.id.txtclose);
                 txtclose.setOnClickListener(new View.OnClickListener() {
@@ -134,18 +137,27 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
 
-
                 myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                MyAdapter adapter =new MyAdapter(getApplication(),mTitle,mDescription,images);
-                listView.setAdapter(adapter);
+                if(mDescription.length!=0) {
+                    MyAdapter adapter = new MyAdapter(getApplication(), mTitle, mDescription, images);
+                    listView.setAdapter(adapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Toast.makeText(getApplicationContext(), "Messageee", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    TextView text=myDialog.findViewById(R.id.messagestatus);
+                    text.setText("You have no messages");
+                    text.setTextColor(Color.RED);
+                    ViewGroup.LayoutParams params = myDialog.findViewById(R.id.customlistviewformessages).getLayoutParams();
+                    // Changes the height and width to the specified *pixels*
+                    params.height = 400;
+                    myDialog.findViewById(R.id.customlistviewformessages).setLayoutParams(params);
 
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Toast.makeText(getApplicationContext(),"Messageee", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                }
                 myDialog.show();
             }
         });
@@ -176,10 +188,106 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             images.setImageResource(rImgs[position]);
             myTitle.setText(rTitle[position]);
             myDescription.setText(rDescription[position]);
+            Log.i("view:","view");
             return row;
         }
     }
+    public void getMessages(){
 
+        Messages async = new Messages();
+        try {
+            String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class Messages extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("messages",user_name);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                String jsonString = response;
+                if (jsonString != null) {
+                    JSONObject jObj;
+                    jObj = new JSONObject(jsonString);
+                    String message = jObj.getString("message");
+                    Log.i("message", "message");
+                    String status = jObj.getString("status");
+                    JSONArray messages = jObj.getJSONArray("messages");
+                    Log.i("message length", messages.length() + "");
+                    mDescription = new String[messages.length()];
+                    mTitle=new String[messages.length()];
+                    images=new int[messages.length()];
+                    for (int i = 0; i < messages.length(); i++) {
+                        Log.i("hok","ok");
+                        JSONObject values = messages.getJSONObject(i);
+                        mDescription[i] = "A user wants to move your request to " + getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))) + ".Do you reject or accept this request?";
+                        Log.i("aadr:",getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
+                        mTitle[i]="Message";
+                        images[i]=R.drawable.open;
+
+                    }
+
+                }
+              else{
+               Log.i("null","null");
+                }
+                isr.close();
+                reader.close();
+                return "";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+public String getAddress(double latitude,double longitude) throws IOException {
+    Geocoder geocoder;
+    List<Address> addresses;
+    geocoder = new Geocoder(this, Locale.getDefault());
+
+    addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+    return address;
+}
 
     @Override
     public void onStart() {

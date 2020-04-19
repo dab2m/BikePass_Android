@@ -976,7 +976,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 }
 
                 response = sb.toString().trim();
-                JSONObject jObj = new JSONObject(response);
                 jsonParser = new JSONParser();
                 String jsonString = response;
                 if (jsonString != null) {
@@ -1051,8 +1050,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 return "Success";
             } catch (IOException e) {
                 // Error
-                e.printStackTrace();
-            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
