@@ -3,22 +3,31 @@ package com.final_project.bikepass_android.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.final_project.bikepass_android.R;
 
@@ -65,7 +74,10 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     private int earnCredit = 0;
     private String _time_double;
     private String co2String;
-
+    ListView listView;
+    String mTitle[]={"Message","Message"};
+    String mDescription[]={"Message1","Message2"};
+    int images[]={R.drawable.open,R.drawable.open};
     private JSONArray data_list; // user's all bike usage data inside this list
     private List<String> data_list_inString = new ArrayList<>();
 
@@ -105,7 +117,69 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             showDialogForEarnCredit(this);
         getRequestForUsageData();
         getRequestForTimeAndCredit();
+        Button message_button=findViewById(R.id.message);
+        final Dialog myDialog = new Dialog(this);
+        message_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.setContentView(R.layout.custom_listview_messages);
+                listView=myDialog.findViewById(R.id.messagelist);
+
+                myDialog.setCancelable(false);
+                TextView txtclose = (TextView) myDialog.findViewById(R.id.txtclose);
+                txtclose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myDialog.dismiss();
+                    }
+                });
+
+
+                myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                MyAdapter adapter =new MyAdapter(getApplication(),mTitle,mDescription,images);
+                listView.setAdapter(adapter);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Toast.makeText(getApplicationContext(),"Messageee", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                myDialog.show();
+            }
+        });
     }
+
+    class MyAdapter extends ArrayAdapter<String>{
+        Context context;
+        String rTitle[];
+        String rDescription[];
+        int rImgs[];
+        MyAdapter(Context c,String title[],String description[],int imgs[]){
+            super(c,R.layout.row,R.id.textView1,title);
+            this.context=c;
+            this.rTitle=title;
+            this.rDescription=description;
+            this.rImgs=imgs;
+
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater layoutInflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View row=layoutInflater.inflate(R.layout.row,parent,false);
+            ImageView images=row.findViewById(R.id.image);
+            TextView myTitle=row.findViewById(R.id.textView1);
+            TextView myDescription=row.findViewById(R.id.textView2);
+            images.setImageResource(rImgs[position]);
+            myTitle.setText(rTitle[position]);
+            myDescription.setText(rDescription[position]);
+            return row;
+        }
+    }
+
 
     @Override
     public void onStart() {
