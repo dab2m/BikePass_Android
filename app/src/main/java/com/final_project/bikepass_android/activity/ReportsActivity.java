@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +28,17 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.final_project.bikepass_android.R;
 
 import org.json.JSONArray;
@@ -56,7 +63,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by Berk on 03.02.2020
  */
-public class ReportsActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReportsActivity extends AppCompatActivity implements View.OnClickListener, PurchasesUpdatedListener {
 
     Button bLeaderboard;
     ImageButton bRentBike;
@@ -84,11 +91,19 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     int images[];
     private JSONArray data_list; // user's all bike usage data inside this list
     private List<String> data_list_inString = new ArrayList<>();
+
+    BillingClient billingClient;
+    RecyclerView recyclerProduct;
+
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
+
+        setupBillingClient();
+
         Intent intent = getIntent();
         //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         bLeaderboard = (Button)findViewById(R.id.worldleaderboard);
@@ -161,6 +176,35 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 myDialog.show();
             }
         });
+    }
+
+    private void setupBillingClient() {
+        billingClient = BillingClient.newBuilder(this).setListener(this).build();
+        billingClient.startConnection(new BillingClientStateListener() {
+            @Override
+            public void onBillingSetupFinished(int responseCode) {
+                if (responseCode == BillingClient.BillingResponse.OK)
+                    Toast.makeText(ReportsActivity.this, "Success to connect Billing", Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(ReportsActivity.this, "" + responseCode, Toast.LENGTH_SHORT);
+
+            }
+
+            @Override
+            public void onBillingServiceDisconnected() {
+                Toast.makeText(ReportsActivity.this, "You are disconnect from Billing", Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    private void loadProductToCardView(List<SkuDetails> skuDetailsList){
+        CreditAdapter adapter = new CreditAdapter(this,skuDetailsList,billingClient);
+
+    }
+
+    @Override
+    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
+
     }
 
     class MyAdapter extends ArrayAdapter<String>{
@@ -262,8 +306,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     }
 
                 }
-              else{
-               Log.i("null","null");
+                else{
+                    Log.i("null","null");
                 }
                 isr.close();
                 reader.close();
@@ -278,16 +322,16 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             return null;
         }
     }
-public String getAddress(double latitude,double longitude) throws IOException {
-    Geocoder geocoder;
-    List<Address> addresses;
-    geocoder = new Geocoder(this, Locale.getDefault());
+    public String getAddress(double latitude,double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
 
-    addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
 
-    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-    return address;
-}
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        return address;
+    }
 
     @Override
     public void onStart() {
@@ -455,6 +499,28 @@ public String getAddress(double latitude,double longitude) throws IOException {
     }
 
     public void showDialogForCredit(Activity activity) { //TODO: cardviewler satin alma islevi icin tiklanabilir hale getirilecek
+
+        if(billingClient.isReady()){
+            SkuDetailsParams params = SkuDetailsParams.newBuilder()
+                    .setSkusList(Arrays.asList("id1","id2"))
+                    .setType(BillingClient.SkuType.INAPP)
+                    .build();
+
+            billingClient.querySkuDetailsAsync(params, new SkuDetailsResponseListener() {
+                @Override
+                public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
+                    if(responseCode == BillingClient.BillingResponse.OK){
+                        loadProductToCardView(skuDetailsList);
+                    }
+                    else{
+                        Toast.makeText(ReportsActivity.this, "Cannot query product", Toast.LENGTH_SHORT);
+                    }
+                }
+            });
+        }else{
+            Toast.makeText(ReportsActivity.this, "Billing client is not ready", Toast.LENGTH_SHORT);
+        }
+
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialogbox_for_credit);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -467,19 +533,19 @@ public String getAddress(double latitude,double longitude) throws IOException {
         justACycle_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("JUST A CYCLE");
+                //TODO: pay 2.5tl
             }
         });
         procycler_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("PROCYCLE");
+                //TODO: pay 5tl
             }
         });
         cycleAddict_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("CYCLEADDICT");
+                //TODO: pay 10tl
             }
         });
         close_button.setOnClickListener(new View.OnClickListener() {

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/leaderboard_activity"
+    android:orientation="vertical"
     tools:context=".activity.ReportsActivity">
 
     <LinearLayout
@@ -35,8 +35,8 @@
                 android:layout_width="77dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:background="@drawable/close"
                 android:layout_marginTop="5dp"
+                android:background="@drawable/close"
                 android:text="Messages"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
@@ -45,8 +45,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             android:text="How much did you cycle this week"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
@@ -60,11 +60,11 @@
 
         <Button
             android:id="@+id/worldleaderboard"
-            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_gravity="bottom"
             android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_button"
@@ -98,9 +98,9 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
+                    app:cardBackgroundColor="@color/backgroudWorld"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="@color/backgroudWorld">
+                    app:cardElevation="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -145,9 +145,9 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
+                    app:cardBackgroundColor="@color/backgroudWorld"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="@color/backgroudWorld">
+                    app:cardElevation="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -192,9 +192,9 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
+                    app:cardBackgroundColor="@color/backgroudWorld"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="@color/backgroudWorld">
+                    app:cardElevation="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -257,8 +257,8 @@
                 android:layout_marginLeft="36dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudWorld"
-                android:src="@drawable/world_1"
-                android:scaleType="fitXY" />
+                android:scaleType="fitXY"
+                android:src="@drawable/world_1" />
 
             <ImageButton
                 android:id="@+id/settings"

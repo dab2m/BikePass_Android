@@ -33,17 +33,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.final_project.bikepass_android.activity.ScanQrCode"></activity>
-        <activity android:name="com.final_project.bikepass_android.activity.ReportParkingProblem" />
-        <activity android:name="com.final_project.bikepass_android.activity.ReportBikeDamage" />
-        <activity android:name="com.final_project.bikepass_android.activity.ReportDamage" />
+        <activity android:name=".activity.PaymentActivity"></activity>
+        <activity android:name=".activity.ScanQrCode" />
+        <activity android:name=".activity.ReportParkingProblem" />
+        <activity android:name=".activity.ReportBikeDamage" />
+        <activity android:name=".activity.ReportDamage" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.MapRequests"
+            android:name=".activity.MapRequests"
             android:label="@string/title_activity_map_requests"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.final_project.bikepass_android.activity.SignupWithGoogle" />
+        <activity android:name=".activity.SignupWithGoogle" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.ImageActivity"
+            android:name=".activity.ImageActivity"
             android:label="@string/title_activity_image"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -69,35 +70,35 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.final_project.bikepass_android.activity.MapActivity"
+            android:name=".activity.MapActivity"
             android:label="@string/title_activity_map" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.BikeUsingActivity"
+            android:name=".activity.BikeUsingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.RentBikeActivity"
+            android:name=".activity.RentBikeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.ReportsActivity"
+            android:name=".activity.ReportsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.CardDetailsActivity"
+            android:name=".activity.CardDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.LeaderboardActivity"
+            android:name=".activity.LeaderboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.SignUpActivity"
+            android:name=".activity.SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.final_project.bikepass_android.activity.PremierActivity"
+            android:name=".activity.PremierActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
