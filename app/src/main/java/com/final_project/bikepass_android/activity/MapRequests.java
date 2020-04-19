@@ -9,23 +9,33 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +51,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -88,7 +99,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     private GoogleMap mMap;
     private boolean isGPS = false;
     private boolean isContinue = false;
-
     private TextView timer_textview;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = 1800000; // 30 min
@@ -101,12 +111,9 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     private int elapsedTime;
     private int earnCredit;
     private String deleteRequest_username;
-
     private List<Request> requestList = new ArrayList<>();
-
     ArrayList<Marker> marker = new ArrayList<Marker>();
     LatLng userLoc;
-
     private Polyline currentPolyline;
     final ArrayList<Hotspots> hotspots = new ArrayList<Hotspots>();
     final ArrayList<Bike> bike_request = new ArrayList<Bike>();
@@ -118,7 +125,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
     SharedPreferences sharedpreferences;
     Button scanqr;
     private Marker requested_bike;
-
+    Dialog messagedialog;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -198,7 +205,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         });
 
         myDialog = new Dialog(this);
-
+        messagedialog = new Dialog(this);
     }
 
     @Override
@@ -383,6 +390,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                     @Override
                     public void onClick(View v) {
                         myDialog.dismiss();
+                        sendMessageDialog();
                     }
                 });
             }else{
@@ -394,6 +402,107 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         return true;
     }
 
+    public void sendMessageDialog(){
+
+        messagedialog.setContentView(R.layout.send_message);
+       // messagedialog.setCancelable(false);
+        TextView txtclose = messagedialog.findViewById(R.id.txtclose);
+        txtclose.setText("X");
+        txtclose.setTextColor(Color.WHITE);
+        txtclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messagedialog.dismiss();
+            }
+        });
+        final SearchView searchView=messagedialog.findViewById(R.id.searchbox);
+        searchView.setBackgroundColor(Color.WHITE);
+        searchView.setBackground(getDrawable(R.drawable.border));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String location=searchView.getQuery().toString();
+                List<Address> addressList=null;
+                if(location!=null || !location.equals("")){
+                    Geocoder geocoder=new Geocoder(MapRequests.this);
+                    try{
+
+                        addressList=geocoder.getFromLocationName(location,1);
+                    }
+                    catch  (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address address =addressList.get(0);
+                    LatLng latLng=new LatLng(address.getLatitude(),address.getLongitude());
+                   // Marker request=mMap.addMarker(new MarkerOptions().position(latLng).title("Your moving message sended to user who created request!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike1)));
+                    final Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title("Your moving message sended to user who created request!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike4)));
+
+                    marker.showInfoWindow();
+                    //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (marker!=null)
+                            {
+                                //If you only hide marker title
+                                marker.hideInfoWindow();
+                                animateMarker(marker,new LatLng(39.9161181,32.8024183),true);
+                                //If you want to remove marker
+                                //marker.remove();
+
+                            }
+                        }
+                    }, 7000);
+
+                    //request.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
+                    messagedialog.dismiss();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        messagedialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        messagedialog.show();
+    }
+    public void animateMarker(final Marker marker, final LatLng toPosition,
+                              final boolean hideMarker) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = mMap.getProjection();
+        Point startPoint = proj.toScreenLocation(marker.getPosition());
+        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        final long duration = 500;
+        final Interpolator interpolator = new LinearInterpolator();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+                double lng = t * toPosition.longitude + (1 - t)
+                        * startLatLng.longitude;
+                double lat = t * toPosition.latitude + (1 - t)
+                        * startLatLng.latitude;
+                marker.setPosition(new LatLng(lat, lng));
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                } else {
+                    if (hideMarker) {
+                        marker.setVisible(false);
+                        marker.remove();
+                    } else {
+                        marker.setVisible(true);
+                    }
+                }
+            }
+        });
+    }
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -699,7 +808,6 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                             if (add_bike) {
                                 Bike bike = new Bike(1, "Available", R.drawable.bike_available, Integer.parseInt(values.getString("name").substring(4)), lat.latitude, lat.longitude,values.getString("address"));
                                 bike_avaliable.add(bike);
-
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

@@ -62,7 +62,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:gravity="center_vertical"
-                android:text="Amixx XX Soluxxxxx"
                 android:textColor="#000000"
                 android:textSize="14dip" />
 
@@ -87,7 +86,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:gravity="center_vertical"
-                android:text="android@gmail.com"
                 android:textColor="#000000"
                 android:textSize="14dip" />
 
