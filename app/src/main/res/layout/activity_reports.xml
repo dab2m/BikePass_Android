@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/leaderboard_activity"
     android:orientation="vertical"
+    android:background="@drawable/leaderboard_activity"
     tools:context=".activity.ReportsActivity">
 
     <LinearLayout
@@ -17,39 +17,39 @@
             android:id="@+id/textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:paddingLeft="16dp"
-            android:paddingTop="10dp"
             android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
-            android:textSize="25sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:paddingLeft="16dp"
-            android:paddingTop="10dp"
             android:text="How much did you cycle this week"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
         <ImageView
             android:layout_width="300dp"
             android:layout_height="240dp"
-            android:layout_gravity="center"
+            android:layout_marginLeft="50dp"
             android:src="@drawable/report_picture" />
 
         <Button
             android:id="@+id/worldleaderboard"
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_gravity="bottom"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginTop="30dp"
             android:layout_marginRight="50dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@color/colorPrimary"
             android:text="Leaderboard"
@@ -60,7 +60,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
-
 
             <GridLayout
                 android:id="@+id/grid_layout"
@@ -83,13 +82,14 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp">
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/backgroudWorld">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:padding="5dip">
+                        android:padding="5dp">
 
                         <ImageView
                             android:id="@+id/ivInvite"
@@ -97,7 +97,6 @@
                             android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:src="@mipmap/ic_launcher_foreground" />
-
 
                         <TextView
                             android:id="@+id/tv_totalTime"
@@ -107,7 +106,7 @@
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="Time: "
                             android:textColor="@color/colorPrimary"
-                            android:textSize="14dp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -117,11 +116,9 @@
                             android:layout_gravity="center"
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="0 sec"
-                            android:textColor="@color/blue"
-                            android:textSize="12dp" />
-
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
                     </LinearLayout>
-
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
@@ -132,13 +129,14 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp">
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/backgroudWorld">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:padding="5dip">
+                        android:padding="5dp">
 
                         <ImageView
                             android:id="@+id/ivNotificationOff"
@@ -155,7 +153,7 @@
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="CO2: "
                             android:textColor="@color/colorPrimary"
-                            android:textSize="14dp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -165,11 +163,9 @@
                             android:layout_gravity="center"
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="0.0 kg"
-                            android:textColor="@color/blue"
-                            android:textSize="12dp" />
-
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
                     </LinearLayout>
-
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
@@ -180,13 +176,14 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp">
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/backgroudWorld">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:padding="5dip">
+                        android:padding="5dp">
 
                         <ImageView
                             android:id="@+id/credit_icon"
@@ -194,7 +191,6 @@
                             android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:src="@drawable/credit_icon" />
-
 
                         <TextView
                             android:id="@+id/tv_totalCredit"
@@ -204,7 +200,7 @@
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="Credit: "
                             android:textColor="@color/colorPrimary"
-                            android:textSize="14dp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -214,16 +210,12 @@
                             android:layout_gravity="center"
                             android:fontFamily="sans-serif-smallcaps"
                             android:text="0 Credit"
-                            android:textColor="@color/blue"
-                            android:textSize="12dp" />
-
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
                     </LinearLayout>
-
                 </android.support.v7.widget.CardView>
-
             </GridLayout>
         </RelativeLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -249,8 +241,7 @@
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudWorld"
                 android:src="@drawable/world_1"
-                android:scaleType="fitXY"
-                />
+                android:scaleType="fitXY" />
 
             <ImageButton
                 android:id="@+id/settings"
