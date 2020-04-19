@@ -47,7 +47,6 @@ public class PremierActivity extends AppCompatActivity {
                         signIn();
                         break;
                     // ...
-
                 }
             }
         });
@@ -132,8 +131,4 @@ public class PremierActivity extends AppCompatActivity {
         startActivity(loginIntent);
     }
 
-    public void toImage(View view ){
-        Intent loginIntent=new Intent(this,ImageActivity.class);
-        startActivity(loginIntent);
-    }
 }

@@ -35,6 +35,7 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,6 +83,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import com.final_project.bikepass_android.directionhelpers.*;
+import com.google.android.gms.vision.text.Line;
 
 
 /**
@@ -418,9 +420,15 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         final SearchView searchView=messagedialog.findViewById(R.id.searchbox);
         searchView.setBackgroundColor(Color.WHITE);
         searchView.setBackground(getDrawable(R.drawable.border));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        Button btnsend=messagedialog.findViewById(R.id.btnsend);
+        btnsend.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public void onClick(View v) {
+
+
+     //   searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+          //  @Override
+          //  public boolean onQueryTextSubmit(String query) {
                 String location=searchView.getQuery().toString();
                 List<Address> addressList=null;
                 if(location!=null || !location.equals("")){
@@ -438,17 +446,14 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                     final Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title("Your moving message sended to user who created request!").icon(BitmapDescriptorFactory.fromResource(R.drawable.bike4)));
 
                     marker.showInfoWindow();
-                    //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             if (marker!=null)
                             {
-                                //If you only hide marker title
+
                                 marker.hideInfoWindow();
-                                animateMarker(marker,new LatLng(39.9161181,32.8024183),true);
-                                //If you want to remove marker
-                                //marker.remove();
+                                animateMarker(marker,new LatLng(39.9148723,32.8182341),true);
 
                             }
                         }
@@ -458,17 +463,23 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
                     messagedialog.dismiss();
                 }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
             }
         });
+        //        return false;
+       //     }
+
+        //    @Override
+         //   public boolean onQueryTextChange(String newText) {
+          //      return false;
+           // }
+       // });
         messagedialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         messagedialog.show();
     }
+    
+
+
+
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker) {
         final Handler handler = new Handler();
