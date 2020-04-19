@@ -76,7 +76,7 @@ import org.json.JSONObject;
 
 public class ReportBikeDamage extends AppCompatActivity {
     ProgressDialog progressDialog ;
-    String ImageUploadPathOnSever ="https://Bikepass.herokuapp.com/API/app.php" ;
+    String ImageUploadPathOnSever ="https://Bikepass.herokuapp.com/recoverymail.php" ;
     String user_name;
     String user_addr;
     String reason;
@@ -84,14 +84,9 @@ public class ReportBikeDamage extends AppCompatActivity {
     String encodedImage;
     LinearLayout clickedLayout;
     TextView clickedText;
-    private static final int CAMERA_REQUEST = 1888;
     ImageView imageView;
     Uri image_uri;
     Bitmap bitmap;
-    private static final int MY_CAMERA_PERMISSION_CODE = 100;
-    String GetImageNameFromEditText;
-    String ImageNameFieldOnServer = "image_name" ;
-    String ImagePathFieldOnServer = "image_path" ;
     private static final int PERMISSION_CODE=1000;
     private static final int IMAGE_CAPTURE_CODE=1001;
     ImageView photoButton;
@@ -112,7 +107,7 @@ public class ReportBikeDamage extends AppCompatActivity {
         TextView loc=findViewById(R.id.userlocation);
         loc.setText(user_addr);
         loc.setTextColor(Color.BLACK);
-        photoButton=findViewById(R.id.photobutton);
+        photoButton=findViewById(R.id.takephoto);
         photoButton.setOnClickListener(new View.OnClickListener()
         {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -135,7 +130,6 @@ public class ReportBikeDamage extends AppCompatActivity {
                     }
                 }
                 else{
-
                     openCamera();
                 }
 
@@ -208,14 +202,13 @@ public class ReportBikeDamage extends AppCompatActivity {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
                 b = baos.toByteArray();
                 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+                Log.i("encoded image:",encodedImage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             imagelayout.addView(imageView);
             //imageView.setRotation(270);
         }
-
-
     }
     public static File savebitmap(Bitmap bmp) throws IOException {
 
@@ -300,7 +293,6 @@ public class ReportBikeDamage extends AppCompatActivity {
 
                 try {
                    async.execute(ImageUploadPathOnSever).get();
-                   Log.i("helloo","hello");
                 } catch (ExecutionException e) {
 
                     e.printStackTrace();
@@ -332,7 +324,7 @@ public class ReportBikeDamage extends AppCompatActivity {
             try {
                 jsonEmailData.put("username",user_name);
                 jsonEmailData.put("message",reason);
-                jsonEmailData.put("image_name",encodedImage);
+                jsonEmailData.put("image_data",encodedImage);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -350,18 +342,22 @@ public class ReportBikeDamage extends AppCompatActivity {
                 String line = "";
                 InputStreamReader isr = new InputStreamReader(connection.getInputStream());
                 BufferedReader reader = new BufferedReader(isr);
-              /*  StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
                 }
-                // Response from server after recovery process will be stored in response variable.
+                //Response from server after recovery process will be stored in response variable.
                 response = sb.toString().trim();
-                String jsonString=response;
-
-                isr.close(); */
+                JSONObject jObj = new JSONObject(response);
+                final String status = jObj.getString("status");
+                final String message = jObj.getString("message");
+                Log.i("status:",status);
+                Log.i("message:",message);
+                isr.close();
                 reader.close();
-                return "";
-            } catch (IOException e) {
+                return status;
+
+            } catch (IOException | JSONException e) {
                 // Error
                 return "Failure sending";
             }

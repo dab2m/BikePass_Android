@@ -120,11 +120,13 @@
             android:background="#A9A9A9" />
 
         <LinearLayout
+            android:id="@+id/imageview"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/takephoto"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginLeft="17dp"
@@ -269,7 +271,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/damaged_button"
+            android:id="@+id/send_mail_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginLeft="40dp"

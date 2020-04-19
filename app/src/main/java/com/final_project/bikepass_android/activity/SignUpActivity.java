@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -81,10 +82,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this
         );
         if (acct != null) {
-
+            Log.i("nulldegil ","nulldegil");
             email_user = acct.getEmail();
             setView();
 
+        }
+        else{
+            Log.i("null","null");
         }
 
         button = findViewById(R.id.signupButton);
