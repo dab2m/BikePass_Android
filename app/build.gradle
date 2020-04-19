@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.final_project.bikepass_android"
+        applicationId "com.graduation_project.bikepass_android"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
