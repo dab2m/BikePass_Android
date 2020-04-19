@@ -388,11 +388,13 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
             });
             Button btnTwo = myDialog.findViewById(R.id.btnTwo);
             if(!createdusername.equals("BikePass")) {
+                final String finalCreatedusername = createdusername;
+                Log.i("created user name:",createdusername);
                 btnTwo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         myDialog.dismiss();
-                        sendMessageDialog();
+                        sendMessageDialog(finalCreatedusername);
                     }
                 });
             }else{
@@ -404,9 +406,10 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         return true;
     }
 
-    public void sendMessageDialog(){
-
-        messagedialog.setContentView(R.layout.send_message);
+    public void sendMessageDialog(final String clientusername){
+         final String senderusername=user_name;
+         final String client_username=clientusername;
+         messagedialog.setContentView(R.layout.send_message);
        // messagedialog.setCancelable(false);
         TextView txtclose = messagedialog.findViewById(R.id.txtclose);
         txtclose.setText("X");
@@ -462,6 +465,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
                     //request.showInfoWindow();
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLoc,15));
                     messagedialog.dismiss();
+                   sendMessage( latLng.latitude, latLng.longitude,senderusername,client_username);
                 }
             }
         });
@@ -476,9 +480,19 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         messagedialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         messagedialog.show();
     }
-    
 
 
+    private void sendMessage(double lat,double lng,String sender_user,String client_user) {
+
+         MyAsyncSendMessage async = new MyAsyncSendMessage(lat,lng,sender_user,client_user);
+        try {
+            async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker) {
@@ -719,6 +733,70 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         });
     }
 
+    class MyAsyncSendMessage extends AsyncTask<String, String, String>{
+       String sender_user;
+       String client_user;
+       double lat;
+       double lng;
+
+        public MyAsyncSendMessage(double lat, double lng, String sender_user, String client_user) {
+            this.lat=lat;
+            this.lng=lng;
+            this.sender_user=sender_user;
+            this.client_user=client_user;
+        }
+
+        @Override
+        protected String doInBackground(String[] urls) {
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("lat", this.lat);
+                jsonObject.put("lng",this.lng);
+                jsonObject.put("from",this.sender_user);
+                jsonObject.put("to",this.client_user);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject jObj = new JSONObject(response);
+                String  message = jObj.getString("message");
+                String  status = jObj.getString("status");
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                isr.close();
+                reader.close();
+                return "";
+            } catch (IOException e) {
+                // Error
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
     class GetHotspotAndIssues extends AsyncTask<String, String, String> {
 
         @Override
