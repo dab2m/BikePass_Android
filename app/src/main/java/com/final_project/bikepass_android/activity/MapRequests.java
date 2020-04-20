@@ -402,6 +402,7 @@ public class MapRequests extends FragmentActivity implements OnMapReadyCallback,
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void sendMessageDialog(final String clientusername){
          final String senderusername=user_name;
          final String client_username=clientusername;

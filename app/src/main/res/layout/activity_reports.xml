@@ -32,12 +32,11 @@
 
             <Button
                 android:id="@+id/message"
-                android:layout_width="77dp"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/close"
-                android:text="Messages"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
         </LinearLayout>

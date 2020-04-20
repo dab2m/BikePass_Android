@@ -1,6 +1,6 @@
 package com.final_project.bikepass_android.activity;
 
-public class Hotspots {
+ class Hotspots {
 
     private double radius;
     private String point_name;

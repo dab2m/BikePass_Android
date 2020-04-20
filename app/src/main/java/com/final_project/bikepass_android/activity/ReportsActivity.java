@@ -89,6 +89,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     String mTitle[];
     String mDescription[];
     int images[];
+    String mCoordinates[];
     private JSONArray data_list; // user's all bike usage data inside this list
     private List<String> data_list_inString = new ArrayList<>();
 
@@ -144,14 +145,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 myDialog.setContentView(R.layout.custom_listview_messages);
                 listView=myDialog.findViewById(R.id.messagelist);
                 myDialog.setCancelable(false);
-                TextView txtclose = (TextView) myDialog.findViewById(R.id.txtclose);
-                txtclose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        myDialog.dismiss();
-                    }
-                });
-
                 myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 if(mDescription.length!=0) {
                     MyAdapter adapter = new MyAdapter(getApplication(), mTitle, mDescription, images);
@@ -159,7 +152,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Toast.makeText(getApplicationContext(), "Messageee", Toast.LENGTH_SHORT).show();
+
                         }
                     });
                 }
@@ -173,6 +166,14 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     myDialog.findViewById(R.id.customlistviewformessages).setLayoutParams(params);
 
                 }
+                TextView txtclose = (TextView) myDialog.findViewById(R.id.txtclose);
+                txtclose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myDialog.dismiss();
+                    }
+                });
+
                 myDialog.show();
             }
         });
@@ -199,7 +200,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
     private void loadProductToCardView(List<SkuDetails> skuDetailsList){
         CreditAdapter adapter = new CreditAdapter(this,skuDetailsList,billingClient);
-
     }
 
     @Override
@@ -223,17 +223,44 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
 
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View row=layoutInflater.inflate(R.layout.row,parent,false);
+            final View row=layoutInflater.inflate(R.layout.row,parent,false);
             ImageView images=row.findViewById(R.id.image);
             TextView myTitle=row.findViewById(R.id.textView1);
             TextView myDescription=row.findViewById(R.id.textView2);
             images.setImageResource(rImgs[position]);
             myTitle.setText(rTitle[position]);
             myDescription.setText(rDescription[position]);
-            Log.i("view:","view");
+            Button accept=row.findViewById(R.id.accept);
+            accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    row.setVisibility(View.INVISIBLE);
+                    updateRequest(position);
+                }
+            });
+            Button reject=row.findViewById(R.id.reject);
+            reject.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    row.setVisibility(View.INVISIBLE);
+                }
+            });
+
             return row;
+        }
+    }
+    public void updateRequest(int position){
+
+        UpdateRequest async = new UpdateRequest(position);
+        try {
+            String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
     public void getMessages(){
@@ -248,7 +275,77 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         }
     }
+    class UpdateRequest extends AsyncTask<String, String, String>{
+        int value;
+        public UpdateRequest(int value) {
+            super();
+            this.value=value;
+        }
 
+        @Override
+        protected String doInBackground(String[] urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("usernamerequest",user_name);
+                jsonObject.put("lat",mCoordinates[this.value].split(",")[0]);
+                jsonObject.put("long",mCoordinates[this.value].split(",")[1]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                response = sb.toString().trim();
+                JSONObject json = new JSONObject(response);
+                String status = json.getString("status");
+                Log.i("stat:",status);
+                if (status.equals("0")) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Location updated!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Error when updating location!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                isr.close();
+                reader.close();
+                return "";
+            } catch (IOException | JSONException e) {
+                // Error
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
     class Messages extends AsyncTask<String, String, String>{
 
         @Override
@@ -295,11 +392,12 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     mDescription = new String[messages.length()];
                     mTitle=new String[messages.length()];
                     images=new int[messages.length()];
+                    mCoordinates=new String[messages.length()];
                     for (int i = 0; i < messages.length(); i++) {
                         Log.i("hok","ok");
                         JSONObject values = messages.getJSONObject(i);
                         mDescription[i] = "A user wants to move your request to " + getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))) + ".Do you reject or accept this request?";
-                        Log.i("aadr:",getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))));
+                        mCoordinates[i]=values.getString("lat")+","+values.getString("long");
                         mTitle[i]="Message";
                         images[i]=R.drawable.open;
 

@@ -24,7 +24,7 @@ import static android.content.ContentValues.TAG;
 /**
  * Created by Dilan on 26.02.2020
  */
- public class GpsUtils {
+  class GpsUtils {
 
     private Context context;
     private SettingsClient mSettingsClient;

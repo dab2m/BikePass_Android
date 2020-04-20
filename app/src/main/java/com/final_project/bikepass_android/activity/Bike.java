@@ -2,7 +2,7 @@ package com.final_project.bikepass_android.activity;
 
 
 
-public class Bike {
+ class Bike {
 
     private int status_code;
     private String status_name;
