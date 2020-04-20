@@ -41,7 +41,13 @@ import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.final_project.bikepass_android.R;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -181,6 +187,25 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 myDialog.show();
             }
         });
+        barEntryArrayList = new ArrayList<>();
+        labelsNames = new ArrayList<>();
+        BarDataSet barDataSet = new BarDataSet(barEntryArrayList, "");
+        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        Description description = new Description();
+        description.setText("Days");
+        barChart.setDescription(description);
+        BarData barData = new BarData(barDataSet);
+        barChart.setData(barData);
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labelsNames));
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(labelsNames.size());
+        xAxis.setLabelRotationAngle(270);
+        barChart.animateY(2000);
+        barChart.invalidate();
     }
 
     @Override
