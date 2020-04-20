@@ -20,5 +20,9 @@ Download BikePass Android Application now ! :heavy_check_mark::heavy_check_mark:
 :pencil: [Dilan Doğan](https://github.com/dilandogann) <br>
 :pencil:[Mustafa Said Tozluoğlu](https://github.com/mustafatozluoglu)  <br>
 :pencil:[Ali Berk Sığın](https://github.com/berksigin) <br>
+
+
+[Our Trello Page](https://trello.com/b/SeSQEz4I/bikepass) <br>
+[BikePass Report](https://docs.google.com/document/d/1_GS6Z9DDU9Q5ximt30LGuUkkoVncaT0maX8dL6as1hI/edit?usp=sharing) <br>
  
 ![diagram](diagram.PNG)
