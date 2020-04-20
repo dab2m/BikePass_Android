@@ -40,6 +40,8 @@ import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.final_project.bikepass_android.R;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +79,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     CardView co2_cardView;
     CardView credit_cardView;
     GridLayout gl;
-    boolean location_update=true;
+
     private String time = null;
     private String total_credit = null;
     private String bikeId = null;
@@ -85,26 +87,29 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     private int earnCredit = 0;
     private String _time_double;
     private String co2String;
-    ListView listView;
     String mTitle[];
     String mDescription[];
     int images[];
     String mCoordinates[];
-    private JSONArray data_list; // user's all bike usage data inside this list
-    private List<String> data_list_inString = new ArrayList<>();
+    boolean location_update = true;
 
+    ListView listView;
     BillingClient billingClient;
     RecyclerView recyclerProduct;
 
+    private JSONArray data_list; // user's all bike usage data inside this list
+    private List<String> data_list_inString = new ArrayList<>();
+
+    BarChart barChart;
+    ArrayList<BarEntry> barEntryArrayList;
+    ArrayList<String> labelsNames;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
-
         setupBillingClient();
-
         Intent intent = getIntent();
         //Toast.makeText(getApplicationContext(),"" +intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
         bLeaderboard = (Button)findViewById(R.id.worldleaderboard);
@@ -118,6 +123,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         totalTimeCount = (TextView)findViewById(R.id.totalTimeCount);
         totalRecoveryCount = (TextView)findViewById(R.id.totalRecoveryCount);
         totalCreditCount = (TextView)findViewById(R.id.totalCreditCount);
+        barChart = findViewById(R.id.barChart);
         bLeaderboard.setOnClickListener(this);
         bRentBike.setOnClickListener(this);
         bGoMap.setOnClickListener(this);
@@ -137,7 +143,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
             showDialogForEarnCredit(this);
         getRequestForUsageData();
         getRequestForTimeAndCredit();
-        Button message_button=findViewById(R.id.message);
+        Button message_button = findViewById(R.id.message);
         final Dialog myDialog = new Dialog(this);
         message_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +152,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 listView=myDialog.findViewById(R.id.messagelist);
                 myDialog.setCancelable(false);
                 myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                if(mDescription.length!=0 && location_update) {
+                if(mDescription.length!=0 && location_update){
                     MyAdapter adapter = new MyAdapter(getApplication(), mTitle, mDescription, images);
                     listView.setAdapter(adapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -157,283 +163,24 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     });
                 }
                 else{
-                    TextView text=myDialog.findViewById(R.id.messagestatus);
+                    TextView text = myDialog.findViewById(R.id.messagestatus);
                     text.setText("You have no messages");
                     text.setTextColor(Color.RED);
                     ViewGroup.LayoutParams params = myDialog.findViewById(R.id.customlistviewformessages).getLayoutParams();
                     // Changes the height and width to the specified *pixels*
                     params.height = 400;
                     myDialog.findViewById(R.id.customlistviewformessages).setLayoutParams(params);
-
                 }
-                TextView txtclose = (TextView) myDialog.findViewById(R.id.txtclose);
+                TextView txtclose = (TextView)myDialog.findViewById(R.id.txtclose);
                 txtclose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         myDialog.dismiss();
                     }
                 });
-
                 myDialog.show();
             }
         });
-    }
-
-    private void setupBillingClient() {
-        billingClient = BillingClient.newBuilder(this).setListener(this).build();
-        billingClient.startConnection(new BillingClientStateListener() {
-            @Override
-            public void onBillingSetupFinished(int responseCode) {
-                if (responseCode == BillingClient.BillingResponse.OK)
-                    Toast.makeText(ReportsActivity.this, "Success to connect Billing", Toast.LENGTH_SHORT);
-                else
-                    Toast.makeText(ReportsActivity.this, "" + responseCode, Toast.LENGTH_SHORT);
-
-            }
-
-            @Override
-            public void onBillingServiceDisconnected() {
-                Toast.makeText(ReportsActivity.this, "You are disconnect from Billing", Toast.LENGTH_SHORT);
-            }
-        });
-    }
-
-    private void loadProductToCardView(List<SkuDetails> skuDetailsList){
-        CreditAdapter adapter = new CreditAdapter(this,skuDetailsList,billingClient);
-    }
-
-    @Override
-    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
-
-    }
-
-    class MyAdapter extends ArrayAdapter<String>{
-        Context context;
-        String rTitle[];
-        String rDescription[];
-        int rImgs[];
-        MyAdapter(Context c,String title[],String description[],int imgs[]){
-            super(c,R.layout.row,R.id.textView1,title);
-            this.context=c;
-            this.rTitle=title;
-            this.rDescription=description;
-            this.rImgs=imgs;
-
-        }
-
-        @NonNull
-        @Override
-        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            LayoutInflater layoutInflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View row=layoutInflater.inflate(R.layout.row,parent,false);
-            ImageView images=row.findViewById(R.id.image);
-            TextView myTitle=row.findViewById(R.id.textView1);
-            TextView myDescription=row.findViewById(R.id.textView2);
-            images.setImageResource(rImgs[position]);
-            myTitle.setText(rTitle[position]);
-            myDescription.setText(rDescription[position]);
-            Button accept=row.findViewById(R.id.accept);
-            accept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    row.setVisibility(View.INVISIBLE);
-                    updateRequest(position);
-                }
-            });
-            Button reject=row.findViewById(R.id.reject);
-            reject.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    row.setVisibility(View.INVISIBLE);
-                }
-            });
-
-            return row;
-        }
-    }
-    public void updateRequest(int position){
-
-        UpdateRequest async = new UpdateRequest(position);
-        try {
-            String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    public void getMessages(){
-
-        Messages async = new Messages();
-        try {
-            String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    class UpdateRequest extends AsyncTask<String, String, String>{
-        int value;
-        public UpdateRequest(int value) {
-            super();
-            this.value=value;
-        }
-
-        @Override
-        protected String doInBackground(String[] urls) {
-
-            HttpURLConnection connection;
-            OutputStreamWriter request = null;
-            URL url = null;
-            String response = null;
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("usernamerequest",user_name);
-                jsonObject.put("lat",mCoordinates[this.value].split(",")[0]);
-                jsonObject.put("long",mCoordinates[this.value].split(",")[1]);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                url = new URL(urls[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setRequestMethod("POST");
-                request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(String.valueOf(jsonObject));
-                request.flush();
-                request.close();
-                String line = "";
-                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-
-                response = sb.toString().trim();
-                JSONObject json = new JSONObject(response);
-                String status = json.getString("status");
-                Log.i("stat:",status);
-                if (status.equals("0")) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Location updated!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Error when updating location!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-                isr.close();
-                reader.close();
-                return "";
-            } catch (IOException | JSONException e) {
-                // Error
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
-    class Messages extends AsyncTask<String, String, String>{
-
-        @Override
-        protected String doInBackground(String[] urls) {
-
-            HttpURLConnection connection;
-            OutputStreamWriter request = null;
-            URL url = null;
-            String response = null;
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("messages",user_name);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                url = new URL(urls[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setRequestMethod("POST");
-                request = new OutputStreamWriter(connection.getOutputStream());
-                request.write(String.valueOf(jsonObject));
-                request.flush();
-                request.close();
-                String line = "";
-                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-
-                response = sb.toString().trim();
-                String jsonString = response;
-                if (jsonString != null) {
-                    JSONObject jObj;
-                    jObj = new JSONObject(jsonString);
-                    String message = jObj.getString("message");
-                    Log.i("message", "message");
-                    String status = jObj.getString("status");
-                    JSONArray messages = jObj.getJSONArray("messages");
-                    Log.i("message length", messages.length() + "");
-                    mDescription = new String[messages.length()];
-                    mTitle=new String[messages.length()];
-                    images=new int[messages.length()];
-                    mCoordinates=new String[messages.length()];
-                    for (int i = 0; i < messages.length(); i++) {
-                        Log.i("hok","ok");
-                        JSONObject values = messages.getJSONObject(i);
-                        if(!values.getString("lat").equals("0")&& !values.getString("long").equals("0")) {
-                            mDescription[i] = "A user wants to move your request to " + getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))) + ".Do you reject or accept this request?";
-                            mCoordinates[i] = values.getString("lat") + "," + values.getString("long");
-                            mTitle[i] = "Message";
-                            images[i] = R.drawable.open;
-
-                        }
-                        else{
-                            location_update=false;
-                        }
-                    }
-
-                }
-                else{
-                    Log.i("null","null");
-                }
-                isr.close();
-                reader.close();
-                return "";
-            } catch (IOException e) {
-                // Error
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
-    public String getAddress(double latitude,double longitude) throws IOException {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(this, Locale.getDefault());
-
-        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-
-        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-        return address;
     }
 
     @Override
@@ -532,6 +279,244 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         thread.start();
     }
 
+    private void setupBillingClient() {
+        billingClient = BillingClient.newBuilder(this).setListener(this).build();
+        billingClient.startConnection(new BillingClientStateListener() {
+            @Override
+            public void onBillingSetupFinished(int responseCode) {
+                if(responseCode==BillingClient.BillingResponse.OK)
+                    Toast.makeText(ReportsActivity.this, "Success to connect Billing", Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(ReportsActivity.this, "" + responseCode, Toast.LENGTH_SHORT);
+            }
+            @Override
+            public void onBillingServiceDisconnected() {
+                Toast.makeText(ReportsActivity.this, "You are disconnect from Billing", Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    private void loadProductToCardView(List<SkuDetails> skuDetailsList){
+        CreditAdapter adapter = new CreditAdapter(this,skuDetailsList,billingClient);
+    }
+
+    @Override
+    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
+
+    }
+
+    class MyAdapter extends ArrayAdapter<String> {
+        Context context;
+        String rTitle[];
+        String rDescription[];
+        int rImgs[];
+        MyAdapter(Context c, String title[], String description[], int imgs[]){
+            super(c,R.layout.row,R.id.textView1,title);
+            this.context=c;
+            this.rTitle=title;
+            this.rDescription=description;
+            this.rImgs=imgs;
+        }
+        @NonNull
+        @Override
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater layoutInflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View row=layoutInflater.inflate(R.layout.row,parent,false);
+            ImageView images=row.findViewById(R.id.image);
+            TextView myTitle=row.findViewById(R.id.textView1);
+            TextView myDescription=row.findViewById(R.id.textView2);
+            images.setImageResource(rImgs[position]);
+            myTitle.setText(rTitle[position]);
+            myDescription.setText(rDescription[position]);
+            Button accept=row.findViewById(R.id.accept);
+            accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    row.setVisibility(View.INVISIBLE);
+                    updateRequest(position);
+                }
+            });
+            Button reject=row.findViewById(R.id.reject);
+            reject.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    row.setVisibility(View.INVISIBLE);
+                }
+            });
+            return row;
+        }
+    }
+
+    public void updateRequest(int position){
+        UpdateRequest async = new UpdateRequest(position);
+        try{
+            String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        }catch(ExecutionException e){
+            e.printStackTrace();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getMessages(){
+        Messages async = new Messages();
+        try {
+            String result = async.execute("https://Bikepass.herokuapp.com/API/app.php").get();
+        }catch(ExecutionException e){
+            e.printStackTrace();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+    class UpdateRequest extends AsyncTask<String, String, String>{
+        int value;
+        public UpdateRequest(int value) {
+            super();
+            this.value=value;
+        }
+        @Override
+        protected String doInBackground(String[] urls) {
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("usernamerequest",user_name);
+                jsonObject.put("lat",mCoordinates[this.value].split(",")[0]);
+                jsonObject.put("long",mCoordinates[this.value].split(",")[1]);
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+            try{
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection)url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while((line = reader.readLine())!=null){
+                    sb.append(line+"\n");
+                }
+                response = sb.toString().trim();
+                JSONObject json = new JSONObject(response);
+                String status = json.getString("status");
+                Log.i("stat:",status);
+                if(status.equals("0")){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Location updated!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Error when updating location!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                isr.close();
+                reader.close();
+                return "";
+            }catch(IOException | JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    class Messages extends AsyncTask<String, String, String>{
+        @Override
+        protected String doInBackground(String[] urls) {
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+            URL url = null;
+            String response = null;
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("messages",user_name);
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+            try{
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection)url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonObject));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while((line = reader.readLine())!=null){
+                    sb.append(line+"\n");
+                }
+                response = sb.toString().trim();
+                String jsonString = response;
+                if(jsonString!=null){
+                    JSONObject jObj;
+                    jObj = new JSONObject(jsonString);
+                    String message = jObj.getString("message");
+                    Log.i("message", "message");
+                    String status = jObj.getString("status");
+                    JSONArray messages = jObj.getJSONArray("messages");
+                    Log.i("message length", messages.length() + "");
+                    mDescription = new String[messages.length()];
+                    mTitle=new String[messages.length()];
+                    images=new int[messages.length()];
+                    mCoordinates=new String[messages.length()];
+                    for(int i=0;i<messages.length();i++){
+                        Log.i("hok","ok");
+                        JSONObject values = messages.getJSONObject(i);
+                        if(!values.getString("lat").equals("0")&& !values.getString("long").equals("0")) {
+                            mDescription[i] = "A user wants to move your request to "+getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long")))+".Do you reject or accept this request?";
+                            mCoordinates[i] = values.getString("lat")+"," + values.getString("long");
+                            mTitle[i] = "Message";
+                            images[i] = R.drawable.open;
+                        }
+                        else{
+                            location_update=false;
+                        }
+                    }
+                }
+                else{
+                    Log.i("null","null");
+                }
+                isr.close();
+                reader.close();
+                return "";
+            }catch(IOException e){
+                e.printStackTrace();
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public String getAddress(double latitude,double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        return address;
+    }
+
     public void showDialogForWarning(Activity activity, String msg) {
         final String myResult = msg;
         Log.d("QRCodeScanner", msg);
@@ -602,13 +587,11 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void showDialogForCredit(Activity activity) { //TODO: cardviewler satin alma islevi icin tiklanabilir hale getirilecek
-
         if(billingClient.isReady()){
             SkuDetailsParams params = SkuDetailsParams.newBuilder()
                     .setSkusList(Arrays.asList("id1","id2"))
                     .setType(BillingClient.SkuType.INAPP)
                     .build();
-
             billingClient.querySkuDetailsAsync(params, new SkuDetailsResponseListener() {
                 @Override
                 public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
@@ -623,7 +606,6 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         }else{
             Toast.makeText(ReportsActivity.this, "Billing client is not ready", Toast.LENGTH_SHORT);
         }
-
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialogbox_for_credit);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));

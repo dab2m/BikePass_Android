@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/leaderboard_activity"
     android:orientation="vertical"
+    android:background="@drawable/leaderboard_activity"
     tools:context=".activity.ReportsActivity">
 
     <LinearLayout
@@ -22,12 +22,12 @@
                 android:id="@+id/textview"
                 android:layout_width="343dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
                 android:paddingTop="12dp"
+                android:paddingLeft="16dp"
                 android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
 
             <Button
@@ -44,26 +44,32 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="12dp"
             android:paddingLeft="16dp"
-            android:paddingTop="16dp"
             android:text="How much did you cycle this week"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary"
             android:textSize="20sp" />
 
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.github.mikephil.charting.charts.BarChart>
+
         <ImageView
             android:layout_width="300dp"
-            android:layout_height="240dp"
+            android:layout_height="200dp"
             android:layout_marginLeft="50dp"
             android:src="@drawable/report_picture" />
 
         <Button
             android:id="@+id/worldleaderboard"
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="50dp"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_button"
@@ -97,9 +103,9 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
-                    app:cardBackgroundColor="@color/backgroudWorld"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp">
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/backgroudWorld">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -144,9 +150,9 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
-                    app:cardBackgroundColor="@color/backgroudWorld"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp">
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/backgroudWorld">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -191,9 +197,9 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="12dp"
-                    app:cardBackgroundColor="@color/backgroudWorld"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="6dp">
+                    app:cardElevation="6dp"
+                    app:cardBackgroundColor="@color/backgroudWorld">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -256,8 +262,8 @@
                 android:layout_marginLeft="36dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/backgroudWorld"
-                android:scaleType="fitXY"
-                android:src="@drawable/world_1" />
+                android:src="@drawable/world_1"
+                android:scaleType="fitXY" />
 
             <ImageButton
                 android:id="@+id/settings"
