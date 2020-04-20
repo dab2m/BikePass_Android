@@ -77,7 +77,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     CardView co2_cardView;
     CardView credit_cardView;
     GridLayout gl;
-
+    boolean location_update=true;
     private String time = null;
     private String total_credit = null;
     private String bikeId = null;
@@ -146,7 +146,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                 listView=myDialog.findViewById(R.id.messagelist);
                 myDialog.setCancelable(false);
                 myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                if(mDescription.length!=0) {
+                if(mDescription.length!=0 && location_update) {
                     MyAdapter adapter = new MyAdapter(getApplication(), mTitle, mDescription, images);
                     listView.setAdapter(adapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -396,11 +396,16 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
                     for (int i = 0; i < messages.length(); i++) {
                         Log.i("hok","ok");
                         JSONObject values = messages.getJSONObject(i);
-                        mDescription[i] = "A user wants to move your request to " + getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))) + ".Do you reject or accept this request?";
-                        mCoordinates[i]=values.getString("lat")+","+values.getString("long");
-                        mTitle[i]="Message";
-                        images[i]=R.drawable.open;
+                        if(!values.getString("lat").equals("0")&& !values.getString("long").equals("0")) {
+                            mDescription[i] = "A user wants to move your request to " + getAddress(Double.parseDouble(values.getString("lat")), Double.parseDouble(values.getString("long"))) + ".Do you reject or accept this request?";
+                            mCoordinates[i] = values.getString("lat") + "," + values.getString("long");
+                            mTitle[i] = "Message";
+                            images[i] = R.drawable.open;
 
+                        }
+                        else{
+                            location_update=false;
+                        }
                     }
 
                 }
