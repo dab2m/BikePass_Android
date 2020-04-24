@@ -109,6 +109,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     BarChart barChart;
     ArrayList<BarEntry> barEntryArrayList;
     ArrayList<String> labelsNames;
+    ArrayList<WeeklyData> daySeconds = new ArrayList<>();
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -189,10 +190,17 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         });
         barEntryArrayList = new ArrayList<>();
         labelsNames = new ArrayList<>();
-        BarDataSet barDataSet = new BarDataSet(barEntryArrayList, "");
+        fillDaySeconds();
+        for(int i=0;i<daySeconds.size();i++){
+            String day = daySeconds.get(i).getDay();
+            int seconds = daySeconds.get(i).getSeconds();
+            barEntryArrayList.add(new BarEntry(i,seconds));
+            labelsNames.add(day);
+        }
+        BarDataSet barDataSet = new BarDataSet(barEntryArrayList, "Days - Seconds");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         Description description = new Description();
-        description.setText("Days");
+        description.setText("");
         barChart.setDescription(description);
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);
@@ -206,6 +214,17 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         xAxis.setLabelRotationAngle(270);
         barChart.animateY(2000);
         barChart.invalidate();
+    }
+
+    private void fillDaySeconds() {
+        daySeconds.clear();
+        daySeconds.add(new WeeklyData("Mon",30));
+        daySeconds.add(new WeeklyData("Tue",20));
+        daySeconds.add(new WeeklyData("Wed",40));
+        daySeconds.add(new WeeklyData("Thu",50));
+        daySeconds.add(new WeeklyData("Fri",70));
+        daySeconds.add(new WeeklyData("Sat",10));
+        daySeconds.add(new WeeklyData("Sun",60));
     }
 
     @Override

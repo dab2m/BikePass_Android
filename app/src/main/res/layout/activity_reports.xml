@@ -53,15 +53,11 @@
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barChart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="360dp"
+            android:layout_height="240dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp">
         </com.github.mikephil.charting.charts.BarChart>
-
-        <ImageView
-            android:layout_width="300dp"
-            android:layout_height="200dp"
-            android:layout_marginLeft="50dp"
-            android:src="@drawable/report_picture" />
 
         <Button
             android:id="@+id/worldleaderboard"
