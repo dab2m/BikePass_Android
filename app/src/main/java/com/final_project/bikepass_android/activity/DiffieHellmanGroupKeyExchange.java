@@ -1,12 +1,14 @@
 package com.final_project.bikepass_android.activity;
 
 import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Created by Berk on 11.05.2020
+ */
 public class DiffieHellmanGroupKeyExchange {
     private static int bitSize=32;
 
