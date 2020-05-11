@@ -111,6 +111,8 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
     ArrayList<String> labelsNames;
     ArrayList<WeeklyData> daySeconds = new ArrayList<>();
 
+    DiffieHellmanGroupKeyExchange dhKey;
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +157,7 @@ public class ReportsActivity extends AppCompatActivity implements View.OnClickLi
         message_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dhKey = new DiffieHellmanGroupKeyExchange(4);
                 myDialog.setContentView(R.layout.custom_listview_messages);
                 listView=myDialog.findViewById(R.id.messagelist);
                 myDialog.setCancelable(false);
